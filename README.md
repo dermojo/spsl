@@ -63,7 +63,7 @@ Visual Studio. When done, execute `RelWithDebInfo\testlib.exe` to run them.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 tl;dr: Feel free to use and modify the code or to include it in your commercial application.
 
