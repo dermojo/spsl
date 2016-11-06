@@ -27,6 +27,11 @@
 *.exe
 *.out
 *.app
+
+# added locally
 /build/
 /googletest-release-1.8.0/
 /msvc_rel/
+/.settings/
+/.cproject
+/.project
