@@ -1,9 +1,9 @@
 #
 # Special Purpose Strings Library
 #
-# At LEAST 3.2 but newer is better
-cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
-project(spsl VERSION 0.1 LANGUAGES CXX)
+# 2.8 is required to support Travis CI
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+#project(spsl VERSION 0.1 LANGUAGES CXX)
 
 # Release version with debug info: Compiles with optimizations, and if a unit test crashes,
 # there may be hope for analysis...
