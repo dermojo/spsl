@@ -55,7 +55,11 @@ before_install:
   - sudo apt-get install -y libgtest-dev
 
 script:
-  - "cd /usr/src/gtest && sudo cmake -DCMAKE_CXX_COMPILER=$COMPILER  . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
+  - cd /usr/src/gtest
+  - sudo cmake -DCMAKE_CXX_COMPILER=$COMPILER .
+  - sudo cmake --build .
+  - sudo mv libg* /usr/local/lib/
+  - cd $TRAVIS_BUILD_DIR
   - mkdir build
   - cd build
   - cmake -DCMAKE_CXX_COMPILER=$COMPILER .. && make
