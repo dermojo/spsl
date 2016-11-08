@@ -422,19 +422,19 @@ public:
 
         // same length
         s1.replace(s1.cbegin(), s1.cbegin() + initListSize, { 'T', 'e', 's', 't' });
-        s2.replace(s2.cbegin(), s2.cbegin() + initListSize, { 'T', 'e', 's', 't' });
+        s2.replace(s2.begin(), s2.begin() + initListSize, { 'T', 'e', 's', 't' });
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         s1.replace(s1.cbegin(), s1.cbegin() + 1, { 'T', 'e', 's', 't' });
-        s2.replace(s2.cbegin(), s2.cbegin() + 1, { 'T', 'e', 's', 't' });
+        s2.replace(s2.begin(), s2.begin() + 1, { 'T', 'e', 's', 't' });
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         s1.replace(s1.cbegin(), s1.cbegin() + initListSize + 3, { 'T', 'e', 's', 't' });
-        s2.replace(s2.cbegin(), s2.cbegin() + initListSize + 3, { 'T', 'e', 's', 't' });
+        s2.replace(s2.begin(), s2.begin() + initListSize + 3, { 'T', 'e', 's', 't' });
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
@@ -461,19 +461,19 @@ public:
 
         // same length
         s1.replace(s1.cbegin(), s1.cbegin() + initListSize, { L'T', L'e', L's', L't' });
-        s2.replace(s2.cbegin(), s2.cbegin() + initListSize, { L'T', L'e', L's', L't' });
+        s2.replace(s2.begin(), s2.begin() + initListSize, { L'T', L'e', L's', L't' });
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         s1.replace(s1.cbegin(), s1.cbegin() + 1, { L'T', L'e', L's', L't' });
-        s2.replace(s2.cbegin(), s2.cbegin() + 1, { L'T', L'e', L's', L't' });
+        s2.replace(s2.begin(), s2.begin() + 1, { L'T', L'e', L's', L't' });
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         s1.replace(s1.cbegin(), s1.cbegin() + initListSize + 3, { L'T', L'e', L's', L't' });
-        s2.replace(s2.cbegin(), s2.cbegin() + initListSize + 3, { L'T', L'e', L's', L't' });
+        s2.replace(s2.begin(), s2.begin() + initListSize + 3, { L'T', L'e', L's', L't' });
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
@@ -556,7 +556,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl1.assign(data.blablabla, 3);
         repl2.assign(data.blablabla, 3);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1);
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, repl2);
+        s2.replace(s2.begin(), s2.begin() + 3, repl2);
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
@@ -564,7 +564,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl1.assign(32, data.blablabla[0]);
         repl2.assign(32, data.blablabla[0]);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1);
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, repl2);
+        s2.replace(s2.begin(), s2.begin() + 3, repl2);
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
@@ -572,7 +572,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl1.assign(1, data.blablabla[0]);
         repl2.assign(1, data.blablabla[0]);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1);
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, repl2);
+        s2.replace(s2.begin(), s2.begin() + 3, repl2);
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
@@ -580,7 +580,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl1.clear();
         repl2.clear();
         s1.replace(s1.cbegin(), s1.cend(), repl1);
-        s2.replace(s2.cbegin(), s2.cend(), repl2);
+        s2.replace(s2.begin(), s2.end(), repl2);
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         ASSERT_TRUE(s1.empty());
@@ -689,12 +689,12 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl1.assign(data.blablabla, 3);
         repl2.assign(data.blablabla, 3);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.begin(), repl1.end());
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, repl2.begin(), repl2.end());
+        s2.replace(s2.begin(), s2.begin() + 3, repl2.begin(), repl2.end());
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         // reverse_iterator
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.crbegin(), repl1.crend());
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, repl2.crbegin(), repl2.crend());
+        s2.replace(s2.begin(), s2.begin() + 3, repl2.crbegin(), repl2.crend());
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
@@ -702,7 +702,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl1.assign(32, data.blablabla[0]);
         repl2.assign(32, data.blablabla[0]);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.begin(), repl1.end());
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, repl2.begin(), repl2.end());
+        s2.replace(s2.begin(), s2.begin() + 3, repl2.begin(), repl2.end());
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         // again, using std::vector for our string class
@@ -710,7 +710,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         s1 = data.hello_world;
         s2 = data.hello_world;
         s1.replace(s1.cbegin(), s1.cbegin() + 3, vec.begin(), vec.end());
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, repl2.begin(), repl2.end());
+        s2.replace(s2.begin(), s2.begin() + 3, repl2.begin(), repl2.end());
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
@@ -718,7 +718,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl1.assign(1, data.blablabla[0]);
         repl2.assign(1, data.blablabla[0]);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.begin(), repl1.end());
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, repl2.begin(), repl2.end());
+        s2.replace(s2.begin(), s2.begin() + 3, repl2.begin(), repl2.end());
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
@@ -838,7 +838,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             StringType s1(data.hello_world);
             RefType s2(data.hello_world);
             s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.data(), len);
-            s2.replace(s2.cbegin(), s2.cbegin() + 3, repl2.data(), len);
+            s2.replace(s2.begin(), s2.begin() + 3, repl2.data(), len);
             ASSERT_EQ(s1.size(), s2.size());
             ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
@@ -852,7 +852,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             StringType s1(data.hello_world);
             RefType s2(data.hello_world);
             s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.data(), len);
-            s2.replace(s2.cbegin(), s2.cbegin() + 3, repl2.data(), len);
+            s2.replace(s2.begin(), s2.begin() + 3, repl2.data(), len);
             ASSERT_EQ(s1.size(), s2.size());
             ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
@@ -866,7 +866,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             StringType s1(data.hello_world);
             RefType s2(data.hello_world);
             s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.data(), len);
-            s2.replace(s2.cbegin(), s2.cbegin() + 3, repl2.data(), len);
+            s2.replace(s2.begin(), s2.begin() + 3, repl2.data(), len);
             ASSERT_EQ(s1.size(), s2.size());
             ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
@@ -880,7 +880,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             StringType s1(data.hello_world);
             RefType s2(data.hello_world);
             s1.replace(s1.cbegin() + 1, s1.cbegin() + 5, repl1.data() + 3, len);
-            s2.replace(s2.cbegin() + 1, s2.cbegin() + 5, repl2.data() + 3, len);
+            s2.replace(s2.begin() + 1, s2.begin() + 5, repl2.data() + 3, len);
             ASSERT_EQ(s1.size(), s2.size());
             ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
@@ -976,7 +976,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl1.assign(data.blablabla, 3);
         repl2.assign(data.blablabla, 3);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.data());
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, repl2.data());
+        s2.replace(s2.begin(), s2.begin() + 3, repl2.data());
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
@@ -984,7 +984,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl1.assign(32, data.blablabla[0]);
         repl2.assign(32, data.blablabla[0]);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.data());
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, repl2.data());
+        s2.replace(s2.begin(), s2.begin() + 3, repl2.data());
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
@@ -992,7 +992,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl1.assign(1, data.blablabla[0]);
         repl2.assign(1, data.blablabla[0]);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.data());
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, repl2.data());
+        s2.replace(s2.begin(), s2.begin() + 3, repl2.data());
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
@@ -1081,19 +1081,19 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
 
         // same length
         s1.replace(s1.cbegin(), s1.cbegin() + 3, 3, repl);
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, 3, repl);
+        s2.replace(s2.begin(), s2.begin() + 3, 3, repl);
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         s1.replace(s1.cbegin(), s1.cbegin() + 3, 32, repl);
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, 32, repl);
+        s2.replace(s2.begin(), s2.begin() + 3, 32, repl);
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         s1.replace(s1.cbegin(), s1.cbegin() + 12, 1, repl);
-        s2.replace(s2.cbegin(), s2.cbegin() + 12, 1, repl);
+        s2.replace(s2.begin(), s2.begin() + 12, 1, repl);
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
@@ -1104,7 +1104,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             StringType s1(data.hello_world);
             RefType s2(data.hello_world);
             s1.replace(s1.cbegin() + 3, s1.cbegin() + 4, len, repl);
-            s2.replace(s2.cbegin() + 3, s2.cbegin() + 4, len, repl);
+            s2.replace(s2.begin() + 3, s2.begin() + 4, len, repl);
             ASSERT_EQ(s1.size(), s2.size());
             ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
@@ -1182,21 +1182,21 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         // same length
         repl.assign(data.blablabla, 3);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl);
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, repl);
+        s2.replace(s2.begin(), s2.begin() + 3, repl);
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         repl.assign(32, data.blablabla[0]);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl);
-        s2.replace(s2.cbegin(), s2.cbegin() + 3, repl);
+        s2.replace(s2.begin(), s2.begin() + 3, repl);
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         repl.assign(1, data.blablabla[0]);
         s1.replace(s1.cbegin() + 1, s1.cbegin() + 4, repl);
-        s2.replace(s2.cbegin() + 1, s2.cbegin() + 4, repl);
+        s2.replace(s2.begin() + 1, s2.begin() + 4, repl);
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 

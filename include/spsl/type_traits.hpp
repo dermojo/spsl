@@ -36,10 +36,16 @@ private:
      */
     template <typename T>
     static constexpr auto check(T*) ->
-      typename std::is_same<CharType const*, decltype(std::declval<const T>().data())>::type;
+      typename std::is_same<CharType const*, decltype(std::declval<const T>().data())>::type
+    {
+        return {};
+    }
 
     template <typename>
-    static constexpr std::false_type check(...);
+    static constexpr std::false_type check(...)
+    {
+        return {};
+    }
 
 public:
     typedef decltype(check<Class>(0)) type;
@@ -53,10 +59,16 @@ struct has_size
 private:
     template <typename T>
     static constexpr auto check(T*) ->
-      typename std::is_same<SizeType, decltype(std::declval<T>().size())>::type;
+      typename std::is_same<SizeType, decltype(std::declval<T>().size())>::type
+    {
+        return {};
+    }
 
     template <typename>
-    static constexpr std::false_type check(...);
+    static constexpr std::false_type check(...)
+    {
+        return {};
+    }
 
 public:
     typedef decltype(check<Class>(0)) type;
