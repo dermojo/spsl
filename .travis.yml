@@ -56,7 +56,7 @@ before_install:
 
 script:
   - cd /usr/src/gtest
-  - sudo cmake -DCMAKE_CXX_COMPILER=$COMPILER .
+  - sudo cmake -DCMAKE_CXX_COMPILER=$COMPILER -DCMAKE_C_COMPILER=$COMPILER .
   - sudo cmake --build .
   - sudo mv libg* /usr/local/lib/
   - cd $TRAVIS_BUILD_DIR
