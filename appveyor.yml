@@ -17,7 +17,7 @@ build_script:
   - cd ..
   - md build
   - cd build
-  - cmake -G %msvc% -DGTEST_LIBRARY=%APPVEYOR_BUILD_FOLDER%\googletest-release-1.8.0\build\Release\gtest.lib -DGTEST_MAIN_LIBRARY=%APPVEYOR_BUILD_FOLDER%\googletest-release-1.8.0\build\Release\gtest_main.lib -DGTEST_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%\googletest-release-1.8.0\include ..
+  - cmake -G %msvc% -DGTEST_LIBRARY=%APPVEYOR_BUILD_FOLDER%\googletest-release-1.8.0\build\Release\gtest.lib -DGTEST_MAIN_LIBRARY=%APPVEYOR_BUILD_FOLDER%\googletest-release-1.8.0\build\Release\gtest_main.lib -DGTEST_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%\googletest-release-1.8.0\googletest\include ..
   - cmake --build . --config Release
 
 test_script:
