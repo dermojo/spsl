@@ -1,0 +1,25 @@
+# Windows Build Configuration for AppVeyor
+
+environment:
+  matrix:
+    - msvc: '"Visual Studio 12 2013"'
+
+
+build_script:
+  - appveyor DownloadFile https://github.com/google/googletest/archive/release-1.8.0.zip -FileName googletest-release-1.8.0.zip
+  - 7z x googletest-release-1.8.0.zip > NUL
+  - cd googletest-release-1.8.0
+  - md build
+  - cd build
+  - cmake -G %msvc%
+  - cmake --build . --config Release
+  - cd ..
+  - cd ..
+  - md build
+  - cd build
+  - cmake -G %msvc% -DGTEST_LIBRARY=%APPVEYOR_BUILD_FOLDER%\googletest-release-1.8.0\build\Release\gtest.lib -DGTEST_MAIN_LIBRARY=%APPVEYOR_BUILD_FOLDER%\googletest-release-1.8.0\build\Release\gtest_main.lib -DGTEST_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%\googletest-release-1.8.0\include ..
+  - cmake --build . --config Release
+
+test_script:
+  - cd build
+  - ctest -VV
