@@ -23,5 +23,4 @@ build_script:
   - cmake --build . --config %buildcfg%
 
 test_script:
-  - cd build
   - ctest -VV
