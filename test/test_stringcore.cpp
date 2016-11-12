@@ -604,13 +604,13 @@ TYPED_TEST(StringCoreTest, Operations)
     ASSERT_TRUE(s1.empty());
 
     // push_back
-    const size_t len = 20;
-    for (size_t i = 0; i < len; ++i)
+    const size_t num = 20;
+    for (size_t i = 0; i < num; ++i)
         s1.push_back(ch);
-    ASSERT_EQ(s1.size(), len);
-    for (size_t i = 0; i < len; ++i)
+    ASSERT_EQ(s1.size(), num);
+    for (size_t i = 0; i < num; ++i)
         ASSERT_EQ(s1[i], ch);
-    ASSERT_EQ(s1[len], nul);
+    ASSERT_EQ(s1[num], nul);
 
     // pop_back
     s1 = data.hello_world;

@@ -955,13 +955,13 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
 
         // exceptions: verify that they are thrown and that the string doesn't change
         {
-            StringType s1(data.hello_world);
+            StringType s3(data.hello_world);
             // (1) invalid pos raises out_of_range
-            ASSERT_THROW(s1.replace(s1.size(), s1.size() + 3, repl1.data()), std::out_of_range);
-            ASSERT_TRUE(s1 == data.hello_world);
+            ASSERT_THROW(s3.replace(s3.size(), s3.size() + 3, repl1.data()), std::out_of_range);
+            ASSERT_TRUE(s3 == data.hello_world);
             // (2) in our class, an invalid count does the same
-            ASSERT_THROW(s1.replace(0, s1.size() + 1, repl1.data()), std::out_of_range);
-            ASSERT_TRUE(s1 == data.hello_world);
+            ASSERT_THROW(s3.replace(0, s3.size() + 1, repl1.data()), std::out_of_range);
+            ASSERT_TRUE(s3 == data.hello_world);
         }
     }
 
@@ -1045,12 +1045,12 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         std::array<size_t, 5> sizes4{ 0, 1, 3, 5, data.blablabla_len };
         for (auto len : sizes4)
         {
-            StringType s1(data.hello_world);
-            RefType s2(data.hello_world);
-            s1.replace(3, 4, len, repl);
-            s2.replace(3, 4, len, repl);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            StringType s3(data.hello_world);
+            RefType s4(data.hello_world);
+            s3.replace(3, 4, len, repl);
+            s4.replace(3, 4, len, repl);
+            ASSERT_EQ(s3.size(), s4.size());
+            ASSERT_TRUE(Traits::compare(s3.data(), s4.data(), s3.size()) == 0);
         }
 
         // replace all
@@ -1101,12 +1101,12 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         std::array<size_t, 5> sizes4{ 0, 1, 3, 5, data.blablabla_len };
         for (auto len : sizes4)
         {
-            StringType s1(data.hello_world);
-            RefType s2(data.hello_world);
-            s1.replace(s1.cbegin() + 3, s1.cbegin() + 4, len, repl);
-            s2.replace(s2.begin() + 3, s2.begin() + 4, len, repl);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            StringType s3(data.hello_world);
+            RefType s4(data.hello_world);
+            s3.replace(s3.cbegin() + 3, s3.cbegin() + 4, len, repl);
+            s4.replace(s4.begin() + 3, s4.begin() + 4, len, repl);
+            ASSERT_EQ(s3.size(), s4.size());
+            ASSERT_TRUE(Traits::compare(s3.data(), s4.data(), s3.size()) == 0);
         }
 
         // replace all
@@ -1285,14 +1285,14 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
 
         // exceptions: verify that they are thrown and that the string doesn't change
         {
-            StringType s1(data.hello_world);
+            StringType s3(data.hello_world);
             // (1) invalid pos raises out_of_range
-            ASSERT_THROW(s1.replace(s1.size(), s1.size() + 3, repl, 0, repl.size()),
+            ASSERT_THROW(s3.replace(s3.size(), s3.size() + 3, repl, 0, repl.size()),
                          std::out_of_range);
-            ASSERT_TRUE(s1 == data.hello_world);
+            ASSERT_TRUE(s3 == data.hello_world);
             // (2) in our class, an invalid count does the same
-            ASSERT_THROW(s1.replace(0, s1.size() + 1, repl, 0, repl.size()), std::out_of_range);
-            ASSERT_TRUE(s1 == data.hello_world);
+            ASSERT_THROW(s3.replace(0, s3.size() + 1, repl, 0, repl.size()), std::out_of_range);
+            ASSERT_TRUE(s3 == data.hello_world);
         }
     }
 }
