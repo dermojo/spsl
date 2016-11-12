@@ -1,6 +1,7 @@
 # SPSL - Special Purpose Strings Library
 
-[![Build Status](https://travis-ci.org/dermojo/spsl.svg?branch=master)](https://travis-ci.org/dermojo/spsl)
+[![Travis-CI status](https://travis-ci.org/dermojo/spsl.svg?branch=master)](https://travis-ci.org/dermojo/spsl)
+[![AppVeyor status](https://ci.appveyor.com/project/dermojo/spsl/branch/master&svg=true)](https://ci.appveyor.com/project/dermojo/spsl)
 
 SPSL is a header-only library for "special" string implementations. It contains the following
 string class templates:

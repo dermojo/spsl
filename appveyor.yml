@@ -4,6 +4,8 @@ environment:
   matrix:
     - msvc: '"Visual Studio 12 2013"'
       buildcfg: Release
+    - msvc: '"Visual Studio 14 2015"'
+      buildcfg: Release
 
 
 build_script:
