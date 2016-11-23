@@ -3,7 +3,6 @@
  * @author  Daniel Evers
  * @brief	Storage implementation that wipes memory before free'ing it - for sensitive data
  * @license MIT
- *
  */
 
 #ifndef SPSL_STORAGE_PASSWORD_HPP_
@@ -13,7 +12,7 @@
 #include <stdexcept>
 #include <string> // for traits
 
-#include "spsl/compat.hpp"
+#include "spsl/pagealloc.hpp"
 
 namespace spsl
 {
@@ -51,7 +50,7 @@ inline void* secure_memzero(void* ptr, size_t size)
  * Only the allocate(), deallocate() and max_size() member functions of the allocator type are used.
  */
 template <typename CharType, std::size_t BlockSize = 128,
-          typename Allocator = typename std::allocator<CharType>>
+          typename Allocator = SensitiveSegmentAllocator<CharType>>
 class StoragePassword : private Allocator
 {
 public:
@@ -97,9 +96,7 @@ public:
 
             // allocate a new buffer (the allocator will throw in case of error)
             allocator& a = *this;
-            // TODO: implement a simple allocator that encapsulates lockMemory/unlockMemory!
             char_type* newbuf = a.allocate(new_cap);
-            os::lockMemory(newbuf, new_cap);
 
             // copy existing data (note: all data must fit because we're only growing)
             if (size())
@@ -111,7 +108,6 @@ public:
             if (m_buffer != _b)
             {
                 _wipe();
-                os::unlockMemory(m_buffer, capacity());
                 a.deallocate(m_buffer, capacity());
             }
 
@@ -178,7 +174,6 @@ public:
         {
             clear();
             allocator& a = *this;
-            os::unlockMemory(m_buffer, capacity());
             a.deallocate(m_buffer, capacity());
         }
     }

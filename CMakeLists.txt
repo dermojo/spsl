@@ -25,6 +25,7 @@ add_executable(testlib
     test/test_stringcore.cpp
     test/test_stringbase.cpp
     test/test_traits.cpp
+    test/test_pagealloc.cpp
     )
 add_executable(example
     test/example.cpp
