@@ -167,7 +167,7 @@ public:
             m_buffer[--m_length] = nul;
     }
 
-    void insert(size_type index, size_type count, char_type ch) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
+    void insert(size_type index, size_type count, char_type ch)
     {
         if (index > size())
             throw std::out_of_range("index out of range");
@@ -181,7 +181,7 @@ public:
         *this = tmp;
     }
 
-    void insert(size_type index, const char_type* s, size_type n) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
+    void insert(size_type index, const char_type* s, size_type n)
     {
         if (index > size())
             throw std::out_of_range("index out of range");
@@ -196,7 +196,7 @@ public:
     }
 
     template <typename InputIt>
-    void insert(size_type index, InputIt first, InputIt last) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
+    void insert(size_type index, InputIt first, InputIt last)
     {
         if (index > size())
             throw std::out_of_range("index out of range");
@@ -277,8 +277,8 @@ public:
         m_buffer[m_length] = nul;
     }
 
-    void replace(size_type pos, size_type count, const char_type* cstr,
-                 size_type count2) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
+    void replace(size_type pos, size_type count, const char_type* cstr, size_type count2)
+      SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         // simple implementation (avoid a lot of memmove's): create a new string and swap
         // => This is ok because there is no heap allocation, making this actually fast.
