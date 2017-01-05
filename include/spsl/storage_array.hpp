@@ -53,7 +53,7 @@ public:
     size_type length() const { return m_length; }
     size_type size() const { return m_length; }
     bool empty() const { return m_length == 0; }
-    void reserve(size_type new_cap = 0) noexcept(!ThrowOnTruncate)
+    void reserve(size_type new_cap = 0) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         if (new_cap > max_size() && ThrowOnTruncate)
             throw std::length_error("requested capacity exceeds maximum");
@@ -69,28 +69,28 @@ public:
     // implement copy & move
     StorageArray(const this_type& other) noexcept : StorageArray()
     {
-        // note: assign() won't throw because 'other' has the same max. length
-        assign(other.data(), other.size());
+        // note: 'other' has the same max. length, so we can skip all checks
+        assign_nothrow(other.data(), other.size());
     }
     StorageArray(this_type&& other) noexcept : StorageArray()
     {
         // swapping is more expensive than this...
-        // note: assign() won't throw because 'other' has the same max. length
-        assign(other.data(), other.size());
+        // note: 'other' has the same max. length, so we can skip all checks
+        assign_nothrow(other.data(), other.size());
         other.clear();
     }
 
     StorageArray& operator=(const this_type& other) noexcept
     {
-        // note: assign() won't throw because 'other' has the same max. length and must be valid
-        assign(other.data(), other.size());
+        // note: 'other' has the same max. length, so we can skip all checks
+        assign_nothrow(other.data(), other.size());
         return *this;
     }
     StorageArray& operator=(this_type&& other) noexcept
     {
         // swapping is more expensive than this...
-        // note: assign() won't throw because 'other' has the same max. length
-        assign(other.data(), other.size());
+        // note: 'other' has the same max. length, so we can skip all checks
+        assign_nothrow(other.data(), other.size());
         other.clear();
         return *this;
     }
@@ -107,17 +107,15 @@ public:
     char_type& operator[](size_type pos) { return m_buffer[pos]; }
     const char_type& operator[](size_type pos) const { return m_buffer[pos]; }
 
-    void assign(const char_type* s, size_type n) noexcept(!ThrowOnTruncate)
+    void assign(const char_type* s, size_type n) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         size_type len = std::min(n, max_size());
         if (len != n && ThrowOnTruncate)
             throw std::length_error("string length exceeds maximum capacity");
 
-        traits_type::copy(m_buffer.data(), s, len);
-        m_length = len;
-        m_buffer[m_length] = nul;
+        assign_nothrow(s, len);
     }
-    void assign(size_type count, char_type ch) noexcept(!ThrowOnTruncate)
+    void assign(size_type count, char_type ch) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         size_type len = std::min(count, max_size());
         if (len != count && ThrowOnTruncate)
@@ -129,7 +127,7 @@ public:
     }
 
     template <typename InputIt>
-    void assign(InputIt first, InputIt last) noexcept(!ThrowOnTruncate)
+    void assign(InputIt first, InputIt last) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         // is there enough space?
         const size_type n = std::distance(first, last);
@@ -150,7 +148,7 @@ public:
         m_buffer[0] = nul;
         m_length = 0;
     }
-    void push_back(char_type c) noexcept(!ThrowOnTruncate)
+    void push_back(char_type c) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         if (capacity_left())
         {
@@ -169,7 +167,7 @@ public:
             m_buffer[--m_length] = nul;
     }
 
-    void insert(size_type index, size_type count, char_type ch) noexcept(!ThrowOnTruncate)
+    void insert(size_type index, size_type count, char_type ch) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         if (index > size())
             throw std::out_of_range("index out of range");
@@ -183,7 +181,7 @@ public:
         *this = tmp;
     }
 
-    void insert(size_type index, const char_type* s, size_type n) noexcept(!ThrowOnTruncate)
+    void insert(size_type index, const char_type* s, size_type n) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         if (index > size())
             throw std::out_of_range("index out of range");
@@ -198,7 +196,7 @@ public:
     }
 
     template <typename InputIt>
-    void insert(size_type index, InputIt first, InputIt last) noexcept(!ThrowOnTruncate)
+    void insert(size_type index, InputIt first, InputIt last) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         if (index > size())
             throw std::out_of_range("index out of range");
@@ -221,7 +219,7 @@ public:
     }
 
 
-    void append(size_type count, char_type ch) noexcept(!ThrowOnTruncate)
+    void append(size_type count, char_type ch) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         // is there enough space?
         size_type appendCount = std::min(count, capacity_left());
@@ -233,7 +231,7 @@ public:
         m_buffer[m_length] = nul;
     }
 
-    void append(const char_type* s, size_type n) noexcept(!ThrowOnTruncate)
+    void append(const char_type* s, size_type n) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         // is there enough space?
         const size_type appendCount = std::min(n, capacity_left());
@@ -246,7 +244,7 @@ public:
     }
 
     template <typename InputIt>
-    void append(InputIt first, InputIt last) noexcept(!ThrowOnTruncate)
+    void append(InputIt first, InputIt last) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         // is there enough space?
         const size_type n = std::distance(first, last);
@@ -261,7 +259,7 @@ public:
         m_buffer[m_length] = nul;
     }
 
-    void resize(size_type count, char_type ch) noexcept(!ThrowOnTruncate)
+    void resize(size_type count, char_type ch) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         if (count < size())
         {
@@ -280,7 +278,7 @@ public:
     }
 
     void replace(size_type pos, size_type count, const char_type* cstr,
-                 size_type count2) noexcept(!ThrowOnTruncate)
+                 size_type count2) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         // simple implementation (avoid a lot of memmove's): create a new string and swap
         // => This is ok because there is no heap allocation, making this actually fast.
@@ -303,8 +301,8 @@ public:
         *this = std::move(tmp);
     }
 
-    void replace(size_type pos, size_type count, size_type count2,
-                 char_type ch) noexcept(!ThrowOnTruncate)
+    void replace(size_type pos, size_type count, size_type count2, char_type ch)
+      SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         // => same implementation as above
         this_type tmp;
@@ -348,6 +346,14 @@ public:
     }
 
     void swap(this_type& other) { std::swap(*this, other); }
+
+protected:
+    void assign_nothrow(const char_type* s, size_type len) noexcept
+    {
+        traits_type::copy(m_buffer.data(), s, len);
+        m_length = len;
+        m_buffer[m_length] = nul;
+    }
 
 protected:
     /// number of bytes (*not* characters) in the buffer, not including the terminating NUL

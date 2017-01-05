@@ -13,6 +13,7 @@
 #define SPSL_HAS_NOEXCEPT
 #define SPSL_HAS_DEFAULT_MOVE
 #define SPSL_HAS_CONSTEXPR_ARRAY
+#define SPSL_NOEXCEPT_IF(cond)      noexcept(cond)
 
 #ifdef _MSC_VER // Windows + Visual Studio
 
@@ -20,12 +21,14 @@
 #include <crtdefs.h>
 typedef intptr_t ssize_t;
 
-// noexcept and consexpr are supported since Visual Studio 2015
+// noexcept and constexpr are supported since Visual Studio 2015
 #if _MSC_VER < 1900
 #define noexcept
 #define constexpr const
 #undef SPSL_HAS_NOEXCEPT
 #undef SPSL_HAS_DEFAULT_MOVE
+#undef SPSL_NOEXCEPT_IF
+#define SPSL_NOEXCEPT_IF(x)
 #endif
 
 // can't use constexpr values in array definitions...
