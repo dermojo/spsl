@@ -5,8 +5,8 @@
  * @license MIT
  */
 
-#include <gtest/gtest.h>
 #include <array>
+#include <gtest/gtest.h>
 
 #include "spsl/pagealloc.hpp"
 #include "testdata.hpp"

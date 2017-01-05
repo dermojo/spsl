@@ -23,7 +23,7 @@ namespace spsl
  * @param[in] size      number of bytes to clear
  * @return @c ptr
  */
-inline void* secure_memzero(void* ptr, size_t size)
+inline void* secure_memzero(void* ptr, size_t size) noexcept
 {
     // Note: We are *not* using SecureZeroMemory() here because this requires us to include the
     // Windows headers and then all hell breaks loose...
@@ -144,7 +144,7 @@ public:
     }
 
     // implement copy & move
-    StoragePassword(const this_type& other) noexcept : StoragePassword()
+    StoragePassword(const this_type& other) : StoragePassword()
     {
         if (!other.empty())
             assign(other.data(), other.size());
@@ -155,7 +155,7 @@ public:
         other.clear();
     }
 
-    StoragePassword& operator=(const this_type& other) noexcept
+    StoragePassword& operator=(const this_type& other)
     {
         assign(other.data(), other.size());
         return *this;
@@ -448,7 +448,7 @@ public:
         _set_length(count);
     }
 
-    void swap(this_type& other)
+    void swap(this_type& other) noexcept
     {
         std::swap(_l.m_length, other._l.m_length);
         std::swap(_l.m_capacity, other._l.m_capacity);
@@ -461,11 +461,11 @@ public:
     }
 
 protected:
-    void _wipe(size_type index, size_type count)
+    void _wipe(size_type index, size_type count) noexcept
     {
         secure_memzero(m_buffer + index, count * sizeof(char_type));
     }
-    void _wipe() { _wipe(0, capacity()); }
+    void _wipe() noexcept { _wipe(0, capacity()); }
 
 
 protected:

@@ -90,7 +90,7 @@ public:
      * @param[in] pageSize      the OS's page size (or a multiple thereof)
      * @throws std::runtime_error  if the pageSize isn't a multiple of the segment or the chunk size
      */
-    SensitivePageAllocator(std::size_t pageSize = os::getPageSize())
+    explicit SensitivePageAllocator(std::size_t pageSize = os::getPageSize())
       : m_mutex(), m_pageSize(pageSize), m_chunksPerPage(m_pageSize / chunk_size),
         m_managedChunks(), m_unmanagedAreas(), m_leakCallback(logLeaks)
     {
@@ -484,7 +484,7 @@ private:
         return addr;
     }
 
-    static void deallocatePage(pointer addr, std::size_t size)
+    static void deallocatePage(pointer addr, std::size_t size) noexcept
     {
         std::error_code ec;
         os::unlockMemory(addr, size, &ec);
@@ -545,10 +545,10 @@ public:
 
     // constructors
     SensitiveSegmentAllocator() : m_alloc(&SensitivePageAllocator::getDefaultInstance()) {}
-    SensitiveSegmentAllocator(SensitivePageAllocator& alloc) noexcept : m_alloc(&alloc) {}
-    SensitiveSegmentAllocator(const SensitiveSegmentAllocator& other) noexcept = default;
+    explicit SensitiveSegmentAllocator(SensitivePageAllocator& alloc) noexcept : m_alloc(&alloc) {}
+    explicit SensitiveSegmentAllocator(const SensitiveSegmentAllocator& other) noexcept = default;
     template <class U>
-    SensitiveSegmentAllocator(const SensitiveSegmentAllocator<U>& other) noexcept
+    explicit SensitiveSegmentAllocator(const SensitiveSegmentAllocator<U>& other) noexcept
       : m_alloc(other.m_alloc)
     {
     }

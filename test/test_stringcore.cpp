@@ -69,7 +69,7 @@ TYPED_TEST(StringCoreTest, Constructors)
 
     // construct from string (with length)
     {
-        const size_t length = data.hello_world_len - 2;
+        const size_t length = data.hello_world_len - 2u;
         const StringType s(data.hello_world, length);
         ASSERT_EQ(s.length(), length);
         ASSERT_EQ(s.size(), length);

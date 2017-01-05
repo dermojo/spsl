@@ -53,7 +53,7 @@ public:
     size_type length() const { return m_length; }
     size_type size() const { return m_length; }
     bool empty() const { return m_length == 0; }
-    void reserve(size_type new_cap = 0)
+    void reserve(size_type new_cap = 0) noexcept(!ThrowOnTruncate)
     {
         if (new_cap > max_size() && ThrowOnTruncate)
             throw std::length_error("requested capacity exceeds maximum");
@@ -69,23 +69,27 @@ public:
     // implement copy & move
     StorageArray(const this_type& other) noexcept : StorageArray()
     {
+        // note: assign() won't throw because 'other' has the same max. length
         assign(other.data(), other.size());
     }
     StorageArray(this_type&& other) noexcept : StorageArray()
     {
         // swapping is more expensive than this...
+        // note: assign() won't throw because 'other' has the same max. length
         assign(other.data(), other.size());
         other.clear();
     }
 
     StorageArray& operator=(const this_type& other) noexcept
     {
+        // note: assign() won't throw because 'other' has the same max. length and must be valid
         assign(other.data(), other.size());
         return *this;
     }
     StorageArray& operator=(this_type&& other) noexcept
     {
         // swapping is more expensive than this...
+        // note: assign() won't throw because 'other' has the same max. length
         assign(other.data(), other.size());
         other.clear();
         return *this;
@@ -103,7 +107,7 @@ public:
     char_type& operator[](size_type pos) { return m_buffer[pos]; }
     const char_type& operator[](size_type pos) const { return m_buffer[pos]; }
 
-    void assign(const char_type* s, size_type n)
+    void assign(const char_type* s, size_type n) noexcept(!ThrowOnTruncate)
     {
         size_type len = std::min(n, max_size());
         if (len != n && ThrowOnTruncate)
@@ -113,7 +117,7 @@ public:
         m_length = len;
         m_buffer[m_length] = nul;
     }
-    void assign(size_type count, char_type ch)
+    void assign(size_type count, char_type ch) noexcept(!ThrowOnTruncate)
     {
         size_type len = std::min(count, max_size());
         if (len != count && ThrowOnTruncate)
@@ -125,7 +129,7 @@ public:
     }
 
     template <typename InputIt>
-    void assign(InputIt first, InputIt last)
+    void assign(InputIt first, InputIt last) noexcept(!ThrowOnTruncate)
     {
         // is there enough space?
         const size_type n = std::distance(first, last);
@@ -146,7 +150,7 @@ public:
         m_buffer[0] = nul;
         m_length = 0;
     }
-    void push_back(char_type c)
+    void push_back(char_type c) noexcept(!ThrowOnTruncate)
     {
         if (capacity_left())
         {
@@ -165,7 +169,7 @@ public:
             m_buffer[--m_length] = nul;
     }
 
-    void insert(size_type index, size_type count, char_type ch)
+    void insert(size_type index, size_type count, char_type ch) noexcept(!ThrowOnTruncate)
     {
         if (index > size())
             throw std::out_of_range("index out of range");
@@ -179,7 +183,7 @@ public:
         *this = tmp;
     }
 
-    void insert(size_type index, const char_type* s, size_type n)
+    void insert(size_type index, const char_type* s, size_type n) noexcept(!ThrowOnTruncate)
     {
         if (index > size())
             throw std::out_of_range("index out of range");
@@ -194,7 +198,7 @@ public:
     }
 
     template <typename InputIt>
-    void insert(size_type index, InputIt first, InputIt last)
+    void insert(size_type index, InputIt first, InputIt last) noexcept(!ThrowOnTruncate)
     {
         if (index > size())
             throw std::out_of_range("index out of range");
@@ -208,7 +212,7 @@ public:
         *this = tmp;
     }
 
-    void erase(size_type index, size_type count)
+    void erase(size_type index, size_type count) noexcept
     {
         // move all following characters here, including the NUL terminator
         const size_type n = size() - index - count + 1;
@@ -217,7 +221,7 @@ public:
     }
 
 
-    void append(size_type count, char_type ch)
+    void append(size_type count, char_type ch) noexcept(!ThrowOnTruncate)
     {
         // is there enough space?
         size_type appendCount = std::min(count, capacity_left());
@@ -229,7 +233,7 @@ public:
         m_buffer[m_length] = nul;
     }
 
-    void append(const char_type* s, size_type n)
+    void append(const char_type* s, size_type n) noexcept(!ThrowOnTruncate)
     {
         // is there enough space?
         const size_type appendCount = std::min(n, capacity_left());
@@ -242,7 +246,7 @@ public:
     }
 
     template <typename InputIt>
-    void append(InputIt first, InputIt last)
+    void append(InputIt first, InputIt last) noexcept(!ThrowOnTruncate)
     {
         // is there enough space?
         const size_type n = std::distance(first, last);
@@ -257,7 +261,7 @@ public:
         m_buffer[m_length] = nul;
     }
 
-    void resize(size_type count, char_type ch)
+    void resize(size_type count, char_type ch) noexcept(!ThrowOnTruncate)
     {
         if (count < size())
         {
@@ -275,7 +279,8 @@ public:
         m_buffer[m_length] = nul;
     }
 
-    void replace(size_type pos, size_type count, const char_type* cstr, size_type count2)
+    void replace(size_type pos, size_type count, const char_type* cstr,
+                 size_type count2) noexcept(!ThrowOnTruncate)
     {
         // simple implementation (avoid a lot of memmove's): create a new string and swap
         // => This is ok because there is no heap allocation, making this actually fast.
@@ -298,7 +303,8 @@ public:
         *this = std::move(tmp);
     }
 
-    void replace(size_type pos, size_type count, size_type count2, char_type ch)
+    void replace(size_type pos, size_type count, size_type count2,
+                 char_type ch) noexcept(!ThrowOnTruncate)
     {
         // => same implementation as above
         this_type tmp;
