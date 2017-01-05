@@ -53,7 +53,7 @@ public:
     size_type length() const { return m_length; }
     size_type size() const { return m_length; }
     bool empty() const { return m_length == 0; }
-    void reserve(size_type new_cap = 0) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
+    void reserve(size_type new_cap = 0)
     {
         if (new_cap > max_size() && ThrowOnTruncate)
             throw std::length_error("requested capacity exceeds maximum");
@@ -107,7 +107,7 @@ public:
     char_type& operator[](size_type pos) { return m_buffer[pos]; }
     const char_type& operator[](size_type pos) const { return m_buffer[pos]; }
 
-    void assign(const char_type* s, size_type n) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
+    void assign(const char_type* s, size_type n)
     {
         size_type len = std::min(n, max_size());
         if (len != n && ThrowOnTruncate)
@@ -115,7 +115,7 @@ public:
 
         assign_nothrow(s, len);
     }
-    void assign(size_type count, char_type ch) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
+    void assign(size_type count, char_type ch)
     {
         size_type len = std::min(count, max_size());
         if (len != count && ThrowOnTruncate)
@@ -127,7 +127,7 @@ public:
     }
 
     template <typename InputIt>
-    void assign(InputIt first, InputIt last) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
+    void assign(InputIt first, InputIt last)
     {
         // is there enough space?
         const size_type n = std::distance(first, last);
@@ -148,7 +148,7 @@ public:
         m_buffer[0] = nul;
         m_length = 0;
     }
-    void push_back(char_type c) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
+    void push_back(char_type c)
     {
         if (capacity_left())
         {
@@ -219,7 +219,7 @@ public:
     }
 
 
-    void append(size_type count, char_type ch) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
+    void append(size_type count, char_type ch)
     {
         // is there enough space?
         size_type appendCount = std::min(count, capacity_left());
@@ -231,7 +231,7 @@ public:
         m_buffer[m_length] = nul;
     }
 
-    void append(const char_type* s, size_type n) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
+    void append(const char_type* s, size_type n)
     {
         // is there enough space?
         const size_type appendCount = std::min(n, capacity_left());
@@ -244,7 +244,7 @@ public:
     }
 
     template <typename InputIt>
-    void append(InputIt first, InputIt last) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
+    void append(InputIt first, InputIt last)
     {
         // is there enough space?
         const size_type n = std::distance(first, last);
@@ -259,7 +259,7 @@ public:
         m_buffer[m_length] = nul;
     }
 
-    void resize(size_type count, char_type ch) SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
+    void resize(size_type count, char_type ch)
     {
         if (count < size())
         {
@@ -278,7 +278,6 @@ public:
     }
 
     void replace(size_type pos, size_type count, const char_type* cstr, size_type count2)
-      SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         // simple implementation (avoid a lot of memmove's): create a new string and swap
         // => This is ok because there is no heap allocation, making this actually fast.
@@ -302,7 +301,6 @@ public:
     }
 
     void replace(size_type pos, size_type count, size_type count2, char_type ch)
-      SPSL_NOEXCEPT_IF(!ThrowOnTruncate)
     {
         // => same implementation as above
         this_type tmp;
