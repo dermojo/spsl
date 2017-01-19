@@ -68,7 +68,7 @@ struct Truncate
         return std::min(n, max - size);
     }
     template <typename char_type, typename size_type>
-    static constexpr size_type checkAppend(size_type n, char_type ch, size_type size,
+    static constexpr size_type checkAppend(size_type n, char_type, size_type size,
                                            size_type max) noexcept
     {
         return std::min(n, max - size);
