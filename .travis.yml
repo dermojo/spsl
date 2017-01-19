@@ -57,6 +57,7 @@ matrix:
       env: MYCC=clang-3.9 MYCXX=clang++-3.9
 
 before_install:
+  - sudo apt-cache search clang-3.7
   - sudo apt-get install -y libgtest-dev
 
 script:
