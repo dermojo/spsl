@@ -109,7 +109,7 @@ struct Throw
         return n;
     }
     template <typename char_type, typename size_type>
-    static size_type checkAppend(size_type n, char_type ch, size_type size, size_type max)
+    static size_type checkAppend(size_type n, char_type, size_type size, size_type max)
     {
         if (size + n > max)
             throw std::length_error("string length exceeds maximum capacity");
