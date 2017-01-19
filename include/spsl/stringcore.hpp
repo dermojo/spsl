@@ -71,6 +71,11 @@ public:
     {
         assign(init.begin(), init.size());
     }
+    template <class InputIt, typename = checkInputIter<InputIt>>
+    StringCore(InputIt first, InputIt last) : m_storage()
+    {
+        assign(first, last);
+    }
 
     // default destructor, move and copy
     ~StringCore() = default;

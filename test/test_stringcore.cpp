@@ -150,8 +150,8 @@ TYPED_TEST(StringCoreTest, Constructors)
     }
 
     // construct from another string-like container
-    {
-        // 1: from a std::basic_string
+    if (true)
+    { // 1: from a std::basic_string
         {
             std::basic_string<CharType> ref;
             ref = data.hello_world;
@@ -180,6 +180,46 @@ TYPED_TEST(StringCoreTest, Constructors)
               spsl::StorageArray<CharType, 123, spsl::policy::overflow::Truncate>>
               other(data.hello_world);
             StringType s(other);
+            ASSERT_EQ(s.length(), data.hello_world_len);
+            ASSERT_EQ(s.size(), data.hello_world_len);
+            ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
+            ASSERT_TRUE(s == data.hello_world);
+        }
+    }
+
+
+    // construct from input iterators
+    if (true)
+    {
+        // 1: from a std::basic_string
+        {
+            std::basic_string<CharType> ref;
+            ref = data.hello_world;
+            StringType s(ref.begin(), ref.end());
+            ASSERT_EQ(s.length(), data.hello_world_len);
+            ASSERT_EQ(s.size(), data.hello_world_len);
+            ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
+            ASSERT_TRUE(s == data.hello_world);
+        }
+
+        // 2: from a std::vector
+        {
+            std::vector<CharType> ref;
+            ref.resize(data.hello_world_len);
+            memcpy(ref.data(), data.hello_world, data.hello_world_len * sizeof(CharType));
+            StringType s(ref.begin(), ref.end());
+            ASSERT_EQ(s.length(), data.hello_world_len);
+            ASSERT_EQ(s.size(), data.hello_world_len);
+            ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
+            ASSERT_TRUE(s == data.hello_world);
+        }
+
+        // 3: from another version of StringCore
+        {
+            const spsl::StringCore<
+              spsl::StorageArray<CharType, 123, spsl::policy::overflow::Truncate>>
+              other(data.hello_world);
+            StringType s(other.begin(), other.end());
             ASSERT_EQ(s.length(), data.hello_world_len);
             ASSERT_EQ(s.size(), data.hello_world_len);
             ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);

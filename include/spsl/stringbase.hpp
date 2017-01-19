@@ -91,6 +91,10 @@ public:
     StringBase(const char_type* s, size_type n) : base_type(s, n) {}
     StringBase(size_type numRepeat, char_type ch) : base_type(numRepeat, ch) {}
     StringBase(std::initializer_list<char_type> init) : base_type(init) {}
+    template <class InputIt, typename = checkInputIter<InputIt>>
+    StringBase(InputIt first, InputIt last) : base_type(first, last)
+    {
+    }
 
     // default destructor, move and copy
     ~StringBase() = default;
