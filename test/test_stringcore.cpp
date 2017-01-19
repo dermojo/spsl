@@ -150,8 +150,8 @@ TYPED_TEST(StringCoreTest, Constructors)
     }
 
     // construct from another string-like container
-    if (true)
-    { // 1: from a std::basic_string
+    {
+        // 1: from a std::basic_string
         {
             std::basic_string<CharType> ref;
             ref = data.hello_world;
@@ -186,10 +186,18 @@ TYPED_TEST(StringCoreTest, Constructors)
             ASSERT_TRUE(s == data.hello_world);
         }
     }
+}
 
+/* check constructor availability */
+TYPED_TEST(StringCoreTest, ConstructorIterator)
+{
+    using StringType = TypeParam; // gtest specific
+    using StorageType = typename StringType::storage_type;
+    using CharType = typename StorageType::char_type;
+    using Traits = typename StringType::traits_type;
+    const TestData<CharType> data{};
 
     // construct from input iterators
-    if (true)
     {
         // 1: from a std::basic_string
         {
