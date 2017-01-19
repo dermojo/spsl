@@ -344,7 +344,7 @@ TYPED_TEST(StorageArrayTest, AssignTruncationTests)
 {
     using CharType = TypeParam; // gtest specific
     // this variant definitely won't throw
-    using ArrayType = spsl::StorageArray<CharType, 64, false>;
+    using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
     const TestData<CharType> data{};
 
     // I can reserve as much as I want - it'll be ignored
@@ -405,7 +405,7 @@ TYPED_TEST(StorageArrayTest, AssignLengthErrorTests)
 {
     using CharType = TypeParam; // gtest specific
     // this variant definitely will throw
-    using ArrayType = spsl::StorageArray<CharType, 64, true>;
+    using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Throw>;
     const TestData<CharType> data{};
 
     ArrayType arr;
@@ -461,7 +461,7 @@ TYPED_TEST(StorageArrayTest, InsertTruncationTests)
 {
     using CharType = TypeParam; // gtest specific
     // this variant definitely won't throw
-    using ArrayType = spsl::StorageArray<CharType, 64, false>;
+    using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
     const TestData<CharType> data{};
 
     const CharType ch = data.hello_world[0];
@@ -509,7 +509,7 @@ TYPED_TEST(StorageArrayTest, InsertLengthErrorTests)
 {
     using CharType = TypeParam; // gtest specific
     // this variant definitely will throw
-    using ArrayType = spsl::StorageArray<CharType, 64, true>;
+    using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Throw>;
     const TestData<CharType> data{};
 
     ArrayType arr;
@@ -674,7 +674,7 @@ TYPED_TEST(StorageArrayTest, ReplaceTruncationTests)
 {
     using CharType = TypeParam; // gtest specific
     // this variant definitely won't throw
-    using ArrayType = spsl::StorageArray<CharType, 64, false>;
+    using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
     using Traits = typename ArrayType::traits_type;
     const TestData<CharType> data{};
 
@@ -722,7 +722,7 @@ TYPED_TEST(StorageArrayTest, ReplaceLengthErrorTests)
 {
     using CharType = TypeParam; // gtest specific
     // this variant definitely will throw
-    using ArrayType = spsl::StorageArray<CharType, 64, true>;
+    using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Throw>;
     using Traits = typename ArrayType::traits_type;
     const TestData<CharType> data{};
 

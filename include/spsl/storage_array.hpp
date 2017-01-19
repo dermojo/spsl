@@ -14,12 +14,8 @@
 #include <string> // for traits
 
 #include "spsl/compat.hpp"
-
-#ifdef _MSC_VER
-// disable: "warning C4127: conditional expression is constant" (this is intentional...)
-#pragma warning(push)
-#pragma warning(disable : 4127)
-#endif
+#include "spsl/policies.hpp"
+#include "spsl/type_traits.hpp"
 
 namespace spsl
 {
@@ -31,18 +27,20 @@ namespace spsl
  * Note that @c MaxSize is the upper limit for the number of characters, not including the
  * terminating NUL.
  *
- * This storage implementation silently ignores string truncation unless @¢ ThrowOnTruncate is
- * set to @c true.
+ * Depending on the @c OverflowPolicy, strings might silently be truncated if they don't fit into
+ * the underlying array (this is the default).
  */
-template <typename CharType, std::size_t MaxSize, bool ThrowOnTruncate = false>
+template <typename CharType, std::size_t MaxSize,
+          typename OverflowPolicy = policy::overflow::Truncate>
 class StorageArray
 {
 public:
     using size_type = std::size_t;
     using difference_type = ssize_t;
     using char_type = CharType;
+    using overflow_policy = OverflowPolicy;
     /// simple alias for the typing impaired :)
-    using this_type = StorageArray<char_type, MaxSize, ThrowOnTruncate>;
+    using this_type = StorageArray<char_type, MaxSize, overflow_policy>;
     using traits_type = typename std::char_traits<char_type>;
 
     static constexpr char_type nul = static_cast<char_type>(0);
@@ -53,11 +51,7 @@ public:
     size_type length() const { return m_length; }
     size_type size() const { return m_length; }
     bool empty() const { return m_length == 0; }
-    void reserve(size_type new_cap = 0)
-    {
-        if (new_cap > max_size() && ThrowOnTruncate)
-            throw std::length_error("requested capacity exceeds maximum");
-    }
+    void reserve(size_type new_cap = 0) { overflow_policy::checkReserve(new_cap, max_size()); }
     // no-op - there is nothing to shrink
     void shrink_to_fit() {}
 
@@ -109,38 +103,27 @@ public:
 
     void assign(const char_type* s, size_type n)
     {
-        size_type len = std::min(n, max_size());
-        if (len != n && ThrowOnTruncate)
-            throw std::length_error("string length exceeds maximum capacity");
-
-        assign_nothrow(s, len);
+        n = overflow_policy::checkAssign(s, n, max_size());
+        assign_nothrow(s, n);
     }
     void assign(size_type count, char_type ch)
     {
-        size_type len = std::min(count, max_size());
-        if (len != count && ThrowOnTruncate)
-            throw std::length_error("string length exceeds maximum capacity");
-
-        traits_type::assign(m_buffer.data(), len, ch);
-        m_length = len;
+        count = overflow_policy::checkAssign(count, ch, max_size());
+        traits_type::assign(m_buffer.data(), count, ch);
+        m_length = count;
         m_buffer[m_length] = nul;
     }
 
-    template <typename InputIt>
+    template <typename InputIt, typename = checkInputIter<InputIt>>
     void assign(InputIt first, InputIt last)
     {
-        // is there enough space?
-        const size_type n = std::distance(first, last);
-        const size_type len = std::min(n, max_size());
-        if (len != n && ThrowOnTruncate)
-            throw std::length_error("string size exceeds maximum buffer capacity");
-
-        m_length = 0;
-        for (size_type i = 0; i < len && first != last; ++i)
+        this_type tmp;
+        while (first != last)
         {
-            m_buffer[m_length++] = *first++;
+            tmp.push_back(*first);
+            ++first;
         }
-        m_buffer[m_length] = nul;
+        assign(tmp.data(), tmp.size());
     }
 
     void clear()
@@ -150,14 +133,11 @@ public:
     }
     void push_back(char_type c)
     {
-        if (capacity_left())
+        const size_type n = overflow_policy::checkAppend((size_type)1, c, size(), max_size());
+        if (n)
         {
             m_buffer[m_length++] = c;
             m_buffer[m_length] = nul;
-        }
-        else if (ThrowOnTruncate)
-        {
-            throw std::length_error("string size exceeds maximum buffer capacity");
         }
     }
     void pop_back()
@@ -195,7 +175,7 @@ public:
         *this = tmp;
     }
 
-    template <typename InputIt>
+    template <typename InputIt, typename = checkInputIter<InputIt>>
     void insert(size_type index, InputIt first, InputIt last)
     {
         if (index > size())
@@ -222,41 +202,29 @@ public:
     void append(size_type count, char_type ch)
     {
         // is there enough space?
-        size_type appendCount = std::min(count, capacity_left());
-        if (appendCount != count && ThrowOnTruncate)
-            throw std::length_error("string size exceeds maximum buffer capacity");
+        count = overflow_policy::checkAppend(count, ch, size(), max_size());
 
-        traits_type::assign(m_buffer.data() + m_length, appendCount, ch);
-        m_length += appendCount;
+        traits_type::assign(m_buffer.data() + m_length, count, ch);
+        m_length += count;
         m_buffer[m_length] = nul;
     }
 
     void append(const char_type* s, size_type n)
     {
         // is there enough space?
-        const size_type appendCount = std::min(n, capacity_left());
-        if (appendCount != n && ThrowOnTruncate)
-            throw std::length_error("string size exceeds maximum buffer capacity");
+        n = overflow_policy::checkAppend(s, n, size(), max_size());
 
-        traits_type::copy(m_buffer.data() + m_length, s, appendCount);
-        m_length += appendCount;
+        traits_type::copy(m_buffer.data() + m_length, s, n);
+        m_length += n;
         m_buffer[m_length] = nul;
     }
 
-    template <typename InputIt>
+    template <typename InputIt, typename = checkInputIter<InputIt>>
     void append(InputIt first, InputIt last)
     {
-        // is there enough space?
-        const size_type n = std::distance(first, last);
-        const size_type appendCount = std::min(n, capacity_left());
-        if (appendCount != n && ThrowOnTruncate)
-            throw std::length_error("string size exceeds maximum buffer capacity");
-
-        for (size_type i = 0; i < appendCount && first != last; ++i)
-        {
-            m_buffer[m_length++] = *first++;
-        }
-        m_buffer[m_length] = nul;
+        this_type tmp;
+        tmp.assign(first, last);
+        append(tmp.data(), tmp.size());
     }
 
     void resize(size_type count, char_type ch)
@@ -264,17 +232,12 @@ public:
         if (count < size())
         {
             m_length = count;
+            m_buffer[m_length] = nul;
         }
         else if (count > size())
         {
-            const size_type n = std::min(count, max_size());
-            if (n != count && ThrowOnTruncate)
-                throw std::length_error("string size exceeds maximum buffer capacity");
-
-            traits_type::assign(m_buffer.data() + m_length, n, ch);
-            m_length = n;
+            append(count - size(), ch);
         }
-        m_buffer[m_length] = nul;
     }
 
     void replace(size_type pos, size_type count, const char_type* cstr, size_type count2)
@@ -321,7 +284,7 @@ public:
         *this = std::move(tmp);
     }
 
-    template <class InputIt>
+    template <class InputIt, typename = checkInputIter<InputIt>>
     void replace(size_type pos, size_type count, InputIt first, InputIt last)
     {
         // => same implementation as above
@@ -360,9 +323,5 @@ protected:
     std::array<char_type, MaxSize + 1> m_buffer;
 };
 }
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #endif /* SPSL_STORAGE_ARRAY_HPP_ */

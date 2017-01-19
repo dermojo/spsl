@@ -13,6 +13,7 @@
 #include <string> // for traits
 
 #include "spsl/pagealloc.hpp"
+#include "spsl/type_traits.hpp"
 
 namespace spsl
 {
@@ -202,18 +203,11 @@ public:
         _set_length(count);
     }
 
-    template <typename InputIt>
+    template <typename InputIt, typename = checkInputIter<InputIt>>
     void assign(InputIt first, InputIt last)
     {
-        const size_type n = std::distance(first, last);
-        reserve(n);
-
-        size_type i = 0;
-        while (first != last)
-        {
-            m_buffer[i++] = *first++;
-        }
-        _set_length(i);
+        clear();
+        append(first, last);
     }
 
     void clear()
@@ -273,25 +267,12 @@ public:
         _l.m_length += n;
     }
 
-    template <typename InputIt>
+    template <typename InputIt, typename = checkInputIter<InputIt>>
     void insert(size_type index, InputIt first, InputIt last)
     {
-        if (index > size())
-            throw std::out_of_range("index out of range");
-
-        const size_type n = std::distance(first, last);
-        reserve(size() + n);
-
-        // move the existing data (including the terminating NUL)
-        char_type* ptr = m_buffer + index;
-        const size_type len = size() + 1 - index;
-        traits_type::move(ptr + n, ptr, len);
-
-        size_type i = 0;
-        while (first != last)
-            traits_type::assign(ptr[i++], *first++);
-
-        _l.m_length += n;
+        this_type tmp;
+        tmp.assign(first, last);
+        insert(index, tmp.data(), tmp.size());
     }
 
 
@@ -322,16 +303,14 @@ public:
         _set_length(size() + n);
     }
 
-    template <typename InputIt>
+    template <typename InputIt, typename = checkInputIter<InputIt>>
     void append(InputIt first, InputIt last)
     {
-        const size_type n = std::distance(first, last);
-        reserve(size() + n);
-
-        size_type i = size();
         while (first != last)
-            traits_type::assign(m_buffer[i++], *first++);
-        _set_length(i);
+        {
+            push_back(*first);
+            ++first;
+        }
     }
 
     void replace(size_type pos, size_type count, const char_type* cstr, size_type count2)
@@ -403,34 +382,9 @@ public:
     void replace(size_type pos, size_type count, InputIt first, InputIt last)
     {
         // => same implementation as above
-        // TODO: avoid reallocations, fix this
-        size_t count2 = std::distance(first, last);
-
-        if (count == count2)
-        {
-            while (first != last && pos != pos + count)
-                m_buffer[pos++] = *first++;
-        }
-        else
-        {
-            this_type tmp;
-            tmp.reserve(size() - count + count2);
-
-            // (1) copy the part before 'pos'
-            if (pos != 0)
-                tmp.assign(data(), pos);
-
-            // (2) append the replacement string
-            tmp.append(first, last);
-
-            // (3) append the rest after 'pos + count'
-            size_type rest = pos + count;
-            if (rest < size())
-                tmp.append(data() + rest, size() - rest);
-
-            // (4) swap/move
-            *this = std::move(tmp);
-        }
+        this_type tmp;
+        tmp.assign(first, last);
+        replace(pos, count, tmp.data(), tmp.size());
     }
 
     void resize(size_type count, char_type ch)

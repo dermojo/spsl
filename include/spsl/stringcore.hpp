@@ -143,7 +143,7 @@ public:
         return assign(init.begin(), init.size());
     }
 
-    template <typename InputIt>
+    template <typename InputIt, typename = checkInputIter<InputIt>>
     this_type& assign(InputIt first, InputIt last)
     {
         m_storage.assign(first, last);
@@ -284,7 +284,7 @@ public:
         return append(init.begin(), init.size());
     }
 
-    template <typename InputIt>
+    template <typename InputIt, typename = checkInputIter<InputIt>>
     this_type& append(InputIt first, InputIt last)
     {
         m_storage.append(first, last);

@@ -92,6 +92,13 @@ struct is_compatible_string2
                                           has_size<typename MyString::size_type, Class>::value>
 {
 };
+
+/**
+ * Checks whether a given type satisfies the InputIterator requirements.
+ */
+template <typename Iter>
+using checkInputIter = typename std::enable_if<std::is_convertible<
+  typename std::iterator_traits<Iter>::iterator_category, std::input_iterator_tag>::value>::type;
 }
 
 #endif /* SPSL_TYPE_TRAITS_HPP_ */

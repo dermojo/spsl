@@ -17,18 +17,21 @@ class StringCoreTest : public ::testing::Test
 
 // all string types we want to test: we already include StringBase here to avoid copy & paste
 using SpecificTypes = testing::Types<
-  spsl::StringCore<spsl::StorageArray<char, 64, false>>,
-  spsl::StringCore<spsl::StorageArray<char, 64, true>>,
-  spsl::StringCore<spsl::StorageArray<wchar_t, 64, false>>,
-  spsl::StringCore<spsl::StorageArray<wchar_t, 64, true>>,
+  spsl::StringCore<spsl::StorageArray<char, 64, spsl::policy::overflow::Truncate>>,
+  spsl::StringCore<spsl::StorageArray<char, 64, spsl::policy::overflow::Throw>>,
+  spsl::StringCore<spsl::StorageArray<wchar_t, 64, spsl::policy::overflow::Truncate>>,
+  spsl::StringCore<spsl::StorageArray<wchar_t, 64, spsl::policy::overflow::Throw>>,
   spsl::StringCore<spsl::StoragePassword<char>>, spsl::StringCore<spsl::StoragePassword<wchar_t>>,
-  spsl::StringCore<spsl::StorageArray<char, 64, false>>,
-  spsl::StringBase<spsl::StorageArray<char, 64, true>>,
-  spsl::StringBase<spsl::StorageArray<wchar_t, 64, false>>,
-  spsl::StringBase<spsl::StorageArray<wchar_t, 64, true>>,
+  spsl::StringCore<spsl::StorageArray<char, 64, spsl::policy::overflow::Truncate>>,
+  spsl::StringBase<spsl::StorageArray<char, 64, spsl::policy::overflow::Throw>>,
+  spsl::StringBase<spsl::StorageArray<wchar_t, 64, spsl::policy::overflow::Truncate>>,
+  spsl::StringBase<spsl::StorageArray<wchar_t, 64, spsl::policy::overflow::Throw>>,
   spsl::StringBase<spsl::StoragePassword<char>>, spsl::StringBase<spsl::StoragePassword<wchar_t>>,
-  spsl::ArrayString<128, false>, spsl::ArrayStringW<128, false>, spsl::ArrayString<128, true>,
-  spsl::ArrayStringW<128, true>, spsl::PasswordString, spsl::PasswordStringW>;
+  spsl::ArrayString<128, spsl::policy::overflow::Truncate>,
+  spsl::ArrayStringW<128, spsl::policy::overflow::Truncate>,
+  spsl::ArrayString<128, spsl::policy::overflow::Throw>,
+  spsl::ArrayStringW<128, spsl::policy::overflow::Throw>, spsl::PasswordString,
+  spsl::PasswordStringW>;
 
 
 TYPED_TEST_CASE(StringCoreTest, SpecificTypes);
@@ -173,8 +176,9 @@ TYPED_TEST(StringCoreTest, Constructors)
 
         // 3: from another version of StringCore
         {
-            const spsl::StringCore<spsl::StorageArray<CharType, 123, false>> other(
-              data.hello_world);
+            const spsl::StringCore<
+              spsl::StorageArray<CharType, 123, spsl::policy::overflow::Truncate>>
+              other(data.hello_world);
             StringType s(other);
             ASSERT_EQ(s.length(), data.hello_world_len);
             ASSERT_EQ(s.size(), data.hello_world_len);
