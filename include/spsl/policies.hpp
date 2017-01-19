@@ -8,6 +8,7 @@
 #ifndef SPSL_POLICIES_HPP_
 #define SPSL_POLICIES_HPP_
 
+#include <algorithm>
 #include <stdexcept>
 
 namespace spsl
@@ -48,8 +49,10 @@ namespace overflow
 struct Truncate
 {
     template <typename size_type>
-    static constexpr void checkReserve(size_type, size_type) noexcept
+    static constexpr bool checkReserve(size_type, size_type) noexcept
     {
+        // this is a hack: constexpr functions using return type 'void' are possible since C++14
+        return true;
     }
     template <typename char_type, typename size_type>
     static constexpr size_type checkAssign(const char_type*, size_type n, size_type max) noexcept
