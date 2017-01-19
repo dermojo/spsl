@@ -58,6 +58,7 @@ matrix:
 
 before_install:
   - sudo apt-cache search clang-3.7
+  - if [ $MYCC == clang-3.7 ]; then sudo apt-get install -y clang-3.7 fi
   - sudo apt-get install -y libgtest-dev
 
 script:
