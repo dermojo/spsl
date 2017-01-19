@@ -33,7 +33,7 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-3.7
+            - llvm-toolchain-trusty
           packages:
             - clang-3.7
       env: MYCC=clang-3.7 MYCXX=clang++-3.7
@@ -42,7 +42,7 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-3.8
+            - llvm-toolchain-trusty
           packages:
             - clang-3.8
       env: MYCC=clang-3.8 MYCXX=clang++-3.8
@@ -57,8 +57,6 @@ matrix:
       env: MYCC=clang-3.9 MYCXX=clang++-3.9
 
 before_install:
-  - sudo apt-cache search clang-3.7
-  - if [ $MYCC == clang-3.7 ]; then sudo apt-get install -y clang-3.7; fi
   - sudo apt-get install -y libgtest-dev
 
 script:
