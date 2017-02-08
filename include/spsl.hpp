@@ -36,11 +36,11 @@ namespace spsl
  * They behave like a "legacy" C-string array, but with a std::string-like interface.
  */
 
-template <size_t MaxSize, bool ThrowOnTruncate = false>
-using ArrayString = StringBase<StorageArray<char, MaxSize, ThrowOnTruncate>>;
+template <size_t MaxSize, typename OverflowPolicy = policy::overflow::Truncate>
+using ArrayString = StringBase<StorageArray<char, MaxSize, OverflowPolicy>>;
 
-template <size_t MaxSize, bool ThrowOnTruncate = false>
-using ArrayStringW = StringBase<StorageArray<wchar_t, MaxSize, ThrowOnTruncate>>;
+template <size_t MaxSize, typename OverflowPolicy = policy::overflow::Truncate>
+using ArrayStringW = StringBase<StorageArray<wchar_t, MaxSize, OverflowPolicy>>;
 
 /*
  * PasswordString / PasswordString:

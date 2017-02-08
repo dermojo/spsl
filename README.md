@@ -1,7 +1,7 @@
 # SPSL - Special Purpose Strings Library
 
-[![Travis-CI status](https://travis-ci.org/dermojo/spsl.svg?branch=master)](https://travis-ci.org/dermojo/spsl)
-[![AppVeyor status](https://ci.appveyor.com/api/projects/status/github/dermojo/spsl?branch=master&svg=true)](https://ci.appveyor.com/project/dermojo/spsl)
+[![Travis-CI status](https://travis-ci.org/dermojo/spsl.svg?branch=truncation-policy)](https://travis-ci.org/dermojo/spsl)
+[![AppVeyor status](https://ci.appveyor.com/api/projects/status/github/dermojo/spsl?branch=truncation-policy&svg=true)](https://ci.appveyor.com/project/dermojo/spsl)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11354/badge.svg)](https://scan.coverity.com/projects/dermojo-spsl)
 
 SPSL is a header-only library for "special" string implementations. It contains the following
@@ -38,7 +38,7 @@ The SPSL itself only relies on the STL and has no dependencies. To compile the t
 * [CMake](https://cmake.org/) 3.2 or higher
 * [GoogleTest](https://github.com/google/googletest) 1.8
 
-Supported compilers (we'll, the ones I've tested) include GCC 4.9/5/6 and clang 3.7/3.8 on Linux, 
+Supported compilers (we'll, the ones I've tested) include GCC 4.9/5/6 and clang 3.8/3.9 on Linux, 
 Microsoft Visual Studio 2013 (Update 5) and Microsoft Visual Studio 2015.
 
 

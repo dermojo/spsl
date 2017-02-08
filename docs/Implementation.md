@@ -52,14 +52,14 @@ string or a string that can hold sensitive data goes far beyond allocation.
 The storage implementations contain basic implementations for all major classes of functionality:
 appending, assigning, replacing, erasing and so on.
 
-The main reason for this design is the `ThrowOnTruncate` option in the
+The main reason for this design is the `OverflowPolicy` option in the
 `spsl::StorageArray` template:
 A string class that is based on a fixed-size array can behave in two different ways
 when it needs to grow past its maximum capacity: It can either throw an exception or it can
 silently truncate the data.
 The choice depends on the application using the string: If you're replacing C-style arrays with
 an `ArrayString`, you might want to preserve the truncation behavior that all the C functions
-(`strncpy`, `strncat`, ...), e.g. because the string will be passed to another API that will
+(`strncpy`, `strncat`, ...) have, e.g. because the string will be passed to another API that will
 itself truncate the string anyway.
 But if data loss isn't an option, exceptions can be the way to go. This way, truncation is detected
 before it occurs and can be handled by the program.
