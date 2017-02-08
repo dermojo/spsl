@@ -35,15 +35,6 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty
           packages:
-            - clang-3.7
-      env: MYCC=clang-3.7 MYCXX=clang++-3.7
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty
-          packages:
             - clang-3.8
       env: MYCC=clang-3.8 MYCXX=clang++-3.8
     - compiler: clang
