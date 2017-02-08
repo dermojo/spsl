@@ -38,7 +38,7 @@ The SPSL itself only relies on the STL and has no dependencies. To compile the t
 * [CMake](https://cmake.org/) 3.2 or higher
 * [GoogleTest](https://github.com/google/googletest) 1.8
 
-Supported compilers (we'll, the ones I've tested) include GCC 4.9/5/6 and clang 3.7/3.8 on Linux, 
+Supported compilers (we'll, the ones I've tested) include GCC 4.9/5/6 and clang 3.8/3.9 on Linux, 
 Microsoft Visual Studio 2013 (Update 5) and Microsoft Visual Studio 2015.
 
 
