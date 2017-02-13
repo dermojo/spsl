@@ -6,6 +6,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <sstream>
 
 #include "spsl.hpp"
 #include "testdata.hpp"
@@ -17,16 +18,13 @@ class StringBaseTest : public ::testing::Test
 
 // all string types we want to test (StringBase-specific only)
 // (note: PasswordString[W] is not based on StringBase and therefore not included here)
-using SpecificTypes = testing::Types<
-  spsl::StringBase<spsl::StorageArray<char, 64, spsl::policy::overflow::Throw>>,
-  spsl::StringBase<spsl::StorageArray<wchar_t, 64, spsl::policy::overflow::Truncate>>,
-  spsl::StringBase<spsl::StorageArray<wchar_t, 64, spsl::policy::overflow::Throw>>,
-  spsl::StringBase<spsl::StoragePassword<char, 32>>,
-  spsl::StringBase<spsl::StoragePassword<wchar_t, 32>>,
-  spsl::ArrayString<128, spsl::policy::overflow::Truncate>,
-  spsl::ArrayStringW<128, spsl::policy::overflow::Truncate>,
-  spsl::ArrayString<128, spsl::policy::overflow::Throw>,
-  spsl::ArrayStringW<128, spsl::policy::overflow::Throw>>;
+using SpecificTypes = testing::Types<spsl::StringBase<spsl::StorageArray<char, 64, true>>,
+                                     spsl::StringBase<spsl::StorageArray<wchar_t, 64, false>>,
+                                     spsl::StringBase<spsl::StorageArray<wchar_t, 64, true>>,
+                                     spsl::StringBase<spsl::StoragePassword<char, 32>>,
+                                     spsl::StringBase<spsl::StoragePassword<wchar_t, 32>>,
+                                     spsl::ArrayString<128, false>, spsl::ArrayStringW<128, false>,
+                                     spsl::ArrayString<128, true>, spsl::ArrayStringW<128, true>>;
 
 
 TYPED_TEST_CASE(StringBaseTest, SpecificTypes);
@@ -1298,4 +1296,21 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             ASSERT_TRUE(s3 == data.hello_world);
         }
     }
+}
+
+/* operator<< */
+TYPED_TEST(StringBaseTest, OutputStream)
+{
+    using StringType = TypeParam; // gtest specific
+    using StorageType = typename StringType::storage_type;
+    using CharType = typename StorageType::char_type;
+    const TestData<CharType> data{};
+
+    const StringType s(data.hello_world);
+    const std::basic_string<CharType> ref(data.hello_world);
+
+    // using a string stream for testing
+    std::basic_stringstream<CharType> outputStream;
+    outputStream << s;
+    ASSERT_EQ(outputStream.str(), ref);
 }

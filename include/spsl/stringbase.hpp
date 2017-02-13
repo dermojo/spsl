@@ -8,6 +8,8 @@
 #ifndef SPSL_STRINGBASE_HPP_
 #define SPSL_STRINGBASE_HPP_
 
+#include <iostream> // for ostream support
+
 #include "spsl/stringcore.hpp"
 
 namespace spsl
@@ -91,10 +93,6 @@ public:
     StringBase(const char_type* s, size_type n) : base_type(s, n) {}
     StringBase(size_type numRepeat, char_type ch) : base_type(numRepeat, ch) {}
     StringBase(std::initializer_list<char_type> init) : base_type(init) {}
-    template <class InputIt, typename = checkInputIter<InputIt>>
-    StringBase(InputIt first, InputIt last) : base_type(first, last)
-    {
-    }
 
     // default destructor, move and copy
     ~StringBase() = default;
@@ -223,7 +221,7 @@ public:
         m_storage.insert(pos - begin(), count, ch);
         return pos;
     }
-    template <class InputIt, typename = checkInputIter<InputIt>>
+    template <class InputIt>
     iterator insert(const_iterator pos, InputIt first, InputIt last)
     {
         m_storage.insert(pos - begin(), first, last);
@@ -290,7 +288,7 @@ public:
         m_storage.replace(pos, count, count2, ch);
         return *this;
     }
-    template <class InputIt, typename = checkInputIter<InputIt>>
+    template <class InputIt>
     this_type& replace(const_iterator first, const_iterator last, InputIt first2, InputIt last2)
     {
         size_type pos = first - data();
@@ -517,7 +515,19 @@ public:
 protected:
     using base_type::m_storage;
 };
+
+// output stream operator
+template <typename CharType, typename CharTraits, typename StorageType,
+          typename std::enable_if<
+            std::is_same<CharType, typename StorageType::char_type>::value>::type* = nullptr>
+inline std::basic_ostream<CharType, CharTraits>& operator<<(
+  std::basic_ostream<CharType, CharTraits>& os, const StringBase<StorageType>& str)
+{
+    os.write(str.data(), str.size());
+    return os;
 }
+
+} // namespace spsl
 
 namespace std
 {
