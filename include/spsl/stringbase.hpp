@@ -229,7 +229,7 @@ public:
     iterator insert(const_iterator pos, InputIt first, InputIt last)
     {
         m_storage.insert(pos - begin(), first, last);
-        return begin() + index;
+        return pos;
     }
     iterator insert(const_iterator pos, std::initializer_list<char_type> ilist)
     {
