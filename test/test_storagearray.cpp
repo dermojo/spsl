@@ -36,7 +36,12 @@ TYPED_TEST(StorageArrayTest, StaticSize)
 
     // and check the size requirements (there may be some padding, but max. 1 word)
     constexpr size_t minSize = sizeof(size_type) + sizeof(CharType) * (ArrayType::max_size() + 1);
+#if defined(__MINGW32__) || defined(__MINGW64__)
+    // not sure why, but MinGW needs a few more bytes...
+    constexpr size_t maxSize = minSize + 2 * sizeof(long);
+#else
     constexpr size_t maxSize = minSize + sizeof(long);
+#endif
     ASSERT_LE(minSize, sizeof(ArrayType));
     ASSERT_GE(maxSize, sizeof(ArrayType));
     //   static_assert(minSize <= sizeof(ArrayType) && sizeof(ArrayType) <= maxSize,

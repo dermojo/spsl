@@ -12,7 +12,7 @@ set(CMAKE_BUILD_TYPE RelWithDebInfo)
 # Setup testing using GTEST
 enable_testing()
 find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIR})
+include_directories(SYSTEM ${GTEST_INCLUDE_DIR})
 
 #
 # Build targets

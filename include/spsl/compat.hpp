@@ -14,7 +14,8 @@
 #define SPSL_HAS_DEFAULT_MOVE
 #define SPSL_HAS_CONSTEXPR_ARRAY
 
-#ifdef _MSC_VER // Windows + Visual Studio
+#ifdef _WIN32   // Windows
+#ifdef _MSC_VER // Visual Studio
 
 // Visual Studio has no ssize_t ...
 #include <crtdefs.h>
@@ -30,6 +31,8 @@ typedef intptr_t ssize_t;
 
 // can't use constexpr values in array definitions...
 #undef SPSL_HAS_CONSTEXPR_ARRAY
+
+#endif // _MSC_VER
 
 // the min/max macros from Windows break a lot of STL stuff...
 #ifndef NOMINMAX

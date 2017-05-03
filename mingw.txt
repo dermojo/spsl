@@ -1,0 +1,12 @@
+# Compile GoogleTest:
+export SPSL_DIR=$HOME/git/spsl
+cmake -DCMAKE_TOOLCHAIN_FILE=$SPSL_DIR/Toolchain-cross-mingw-linux.cmake -Dgtest_disable_pthreads=ON ..
+make
+
+# Compile SPSL:
+export GTEST_ROOT=$HOME/git/spsl/googletest-release-1.8.0
+cmake -DCMAKE_TOOLCHAIN_FILE=$SPSL_DIR/Toolchain-cross-mingw-linux.cmake \
+      -DGTEST_INCLUDE_DIR=$GTEST_ROOT/googletest/include/ \
+      -DGTEST_LIBRARY=$GTEST_ROOT/build/googlemock/gtest/libgtest.a \
+      -DGTEST_MAIN_LIBRARY=$GTEST_ROOT/build/googlemock/gtest/libgtest_main.a ..
+make
