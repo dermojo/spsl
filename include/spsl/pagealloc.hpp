@@ -120,7 +120,7 @@ public:
         // check for memory that is still in use
         bool firstCbCall = true;
 
-        // check each chunk and tell the callbcak
+        // check each chunk and tell the callback
         if (m_leakCallback)
         {
             for (auto& chunk : m_managedChunks)
@@ -161,8 +161,9 @@ public:
 
                         // notify the callback
                         m_leakCallback(
-                          this, AllocationInfo{ (char*)chunk.addr + startIndex * segment_size,
-                                                (endIndex - startIndex + 1) * segment_size },
+                          this,
+                          AllocationInfo{ (char*)chunk.addr + startIndex * segment_size,
+                                          (endIndex - startIndex + 1) * segment_size },
                           firstCbCall);
                         firstCbCall = false;
                     }
@@ -198,7 +199,7 @@ public:
     /**
      * Returns the "default instance", a.k.a. a static instance of the allocator. The instance is
      * created upon first use and destroyed when the application exits.
-     * Note: This functio may throw any exception that the constructor might throw.
+     * Note: This function may throw any exception that the constructor might throw.
      * @return a reference to the instance
      */
     static SensitivePageAllocator& getDefaultInstance()
@@ -210,7 +211,7 @@ public:
 
     /**
      * Sets the leak callback function. This function is called by the destructor for every memory
-     * location that hasn't been deallcated yet.
+     * location that hasn't been deallocated yet.
      *
      * Note: This method is intentionally *not* thread-safe.
      * Another note: Pass @c nullptr to disable leak checks.
@@ -430,7 +431,8 @@ private:
             if (addr >= chunk.addr && addr < (char*)chunk.addr + chunk_size)
             {
                 // found: calculate the index and the bit mask
-                std::size_t index = ((char*)addr - (char*)chunk.addr) / segment_size;
+                std::size_t index =
+                  static_cast<std::size_t>((char*)addr - (char*)chunk.addr) / segment_size;
                 uint64_t mask = bitmask << index;
                 chunk.segments |= mask;
 
@@ -526,7 +528,7 @@ private:
     std::vector<AllocationInfo> m_unmanagedAreas;
 
     /// This function is called by the destructor for every memory location that hasn't been
-    /// deallocted yet. The default implementation prints using std::cerr.
+    /// deallocated yet. The default implementation prints using std::cerr.
     LeakCallbackFunction m_leakCallback;
 };
 
@@ -545,16 +547,38 @@ public:
 
     // constructors
     SensitiveSegmentAllocator() : m_alloc(&SensitivePageAllocator::getDefaultInstance()) {}
-    explicit SensitiveSegmentAllocator(SensitivePageAllocator& alloc) noexcept : m_alloc(&alloc) {}
-    explicit SensitiveSegmentAllocator(const SensitiveSegmentAllocator& other) noexcept = default;
+    SensitiveSegmentAllocator(SensitivePageAllocator& alloc) noexcept : m_alloc(&alloc) {}
+    SensitiveSegmentAllocator(const SensitiveSegmentAllocator& other) noexcept = default;
+    SensitiveSegmentAllocator(SensitiveSegmentAllocator&& other) noexcept
+      : SensitiveSegmentAllocator()
+    {
+        this->swap(other);
+    }
     template <class U>
     explicit SensitiveSegmentAllocator(const SensitiveSegmentAllocator<U>& other) noexcept
       : m_alloc(other.m_alloc)
     {
     }
 
+    SensitiveSegmentAllocator& operator=(const SensitiveSegmentAllocator& other) noexcept = default;
+    SensitiveSegmentAllocator& operator=(SensitiveSegmentAllocator&& other) noexcept
+    {
+        this->swap(other);
+        return *this;
+    }
+
     // default destructor
     ~SensitiveSegmentAllocator() = default;
+
+    /**
+     * Swaps this allocator with another one by swapping the referenced page allocator.
+     * @param[in] other    the allocator to swap with
+     */
+    void swap(SensitiveSegmentAllocator& other) noexcept { std::swap(m_alloc, other.m_alloc); }
+
+    SensitivePageAllocator* pageAllocator() const noexcept { return m_alloc; }
+
+    // allocation / deallocation
 
     T* allocate(std::size_t n) { return static_cast<T*>(m_alloc->allocate(n * sizeof(T))); }
 
@@ -566,7 +590,7 @@ private:
     /// non-owning pointer to the "real" allocator (never nullptr, but cannot use a reference...)
     SensitivePageAllocator* m_alloc;
 };
-}
+} // namespace spsl
 
 
 #endif /* SPSL_PAGEALLOC_HPP_ */

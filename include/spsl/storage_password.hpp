@@ -77,6 +77,10 @@ public:
     size_type size() const { return _l.m_length; }
     bool empty() const { return _l.m_length == 0; }
 
+    // access to the underlying allocator
+    allocator& getAllocator() noexcept { return *this; }
+    const allocator& getAllocator() const noexcept { return *this; }
+
     // note: This function is *not* constexpr to stay compatible with C++11
     static const size_type _roundRequiredCapacityToBlockSize(size_type cap)
     {
@@ -138,19 +142,19 @@ public:
     }
 
     // default constructor
-    StoragePassword() noexcept : m_buffer(_b)
+    StoragePassword(const allocator& alloc = allocator()) noexcept : allocator(alloc), m_buffer(_b)
     {
         _l.m_capacity = 0;
         _set_length(0);
     }
 
     // implement copy & move
-    StoragePassword(const this_type& other) : StoragePassword()
+    StoragePassword(const this_type& other) : StoragePassword(other.getAllocator())
     {
         if (!other.empty())
             assign(other.data(), other.size());
     }
-    StoragePassword(this_type&& other) noexcept : StoragePassword()
+    StoragePassword(this_type&& other) noexcept : StoragePassword(other.getAllocator())
     {
         swap(other);
         other.clear();
@@ -412,6 +416,7 @@ public:
             other.m_buffer = other._b;
         if (m_buffer == other._b)
             m_buffer = _b;
+        std::swap(getAllocator(), other.getAllocator());
     }
 
 protected:
@@ -439,7 +444,7 @@ protected:
     /// the underlying buffer
     char_type* m_buffer;
 };
-}
+} // namespace spsl
 
 
 #endif /* SPSL_STORAGE_PASSWORD_HPP_ */

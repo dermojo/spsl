@@ -110,7 +110,7 @@ TYPED_TEST(StringBaseTest, FindFirstOfFunctions)
     ASSERT_EQ(s.find_first_of(chars4, 0), npos);
     ASSERT_EQ(sWithNul.find_first_of(chars4), sWithNul.size() - 1);
     ASSERT_EQ(sWithNul.find_first_of(chars4, 0), sWithNul.size() - 1);
-};
+}
 
 
 /* find_first_not_of functions */

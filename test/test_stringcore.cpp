@@ -722,12 +722,8 @@ TYPED_TEST(StringCoreTest, Operations)
     ASSERT_THROW(s1.substr(s1.size() + 1), std::out_of_range);
     ASSERT_THROW(s2.substr(s2.size() + 1), std::out_of_range);
 
-// copy
-#ifdef SPSL_HAS_CONSTEXPR_ARRAY
-    CharType buffer[data.hello_world_len + 1];
-#else
+    // copy
     CharType buffer[256];
-#endif
     for (size_t pos = 0; pos <= data.hello_world_len; ++pos)
     {
         // + 10 because we are allowed to ask for more

@@ -63,7 +63,7 @@ string(TOLOWER "${CMAKE_BUILD_TOOL}" MY_BUILDTOOL)
 if(MY_BUILDTOOL MATCHES "(msdev|devenv|nmake|msbuild)")
     target_compile_options(testlib PUBLIC /W4 /WX)
 else()
-    target_compile_options(testlib PUBLIC -Wall -Weffc++ -Werror)
+    target_compile_options(testlib PUBLIC -Wall -Weffc++ -Werror -pedantic)
     # These are enabled on Clang and don't help...
     target_compile_options(testlib PUBLIC -Wno-missing-braces)
     target_link_libraries(testlib pthread)

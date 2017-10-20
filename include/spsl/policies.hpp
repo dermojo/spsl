@@ -86,7 +86,7 @@ struct Throw
     {
         if (cap > max)
             throw std::length_error("requested capacity exceeds maximum");
-    };
+    }
     template <typename char_type, typename size_type>
     static size_type checkAssign(const char_type*, size_type n, size_type max)
     {
