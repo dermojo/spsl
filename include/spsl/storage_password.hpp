@@ -33,7 +33,7 @@ inline void* secure_memzero(void* ptr, size_t size) noexcept
     // For more info, start here:
     // http://stackoverflow.com/questions/9973260/what-is-the-correct-way-to-clear-sensitive-data-from-memory-in-ios
 
-    volatile char* p = (char*)ptr;
+    volatile char* p = reinterpret_cast<char*>(ptr);
     while (size--)
         *p++ = 0;
     return ptr;
@@ -77,8 +77,12 @@ public:
     size_type size() const { return _l.m_length; }
     bool empty() const { return _l.m_length == 0; }
 
+    // access to the underlying allocator
+    allocator& getAllocator() noexcept { return *this; }
+    const allocator& getAllocator() const noexcept { return *this; }
+
     // note: This function is *not* constexpr to stay compatible with C++11
-    static const size_type _roundRequiredCapacityToBlockSize(size_type cap)
+    static size_type _roundRequiredCapacityToBlockSize(size_type cap)
     {
         size_type numBlocks = cap / BlockSize;
         if (numBlocks * BlockSize < cap)
@@ -138,19 +142,19 @@ public:
     }
 
     // default constructor
-    StoragePassword() noexcept : m_buffer(_b)
+    StoragePassword(const allocator& alloc = allocator()) noexcept : allocator(alloc), m_buffer(_b)
     {
         _l.m_capacity = 0;
         _set_length(0);
     }
 
     // implement copy & move
-    StoragePassword(const this_type& other) : StoragePassword()
+    StoragePassword(const this_type& other) : StoragePassword(other.getAllocator())
     {
         if (!other.empty())
             assign(other.data(), other.size());
     }
-    StoragePassword(this_type&& other) noexcept : StoragePassword()
+    StoragePassword(this_type&& other) noexcept : StoragePassword(other.getAllocator())
     {
         swap(other);
         other.clear();
@@ -412,6 +416,7 @@ public:
             other.m_buffer = other._b;
         if (m_buffer == other._b)
             m_buffer = _b;
+        std::swap(getAllocator(), other.getAllocator());
     }
 
 protected:
@@ -425,21 +430,22 @@ protected:
 protected:
     // we store length + capacity information in a union that we also use as empty string
     // representation (assumption: m_buffer == _b => m_length == m_capacity == 0)
+    struct SizeInfo
+    {
+        /// number of bytes (*not* characters) in the buffer, not including the terminating NUL
+        size_type m_length;
+        /// number of bytes (*not* characters) allocated
+        size_type m_capacity;
+    };
     union {
-        struct
-        {
-            /// number of bytes (*not* characters) in the buffer, not including the terminating NUL
-            size_type m_length;
-            /// number of bytes (*not* characters) allocated
-            size_type m_capacity;
-        } _l;
+        SizeInfo _l;
         char_type _b[1];
     };
 
     /// the underlying buffer
     char_type* m_buffer;
 };
-}
+} // namespace spsl
 
 
 #endif /* SPSL_STORAGE_PASSWORD_HPP_ */

@@ -133,7 +133,8 @@ public:
     }
     void push_back(char_type c)
     {
-        const size_type n = overflow_policy::checkAppend((size_type)1, c, size(), max_size());
+        const size_type n =
+          overflow_policy::checkAppend(static_cast<size_type>(1), c, size(), max_size());
         if (n)
         {
             m_buffer[m_length++] = c;

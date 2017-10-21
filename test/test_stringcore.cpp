@@ -722,12 +722,8 @@ TYPED_TEST(StringCoreTest, Operations)
     ASSERT_THROW(s1.substr(s1.size() + 1), std::out_of_range);
     ASSERT_THROW(s2.substr(s2.size() + 1), std::out_of_range);
 
-// copy
-#ifdef SPSL_HAS_CONSTEXPR_ARRAY
-    CharType buffer[data.hello_world_len + 1];
-#else
+    // copy
     CharType buffer[256];
-#endif
     for (size_t pos = 0; pos <= data.hello_world_len; ++pos)
     {
         // + 10 because we are allowed to ask for more
@@ -761,7 +757,7 @@ TYPED_TEST(StringCoreTest, Operations)
     ASSERT_TRUE(s1 == data.hello_world);
     ASSERT_EQ(s1.size(), data.hello_world_len);
     // shrink tests
-    for (size_t i = data.hello_world_len; i != (size_t)-1; --i)
+    for (size_t i = data.hello_world_len; i != static_cast<size_t>(-1); --i)
     {
         s1.resize(i);
         ASSERT_EQ(s1.size(), i);
@@ -917,7 +913,7 @@ TYPED_TEST(StringCoreTest, ComparisonFunctions)
     ASSERT_EQ(s.compare(ref.c_str()), 0);
     ref[0]++;
     ASSERT_LT(s.compare(ref.c_str()), 0);
-    ref[0] -= 2;
+    ref[0] = static_cast<CharType>(ref[0] - 2);
     ASSERT_GT(s.compare(ref.c_str()), 0);
     ref = s.c_str();
     ref.pop_back();
@@ -958,7 +954,7 @@ TYPED_TEST(StringCoreTest, ComparisonFunctions)
     ASSERT_EQ(s.compare(ref), 0);
     ref[0]++;
     ASSERT_LT(s.compare(ref), 0);
-    ref[0] -= 2;
+    ref[0] = static_cast<CharType>(ref[0] - 2);
     ASSERT_GT(s.compare(ref), 0);
     ref = s;
     ref.pop_back();
@@ -1104,7 +1100,7 @@ TYPED_TEST(StringCoreTest, ComparisonOperators)
     ASSERT_TRUE(s >= ref.c_str());
     ASSERT_FALSE(s < ref.c_str());
     ASSERT_FALSE(s <= ref.c_str());
-    ref[0] += 2;
+    ref[0] = static_cast<CharType>(ref[0] + 2);
     ASSERT_TRUE(s < ref.c_str());
     ASSERT_TRUE(s <= ref.c_str());
     ASSERT_FALSE(s > ref.c_str());
@@ -1124,7 +1120,7 @@ TYPED_TEST(StringCoreTest, ComparisonOperators)
     ASSERT_TRUE(ref.c_str() <= s);
     ASSERT_FALSE(ref.c_str() > s);
     ASSERT_FALSE(ref.c_str() >= s);
-    ref[0] += 2;
+    ref[0] = static_cast<CharType>(ref[0] + 2);
     ASSERT_TRUE(ref.c_str() > s);
     ASSERT_TRUE(ref.c_str() >= s);
     ASSERT_FALSE(ref.c_str() < s);
@@ -1147,7 +1143,7 @@ TYPED_TEST(StringCoreTest, ComparisonOperators)
     ASSERT_TRUE(s >= ref2);
     ASSERT_FALSE(s < ref2);
     ASSERT_FALSE(s <= ref2);
-    ref2[0] += 2;
+    ref2[0] = static_cast<CharType>(ref2[0] + 2);
     ASSERT_TRUE(s < ref2);
     ASSERT_TRUE(s <= ref2);
     ASSERT_FALSE(s > ref2);
@@ -1172,7 +1168,7 @@ TYPED_TEST(StringCoreTest, ComparisonOperators)
     ASSERT_TRUE(s >= ref);
     ASSERT_FALSE(s < ref);
     ASSERT_FALSE(s <= ref);
-    ref[0] += 2;
+    ref[0] = static_cast<CharType>(ref[0] + 2);
     ASSERT_TRUE(s < ref);
     ASSERT_TRUE(s <= ref);
     ASSERT_FALSE(s > ref);
@@ -1197,7 +1193,7 @@ TYPED_TEST(StringCoreTest, ComparisonOperators)
     ASSERT_TRUE(ref <= s);
     ASSERT_FALSE(ref > s);
     ASSERT_FALSE(ref >= s);
-    ref[0] += 2;
+    ref[0] = static_cast<CharType>(ref[0] + 2);
     ASSERT_TRUE(ref > s);
     ASSERT_TRUE(ref >= s);
     ASSERT_FALSE(ref < s);

@@ -277,7 +277,8 @@ TEST(PageAllocTest, LeakCheckTest2)
         {
             // note: we iterate backwards to have stable indexes, but collect "in order"
             myLeaks.insert(myLeaks.begin(), allocations[index]);
-            allocations.erase(allocations.begin() + index);
+            allocations.erase(allocations.begin() +
+                              static_cast<AllocationList::difference_type>(index));
         }
 
         for (auto& entry : allocations)

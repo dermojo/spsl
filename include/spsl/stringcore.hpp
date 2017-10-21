@@ -337,7 +337,7 @@ public:
         if (r == 0)
         {
             // compare the length difference if the strings are equal (so far)
-            difference_type diff = this_len - other_len;
+            difference_type diff = static_cast<difference_type>(this_len - other_len);
             if (diff > std::numeric_limits<int>::max())
                 diff = std::numeric_limits<int>::max();
             else if (diff < std::numeric_limits<int>::min())
@@ -478,7 +478,7 @@ public:
             const size_type n = mysize - pos;
             const char_type* p = traits_type::find(mydata + pos, n, ch);
             if (p)
-                ret = p - mydata;
+                ret = static_cast<size_type>(p - mydata);
         }
         return ret;
     }
@@ -507,7 +507,7 @@ public:
             for (const char_type* ptr = d + pos; ptr >= d; --ptr)
             {
                 if (traits_type::compare(ptr, s, count) == 0)
-                    return (ptr - d);
+                    return static_cast<size_type>(ptr - d);
             }
         }
         return npos;
@@ -523,7 +523,7 @@ public:
             for (const char_type* ptr = d + pos; ptr >= d; --ptr)
             {
                 if (traits_type::eq(*ptr, ch))
-                    return (ptr - d);
+                    return static_cast<size_type>(ptr - d);
             }
         }
         return npos;

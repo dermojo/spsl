@@ -11,7 +11,7 @@
 #include "testdata.hpp"
 
 /**
- * Custom allocator that checkes whether a memory area was zero'd out before freeing it.
+ * Custom allocator that checks whether a memory area was zero'd out before freeing it.
  */
 template <typename T>
 struct WipeCheckAllocator
@@ -31,7 +31,7 @@ struct WipeCheckAllocator
     {
         for (size_t i = 0; i < size; ++i)
         {
-            ASSERT_EQ(ptr[i], (T)0);
+            ASSERT_EQ(ptr[i], static_cast<T>(0));
         }
         free(ptr);
     }
@@ -59,7 +59,7 @@ TYPED_TEST(StoragePasswordTest, ConstructorTests)
 
     const StorageType s1;
     ASSERT_EQ(s1.capacity(), 0);
-    ASSERT_EQ(s1.max_size(), ((size_t)-1) / sizeof(CharType));
+    ASSERT_EQ(s1.max_size(), static_cast<size_t>(-1) / sizeof(CharType));
 
     ASSERT_TRUE(s1.empty());
     ASSERT_EQ(s1.length(), 0);
@@ -563,4 +563,63 @@ TYPED_TEST(StoragePasswordTest, ReplaceTests)
         ASSERT_EQ(s.size(), ref.size());
         ASSERT_TRUE(Traits::compare(s.data(), ref.data(), ref.size()) == 0);
     }
+}
+
+/* copy & move tests */
+TYPED_TEST(StoragePasswordTest, CopyAndMoveTests)
+{
+    using CharType = TypeParam; // gtest specific
+    using StorageType = spsl::StoragePassword<CharType>;
+    const TestData<CharType> data{};
+
+    // create 2 distinct page allocator instances
+    spsl::SensitivePageAllocator alloc1, alloc2;
+    // use them in 2 different strings
+    StorageType string1{ spsl::SensitiveSegmentAllocator<CharType>(alloc1) };
+    string1.assign(data.hello_world, data.hello_world_len);
+    StorageType string2{ spsl::SensitiveSegmentAllocator<CharType>(alloc2) };
+    string2.assign(data.hello_world, data.hello_world_len);
+
+    // same content, different allocators
+    ASSERT_STREQ(string1.data(), string2.data());
+    ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc1);
+    ASSERT_EQ(string2.getAllocator().pageAllocator(), &alloc2);
+
+    // swap: allocators are swapped, too
+    std::swap(string1, string2);
+    ASSERT_STREQ(string1.data(), string2.data());
+    ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc2);
+    ASSERT_EQ(string2.getAllocator().pageAllocator(), &alloc1);
+
+    // change the content and swap back
+    string1.assign(data.blablabla, data.blablabla_len);
+    ASSERT_STREQ(string1.data(), data.blablabla);
+    ASSERT_STREQ(string2.data(), data.hello_world);
+    ASSERT_STRNE(string1.data(), string2.data());
+    std::swap(string1, string2);
+    ASSERT_STREQ(string1.data(), data.hello_world);
+    ASSERT_STREQ(string2.data(), data.blablabla);
+    ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc1);
+    ASSERT_EQ(string2.getAllocator().pageAllocator(), &alloc2);
+
+    // using the copy or move constructor copies the allocator
+    StorageType string3(string1);
+    StorageType string4(std::move(string1));
+    ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc1);
+    ASSERT_EQ(string3.getAllocator().pageAllocator(), &alloc1);
+    ASSERT_EQ(string4.getAllocator().pageAllocator(), &alloc1);
+    // copy assignment doesn't
+    string3 = string2;
+    ASSERT_EQ(string3.getAllocator().pageAllocator(), &alloc1);
+
+    // moving swaps the allocator
+    auto defaultAlloc = &spsl::SensitivePageAllocator::getDefaultInstance();
+    StorageType string5;
+    ASSERT_EQ(string5.getAllocator().pageAllocator(), defaultAlloc);
+    string5 = std::move(string1);
+    ASSERT_EQ(string5.getAllocator().pageAllocator(), &alloc1);
+    ASSERT_EQ(string1.getAllocator().pageAllocator(), defaultAlloc);
+    string5.swap(string1);
+    ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc1);
+    ASSERT_EQ(string5.getAllocator().pageAllocator(), defaultAlloc);
 }
