@@ -76,3 +76,27 @@ endif()
 # use this to enable C++17 tests (esp. string_view) with GCC/Clang
 # (but comment the CXX_STANDARD* settings above)
 #target_compile_options(testlib PUBLIC -std=c++1z)
+
+# run clang-format on all files
+list(APPEND CLANG_FORMAT_ARGS
+    -style=file
+    -i
+    ${CMAKE_SOURCE_DIR}/include/*.hpp
+    ${CMAKE_SOURCE_DIR}/include/spsl/*.hpp
+    ${CMAKE_SOURCE_DIR}/test/*.hpp
+    ${CMAKE_SOURCE_DIR}/test/*.cpp
+)
+
+if(NOT WIN32 STREQUAL "1")
+    add_custom_target(
+        format
+        COMMAND clang-format ${CLANG_FORMAT_ARGS}
+        COMMENT "running clang-format"
+    )
+else()
+    add_custom_target(
+        format
+        COMMAND clang-format.exe ${CLANG_FORMAT_ARGS}
+        COMMENT "running clang-format"
+    )
+endif()

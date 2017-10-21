@@ -28,13 +28,13 @@ struct TestData
 template <>
 struct TestData<char>
 {
-	TestData() = default;
-	~TestData() = default;
-	// not needed
-	TestData(const TestData&) = delete;
-	TestData(TestData&&) = delete;
-	TestData& operator=(const TestData&) = delete;
-	TestData& operator=(TestData&&) = delete;
+    TestData() = default;
+    ~TestData() = default;
+    // not needed
+    TestData(const TestData&) = delete;
+    TestData(TestData&&) = delete;
+    TestData& operator=(const TestData&) = delete;
+    TestData& operator=(TestData&&) = delete;
 
     const char* const hello_world = "Hello World!";
     const size_t hello_world_len = 12;
@@ -47,24 +47,21 @@ struct TestData<char>
         return { 'T', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', 'n', ' ', 'a', 's',
                  's', 'i', 'g', 'n', 'm', 'e', 'n', 't', ' ', 't', 'e', 's', 't' };
     }
-    std::initializer_list<char> initializerList2() const
-    {
-        return { 'T', 'e', 's', 't' };
-    }
+    std::initializer_list<char> initializerList2() const { return { 'T', 'e', 's', 't' }; }
 };
 
 template <>
 struct TestData<wchar_t>
 {
-	TestData() = default;
-	~TestData() = default;
-	// not needed
-	TestData(const TestData&) = delete;
-	TestData(TestData&&) = delete;
-	TestData& operator=(const TestData&) = delete;
-	TestData& operator=(TestData&&) = delete;
-	
-	const wchar_t* const hello_world = L"Hello World!";
+    TestData() = default;
+    ~TestData() = default;
+    // not needed
+    TestData(const TestData&) = delete;
+    TestData(TestData&&) = delete;
+    TestData& operator=(const TestData&) = delete;
+    TestData& operator=(TestData&&) = delete;
+
+    const wchar_t* const hello_world = L"Hello World!";
     const size_t hello_world_len = 12;
     const wchar_t* const blablabla = L"blablabla";
     const size_t blablabla_len = 9;
@@ -75,10 +72,7 @@ struct TestData<wchar_t>
         return { L'T', L'h', L'i', L's', L' ', L'i', L's', L' ', L'a', L'n', L' ', L'a', L's',
                  L's', L'i', L'g', L'n', L'm', L'e', L'n', L't', L' ', L't', L'e', L's', L't' };
     }
-    std::initializer_list<wchar_t> initializerList2() const
-    {
-        return { L'T', L'e', L's', L't' };
-    }
+    std::initializer_list<wchar_t> initializerList2() const { return { L'T', L'e', L's', L't' }; }
 };
 
 #endif /* TESTDATA_HPP_ */
