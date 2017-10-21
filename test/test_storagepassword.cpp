@@ -602,21 +602,24 @@ TYPED_TEST(StoragePasswordTest, CopyAndMoveTests)
     ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc1);
     ASSERT_EQ(string2.getAllocator().pageAllocator(), &alloc2);
 
-    // copying the string copies the allocator
-    StorageType string3 = string1;
+    // using the copy or move constructor copies the allocator
+    StorageType string3(string1);
+    StorageType string4(std::move(string1));
     ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc1);
     ASSERT_EQ(string3.getAllocator().pageAllocator(), &alloc1);
+    ASSERT_EQ(string4.getAllocator().pageAllocator(), &alloc1);
+    // copy assignment doesn't
     string3 = string2;
-    ASSERT_EQ(string3.getAllocator().pageAllocator(), &alloc2);
+    ASSERT_EQ(string3.getAllocator().pageAllocator(), &alloc1);
 
     // moving swaps the allocator
     auto defaultAlloc = &spsl::SensitivePageAllocator::getDefaultInstance();
-    StorageType string4;
-    ASSERT_EQ(string4.getAllocator().pageAllocator(), defaultAlloc);
-    string4 = std::move(string1);
-    ASSERT_EQ(string4.getAllocator().pageAllocator(), &alloc1);
+    StorageType string5;
+    ASSERT_EQ(string5.getAllocator().pageAllocator(), defaultAlloc);
+    string5 = std::move(string1);
+    ASSERT_EQ(string5.getAllocator().pageAllocator(), &alloc1);
     ASSERT_EQ(string1.getAllocator().pageAllocator(), defaultAlloc);
-    string4.swap(string1);
+    string5.swap(string1);
     ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc1);
-    ASSERT_EQ(string4.getAllocator().pageAllocator(), defaultAlloc);
+    ASSERT_EQ(string5.getAllocator().pageAllocator(), defaultAlloc);
 }
