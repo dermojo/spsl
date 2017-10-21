@@ -46,6 +46,15 @@ matrix:
           packages:
             - clang-3.9
       env: MYCC=clang-3.9 MYCXX=clang++-3.9
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-4.0
+          packages:
+            - clang-4.0
+      env: MYCC=clang-4.0 MYCXX=clang++-4.0
 
 before_install:
   - sudo apt-get install -y libgtest-dev

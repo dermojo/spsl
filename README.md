@@ -38,14 +38,14 @@ The SPSL itself only relies on the STL and has no dependencies. To compile the t
 * [CMake](https://cmake.org/) 3.2 or higher
 * [GoogleTest](https://github.com/google/googletest) 1.8
 
-Supported compilers (we'll, the ones I've tested) include GCC 4.9/5/6 and clang 3.8/3.9 on Linux, 
-Microsoft Visual Studio 2013 (Update 5) and Microsoft Visual Studio 2015.
+Supported compilers (we'll, the ones I've tested) include GCC 4.9/5/6 and clang 3.8/3.9/4.0
+on Linux, Microsoft Visual Studio 2013 (Update 5) and Microsoft Visual Studio 2015.
 
 
 ## Running the tests
 
 SPSL comes with a lot of unit tests. They are compiled into the `testlib` executable, which can
-be run standalone or from cmake/ctest. 
+be run standalone or from cmake/ctest.
 
 To build on Linux, simply run CMake and execute the tests:
     mkdir build
@@ -75,4 +75,4 @@ tl;dr: Feel free to use and modify the code or to include it in your commercial 
 ## Acknowledgements
 
 This library uses the MurmurHash3 hash functions, copied thankfully from
-[https://github.com/aappleby/smhasher](https://github.com/aappleby/smhasher). Thanks a lot! 
+[https://github.com/aappleby/smhasher](https://github.com/aappleby/smhasher). Thanks a lot!
