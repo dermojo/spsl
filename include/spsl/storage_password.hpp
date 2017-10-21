@@ -33,7 +33,7 @@ inline void* secure_memzero(void* ptr, size_t size) noexcept
     // For more info, start here:
     // http://stackoverflow.com/questions/9973260/what-is-the-correct-way-to-clear-sensitive-data-from-memory-in-ios
 
-    volatile char* p = (char*)ptr;
+    volatile char* p = reinterpret_cast<char*>(ptr);
     while (size--)
         *p++ = 0;
     return ptr;
@@ -82,7 +82,7 @@ public:
     const allocator& getAllocator() const noexcept { return *this; }
 
     // note: This function is *not* constexpr to stay compatible with C++11
-    static const size_type _roundRequiredCapacityToBlockSize(size_type cap)
+    static size_type _roundRequiredCapacityToBlockSize(size_type cap)
     {
         size_type numBlocks = cap / BlockSize;
         if (numBlocks * BlockSize < cap)
@@ -430,14 +430,15 @@ protected:
 protected:
     // we store length + capacity information in a union that we also use as empty string
     // representation (assumption: m_buffer == _b => m_length == m_capacity == 0)
+    struct SizeInfo
+    {
+        /// number of bytes (*not* characters) in the buffer, not including the terminating NUL
+        size_type m_length;
+        /// number of bytes (*not* characters) allocated
+        size_type m_capacity;
+    };
     union {
-        struct
-        {
-            /// number of bytes (*not* characters) in the buffer, not including the terminating NUL
-            size_type m_length;
-            /// number of bytes (*not* characters) allocated
-            size_type m_capacity;
-        } _l;
+        SizeInfo _l;
         char_type _b[1];
     };
 

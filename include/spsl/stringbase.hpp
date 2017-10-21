@@ -295,8 +295,8 @@ public:
     template <class InputIt, typename = checkInputIter<InputIt>>
     this_type& replace(const_iterator first, const_iterator last, InputIt first2, InputIt last2)
     {
-        size_type pos = first - data();
-        size_type count = last - first;
+        size_type pos = static_cast<size_type>(first - data());
+        size_type count = static_cast<size_type>(last - first);
         if (pos > size())
             throw std::out_of_range("replace: pos > size()");
         if (pos + count > size())
@@ -310,7 +310,8 @@ public:
     this_type& replace(const_iterator first, const_iterator last, const char_type* cstr,
                        size_type count2)
     {
-        return replace(first - data(), last - first, cstr, count2);
+        return replace(static_cast<size_type>(first - data()), static_cast<size_type>(last - first),
+                       cstr, count2);
     }
     this_type& replace(size_type pos, size_type count, const char_type* cstr)
     {
@@ -318,16 +319,19 @@ public:
     }
     this_type& replace(const_iterator first, const_iterator last, const char_type* cstr)
     {
-        return replace(first - data(), last - first, cstr, traits_type::length(cstr));
+        return replace(static_cast<size_type>(first - data()), static_cast<size_type>(last - first),
+                       cstr, traits_type::length(cstr));
     }
     this_type& replace(const_iterator first, const_iterator last, size_type count2, char_type ch)
     {
-        return replace(first - data(), last - first, count2, ch);
+        return replace(static_cast<size_type>(first - data()), static_cast<size_type>(last - first),
+                       count2, ch);
     }
     this_type& replace(const_iterator first, const_iterator last,
                        std::initializer_list<char_type> ilist)
     {
-        return replace(first - data(), last - first, ilist.begin(), ilist.size());
+        return replace(static_cast<size_type>(first - data()), static_cast<size_type>(last - first),
+                       ilist.begin(), ilist.size());
     }
 
     template <typename StringClass, typename std::enable_if<is_compatible_string<
@@ -341,7 +345,8 @@ public:
                                       char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& replace(const_iterator first, const_iterator last, const StringClass& s)
     {
-        return replace(first - data(), last - first, s.data(), s.size());
+        return replace(static_cast<size_type>(first - data()), static_cast<size_type>(last - first),
+                       s.data(), s.size());
     }
 
     template <typename StringClass, typename std::enable_if<is_compatible_string<
@@ -442,7 +447,7 @@ public:
                 for (size_type ind2 = 0; ind2 < count; ++ind2)
                 {
                     if (traits_type::eq(*ptr, s[ind2]))
-                        return (ptr - d);
+                        return static_cast<size_type>(ptr - d);
                 }
             }
         }
@@ -483,7 +488,7 @@ public:
                         found = true;
                 }
                 if (!found)
-                    return (ptr - d);
+                    return static_cast<size_type>(ptr - d);
             }
         }
         return npos;
@@ -499,7 +504,7 @@ public:
             for (const char_type* ptr = d + pos; ptr >= d; --ptr)
             {
                 if (!traits_type::eq(*ptr, ch))
-                    return (ptr - d);
+                    return static_cast<size_type>(ptr - d);
             }
         }
         return npos;
@@ -527,7 +532,7 @@ template <typename CharType, typename CharTraits, typename StorageType,
 inline std::basic_ostream<CharType, CharTraits>& operator<<(
   std::basic_ostream<CharType, CharTraits>& os, const StringBase<StorageType>& str)
 {
-    os.write(str.data(), str.size());
+    os.write(str.data(), static_cast<std::streamsize>(str.size()));
     return os;
 }
 

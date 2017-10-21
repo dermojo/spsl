@@ -160,11 +160,11 @@ public:
                         chunk.segments |= resetMask;
 
                         // notify the callback
-                        m_leakCallback(
-                          this,
-                          AllocationInfo{ (char*)chunk.addr + startIndex * segment_size,
-                                          (endIndex - startIndex + 1) * segment_size },
-                          firstCbCall);
+                        m_leakCallback(this,
+                                       AllocationInfo{ reinterpret_cast<char*>(chunk.addr) +
+                                                         startIndex * segment_size,
+                                                       (endIndex - startIndex + 1) * segment_size },
+                                       firstCbCall);
                         firstCbCall = false;
                     }
                 }
@@ -231,7 +231,8 @@ public:
                          bool first)
     {
         if (first)
-            std::cerr << "!!! Leaks detected in PageAllocator(" << (const void*)instance << "):\n";
+            std::cerr << "!!! Leaks detected in PageAllocator("
+                      << reinterpret_cast<const void*>(instance) << "):\n";
         std::cerr << "!!!   " << leak.size << " bytes @ address " << leak.addr << '\n';
     }
 
@@ -259,7 +260,7 @@ public:
 
     static inline constexpr uint64_t getBitmask(std::size_t n)
     {
-        return (n == segmentsPerChunk ? all64 : (((uint64_t)1 << n) - 1));
+        return (n == segmentsPerChunk ? all64 : ((static_cast<uint64_t>(1) << n) - 1));
     }
 
 
@@ -384,7 +385,7 @@ private:
                 {
                     // found! -> mark as reserved
                     chunk.segments &= ~mask;
-                    return (char*)chunk.addr + index * segment_size;
+                    return reinterpret_cast<char*>(chunk.addr) + index * segment_size;
                 }
                 // shift the mask
                 mask <<= 1;
@@ -401,7 +402,7 @@ private:
         for (std::size_t i = 0; i < m_chunksPerPage; ++i)
         {
             m_managedChunks.push_back(
-              ChunkManagementInfo{ (char*)addr + i * chunk_size, addr, all64 });
+              ChunkManagementInfo{ reinterpret_cast<char*>(addr) + i * chunk_size, addr, all64 });
         }
         ChunkManagementInfo& chunk = m_managedChunks[m_managedChunks.size() - m_chunksPerPage];
 
@@ -428,11 +429,12 @@ private:
         pointer pageAddr = nullptr;
         for (auto& chunk : m_managedChunks)
         {
-            if (addr >= chunk.addr && addr < (char*)chunk.addr + chunk_size)
+            if (addr >= chunk.addr && addr < reinterpret_cast<char*>(chunk.addr) + chunk_size)
             {
                 // found: calculate the index and the bit mask
-                std::size_t index =
-                  static_cast<std::size_t>((char*)addr - (char*)chunk.addr) / segment_size;
+                std::size_t index = static_cast<std::size_t>(reinterpret_cast<char*>(addr) -
+                                                             reinterpret_cast<char*>(chunk.addr)) /
+                                    segment_size;
                 uint64_t mask = bitmask << index;
                 chunk.segments |= mask;
 

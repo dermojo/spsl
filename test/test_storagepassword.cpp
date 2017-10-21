@@ -31,7 +31,7 @@ struct WipeCheckAllocator
     {
         for (size_t i = 0; i < size; ++i)
         {
-            ASSERT_EQ(ptr[i], (T)0);
+            ASSERT_EQ(ptr[i], static_cast<T>(0));
         }
         free(ptr);
     }
@@ -59,7 +59,7 @@ TYPED_TEST(StoragePasswordTest, ConstructorTests)
 
     const StorageType s1;
     ASSERT_EQ(s1.capacity(), 0);
-    ASSERT_EQ(s1.max_size(), ((size_t)-1) / sizeof(CharType));
+    ASSERT_EQ(s1.max_size(), static_cast<size_t>(-1) / sizeof(CharType));
 
     ASSERT_TRUE(s1.empty());
     ASSERT_EQ(s1.length(), 0);
@@ -575,9 +575,9 @@ TYPED_TEST(StoragePasswordTest, CopyAndMoveTests)
     // create 2 distinct page allocator instances
     spsl::SensitivePageAllocator alloc1, alloc2;
     // use them in 2 different strings
-    StorageType string1{spsl::SensitiveSegmentAllocator<CharType>(alloc1)};
+    StorageType string1{ spsl::SensitiveSegmentAllocator<CharType>(alloc1) };
     string1.assign(data.hello_world, data.hello_world_len);
-    StorageType string2{spsl::SensitiveSegmentAllocator<CharType>(alloc2)};
+    StorageType string2{ spsl::SensitiveSegmentAllocator<CharType>(alloc2) };
     string2.assign(data.hello_world, data.hello_world_len);
 
     // same content, different allocators
