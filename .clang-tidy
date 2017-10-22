@@ -1,0 +1,24 @@
+---
+# enable useful checks and disable a bunch of false positives :-(
+# TODO: splitting into multiple lines doesn't seem to work...
+Checks: 'clan*,cert*,misc*,perf*,cppc*,mode*,-*pointer-arithmetic,-*vararg,-*reinterpret-cast,-*array-to-pointer-decay,-*union-access,-cppcoreguidelines-pro-type-member-init,-cert-dcl50-cpp,-cppcoreguidelines-c-copy-assignment-signature,-misc-unconventional-assign-operator,-cppcoreguidelines-no-malloc,-cppcoreguidelines-pro-bounds-constant-array-index'
+
+WarningsAsErrors: ''
+HeaderFilterRegex: '.*'
+AnalyzeTemporaryDtors: false
+User:            daniel
+CheckOptions:
+  - key:             modernize-loop-convert.MaxCopySize
+    value:           '16'
+  - key:             modernize-loop-convert.MinConfidence
+    value:           reasonable
+  - key:             modernize-loop-convert.NamingStyle
+    value:           CamelCase
+  - key:             modernize-pass-by-value.IncludeStyle
+    value:           llvm
+  - key:             modernize-replace-auto-ptr.IncludeStyle
+    value:           llvm
+  - key:             modernize-use-nullptr.NullMacros
+    value:           'NULL'
+...
+
