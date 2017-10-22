@@ -105,11 +105,13 @@ matrix:
 before_install:
   - sudo apt-get install -y libgtest-dev
 
-script:
+before_script:
   - cd /usr/src/gtest
   - sudo cmake -DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX .
   - sudo cmake --build .
   - sudo mv libg* /usr/local/lib/
+
+script:
   - cd $TRAVIS_BUILD_DIR
   - mkdir build
   - cd build
