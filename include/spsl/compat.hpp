@@ -11,7 +11,6 @@
 #include <system_error>
 
 #define SPSL_HAS_NOEXCEPT
-#define SPSL_HAS_DEFAULT_MOVE
 #define SPSL_HAS_CONSTEXPR_ARRAY
 
 #ifdef _WIN32   // Windows
@@ -26,7 +25,6 @@ typedef intptr_t ssize_t;
 #define noexcept
 #define constexpr const
 #undef SPSL_HAS_NOEXCEPT
-#undef SPSL_HAS_DEFAULT_MOVE
 #endif
 
 // can't use constexpr values in array definitions...

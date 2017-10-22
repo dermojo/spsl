@@ -117,7 +117,7 @@ FORCE_INLINE uint64_t fmix64(uint64_t k)
 
 inline void MurmurHash3_x86_32(const void* key, const uint32_t len, uint32_t seed, void* out)
 {
-    const uint8_t* data = reinterpret_cast<const uint8_t*>(key);
+    auto data = reinterpret_cast<const uint8_t*>(key);
     const uint32_t nblocks = len / 4;
 
     uint32_t h1 = seed;
@@ -128,7 +128,7 @@ inline void MurmurHash3_x86_32(const void* key, const uint32_t len, uint32_t see
     //----------
     // body
 
-    const uint32_t* blocks = reinterpret_cast<const uint32_t*>(data);
+    auto blocks = reinterpret_cast<const uint32_t*>(data);
 
     for (uint32_t i = 0; i < nblocks; ++i)
     {
@@ -181,7 +181,7 @@ inline void MurmurHash3_x86_32(const void* key, const uint32_t len, uint32_t see
 inline void MurmurHash3_x64_128(const void* key, const std::size_t len, const uint32_t seed,
                                 void* out)
 {
-    const uint8_t* data = reinterpret_cast<const uint8_t*>(key);
+    auto data = reinterpret_cast<const uint8_t*>(key);
     const std::size_t nblocks = len / 16;
 
     uint64_t h1 = seed;
@@ -193,7 +193,7 @@ inline void MurmurHash3_x64_128(const void* key, const std::size_t len, const ui
     //----------
     // body
 
-    const uint64_t* blocks = reinterpret_cast<const uint64_t*>(data);
+    auto blocks = reinterpret_cast<const uint64_t*>(data);
 
     for (std::size_t i = 0; i < nblocks; i++)
     {

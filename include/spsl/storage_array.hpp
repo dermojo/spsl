@@ -307,7 +307,11 @@ public:
         *this = std::move(tmp);
     }
 
-    void swap(this_type& other) { std::swap(*this, other); }
+    void swap(this_type& other) noexcept
+    {
+        std::swap(m_length, other.m_length);
+        std::swap(m_buffer, other.m_buffer);
+    }
 
 protected:
     void assign_nothrow(const char_type* s, size_type len) noexcept
@@ -319,7 +323,7 @@ protected:
 
 protected:
     /// number of bytes (*not* characters) in the buffer, not including the terminating NUL
-    size_type m_length;
+    size_type m_length; // NOLINT: disable modernize-use-default-member-init
     /// the underlying buffer: an array that can hold MaxSize characters (+ terminating NUL)
     std::array<char_type, MaxSize + 1> m_buffer;
 };

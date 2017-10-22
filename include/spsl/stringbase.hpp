@@ -101,11 +101,7 @@ public:
     // default destructor, move and copy
     ~StringBase() = default;
     StringBase(const this_type&) = default;
-#ifdef SPSL_HAS_DEFAULT_MOVE
-    StringBase(this_type&&) = default;
-#else
-    StringBase(this_type&& rhs) { this->swap(rhs); }
-#endif
+    StringBase(this_type&& rhs) noexcept : StringBase() { this->swap(rhs); }
 
     /// construct from another storage instance
     explicit StringBase(const storage_type& storage) : base_type(storage) {}
@@ -138,15 +134,11 @@ public:
 
     // default copy & move
     this_type& operator=(const this_type&) = default;
-#ifdef SPSL_HAS_DEFAULT_MOVE
-    this_type& operator=(this_type&&) = default;
-#else
-    this_type& operator=(this_type&& rhs)
+    this_type& operator=(this_type&& rhs) noexcept
     {
         this->swap(rhs);
         return *this;
     }
-#endif
 
     /// allow assignment from another string-like container (may even be a vector...)
     template <typename StringClass, typename std::enable_if<is_compatible_string<
@@ -295,8 +287,8 @@ public:
     template <class InputIt, typename = checkInputIter<InputIt>>
     this_type& replace(const_iterator first, const_iterator last, InputIt first2, InputIt last2)
     {
-        size_type pos = static_cast<size_type>(first - data());
-        size_type count = static_cast<size_type>(last - first);
+        auto pos = static_cast<size_type>(first - data());
+        auto count = static_cast<size_type>(last - first);
         if (pos > size())
             throw std::out_of_range("replace: pos > size()");
         if (pos + count > size())
@@ -556,17 +548,9 @@ struct hash<spsl::StringBase<StorageType>>
 
     hash() = default;
     hash(const hash&) = default;
-#ifdef SPSL_HAS_DEFAULT_MOVE
-    hash(hash&&) = default;
-#else
-    hash(hash&&) {}
-#endif
+    hash(hash&&) noexcept {}
     hash& operator=(const hash&) = default;
-#ifdef SPSL_HAS_DEFAULT_MOVE
-    hash& operator=(hash&&) = default;
-#else
-    hash& operator=(hash&&) { return *this; }
-#endif
+    hash& operator=(hash&&) noexcept { return *this; }
     ~hash() = default;
 
     size_t operator()(const argument_type& s) const

@@ -80,11 +80,7 @@ public:
     // default destructor, move and copy
     ~StringCore() = default;
     StringCore(const this_type&) = default;
-#ifdef SPSL_HAS_DEFAULT_MOVE
-    StringCore(this_type&&) = default;
-#else
-    StringCore(this_type&& rhs) { this->swap(rhs); }
-#endif
+    StringCore(this_type&& rhs) noexcept : StringCore() { this->swap(rhs); }
 
     /// construct from another storage instance
     explicit StringCore(const storage_type& storage) : m_storage(storage) {}
@@ -109,15 +105,11 @@ public:
 
     // default copy & move
     this_type& operator=(const this_type&) = default;
-#ifdef SPSL_HAS_DEFAULT_MOVE
-    this_type& operator=(this_type&&) = default;
-#else
-    this_type& operator=(this_type&& rhs)
+    this_type& operator=(this_type&& rhs) noexcept
     {
         this->swap(rhs);
         return *this;
     }
-#endif
 
     /// allow assignment from another string-like container (may even be a vector...)
     template <typename StringClass, typename std::enable_if<is_compatible_string<
@@ -268,7 +260,7 @@ public:
 
     void resize(size_type count) { resize(count, nul); }
     void resize(size_type count, char_type ch) { m_storage.resize(count, ch); }
-    void swap(this_type& other) { m_storage.swap(other.m_storage); }
+    void swap(this_type& other) noexcept { m_storage.swap(other.m_storage); }
 
 
     /* ********************************** APPENDING ********************************** */
@@ -337,7 +329,7 @@ public:
         if (r == 0)
         {
             // compare the length difference if the strings are equal (so far)
-            difference_type diff = static_cast<difference_type>(this_len - other_len);
+            auto diff = static_cast<difference_type>(this_len - other_len);
             if (diff > std::numeric_limits<int>::max())
                 diff = std::numeric_limits<int>::max();
             else if (diff < std::numeric_limits<int>::min())
@@ -647,17 +639,9 @@ struct hash<spsl::StringCore<StorageType>>
 
     hash() = default;
     hash(const hash&) = default;
-#ifdef SPSL_HAS_DEFAULT_MOVE
-    hash(hash&&) = default;
-#else
-    hash(hash&&) {}
-#endif
+    hash(hash&&) noexcept {}
     hash& operator=(const hash&) = default;
-#ifdef SPSL_HAS_DEFAULT_MOVE
-    hash& operator=(hash&&) = default;
-#else
-    hash& operator=(hash&&) { return *this; }
-#endif
+    hash& operator=(hash&&) noexcept { return *this; }
     ~hash() = default;
 
     size_t operator()(const argument_type& s) const

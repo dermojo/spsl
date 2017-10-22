@@ -48,7 +48,7 @@ private:
     }
 
 public:
-    typedef decltype(check<Class>(0)) type;
+    using type = decltype(check<Class>(nullptr));
     static constexpr bool value = type::value;
 };
 
@@ -71,7 +71,7 @@ private:
     }
 
 public:
-    typedef decltype(check<Class>(0)) type;
+    using type = decltype(check<Class>(nullptr));
     static constexpr bool value = type::value;
 };
 

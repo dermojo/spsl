@@ -76,3 +76,43 @@ endif()
 # use this to enable C++17 tests (esp. string_view) with GCC/Clang
 # (but comment the CXX_STANDARD* settings above)
 #target_compile_options(testlib PUBLIC -std=c++1z)
+
+# run clang-format on all files
+list(APPEND CLANG_FORMAT_ARGS
+    -style=file
+    -i
+    ${CMAKE_SOURCE_DIR}/include/*.hpp
+    ${CMAKE_SOURCE_DIR}/include/spsl/*.hpp
+    ${CMAKE_SOURCE_DIR}/test/*.hpp
+    ${CMAKE_SOURCE_DIR}/test/*.cpp
+)
+
+if(NOT WIN32 STREQUAL "1")
+    add_custom_target(
+        format
+        COMMAND clang-format ${CLANG_FORMAT_ARGS}
+        COMMENT "running clang-format"
+    )
+else()
+    add_custom_target(
+        format
+        COMMAND clang-format.exe ${CLANG_FORMAT_ARGS}
+        COMMENT "running clang-format"
+    )
+endif()
+
+# clang tidy support (using version 4.0 atm)
+# (since this is a header-only library, it's sufficient to check a single source that includes
+#  everything)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CLANG_TIDY /usr/bin/clang-tidy-4.0)
+list(APPEND CLANG_TIDY_ARGS
+    -p .
+    ${CMAKE_SOURCE_DIR}/test/example.cpp
+)
+
+add_custom_target(
+    tidy
+    COMMAND ${CLANG_TIDY} ${CLANG_TIDY_ARGS}
+    COMMENT "running clang tidy"
+)

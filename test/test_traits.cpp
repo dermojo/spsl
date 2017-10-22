@@ -5,8 +5,8 @@
  * @license MIT
  */
 
-#include <vector>
 #include <gtest/gtest.h>
+#include <vector>
 
 #include "spsl.hpp"
 #include "testdata.hpp"
@@ -102,4 +102,3 @@ TEST(TypeTraitsTest, IsCompatible)
     ASSERT_FALSE((spsl::is_compatible_string<char, size_t, std::exception>::value));
     ASSERT_FALSE((spsl::is_compatible_string<char, size_t, std::vector<int>>::value));
 }
-
