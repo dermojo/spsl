@@ -66,7 +66,6 @@ matrix:
           packages:
             - clang-format
       script:
-        - cd $TRAVIS_BUILD_DIR
         - mkdir build
         - cd build
         - cmake ..
@@ -88,11 +87,11 @@ matrix:
             - llvm-toolchain-trusty-4.0
           packages:
             - clang-tidy-4.0
+            - clang-4.0
       script:
-        - cd $TRAVIS_BUILD_DIR
         - mkdir build
         - cd build
-        - cmake ..
+        - cmake .. -DCMAKE_C_COMPILER=clang-4.0 -DCMAKE_CXX_COMPILER=clang++-4.0
         - make tidy >output.txt
         - |
           if [[ -n $(grep "warning: " output.txt) ]] || [[ -n $(grep "error: " output.txt) ]]; then
