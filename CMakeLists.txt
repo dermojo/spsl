@@ -100,3 +100,19 @@ else()
         COMMENT "running clang-format"
     )
 endif()
+
+# clang tidy support (using version 4.0 atm)
+# (since this is a header-only library, it's sufficient to check a single source that includes
+#  everything)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CLANG_TIDY /usr/bin/clang-tidy-4.0)
+list(APPEND CLANG_TIDY_ARGS
+    -p .
+    ${CMAKE_SOURCE_DIR}/test/example.cpp
+)
+
+add_custom_target(
+    tidy
+    COMMAND ${CLANG_TIDY} ${CLANG_TIDY_ARGS}
+    COMMENT "running clang tidy"
+)

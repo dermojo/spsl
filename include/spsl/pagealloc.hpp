@@ -57,22 +57,14 @@ public:
     {
         AllocationInfo(pointer a, std::size_t s) : addr(a), size(s) {}
         AllocationInfo(const AllocationInfo&) noexcept = default;
-#ifdef SPSL_HAS_DEFAULT_MOVE
-        AllocationInfo(AllocationInfo&&) noexcept = default;
-#else
         AllocationInfo(AllocationInfo&& other) noexcept : addr(other.addr), size(other.size) {}
-#endif
         AllocationInfo& operator=(const AllocationInfo&) noexcept = default;
-#ifdef SPSL_HAS_DEFAULT_MOVE
-        AllocationInfo& operator=(AllocationInfo&&) noexcept = default;
-#else
         AllocationInfo& operator=(AllocationInfo&& other) noexcept
         {
             addr = other.addr;
             size = other.size;
             return *this;
         }
-#endif
         ~AllocationInfo() = default;
 
         /// the allocated address
@@ -195,6 +187,11 @@ public:
         }
     }
 
+    // disable copy & move
+    SensitivePageAllocator(const SensitivePageAllocator&) = delete;
+    SensitivePageAllocator(SensitivePageAllocator&&) = delete;
+    SensitivePageAllocator& operator=(const SensitivePageAllocator&) = delete;
+    SensitivePageAllocator& operator=(SensitivePageAllocator&&) = delete;
 
     /**
      * Returns the "default instance", a.k.a. a static instance of the allocator. The instance is
