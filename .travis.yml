@@ -55,6 +55,14 @@ matrix:
           packages:
             - clang-4.0
       env: MYCC=clang-4.0 MYCXX=clang++-4.0
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - mingw
+      env: MYCC=x86_64-w64-mingw32-gcc MYCXX=x86_64-w64-mingw32-g++
     - os: linux
       env:
         - TEST="Clang Format"
@@ -108,7 +116,8 @@ before_install:
 
 before_script:
   - cd /usr/src/gtest
-  - sudo cmake -DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX .
+  - [[ $MYCC =~ *mingw* ]] && ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake -Dgtest_disable_pthreads=ON"
+  - sudo cmake -DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX $ADD_OPTS .
   - sudo cmake --build .
   - sudo mv libg* /usr/local/lib/
   - cd $TRAVIS_BUILD_DIR
@@ -116,6 +125,7 @@ before_script:
 script:
   - mkdir build
   - cd build
+  - [[ $MYCC =~ *mingw* ]] && ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake"
   - cmake -DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX ..
   - make
   - make runtest
