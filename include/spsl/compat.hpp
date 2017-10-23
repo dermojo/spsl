@@ -111,7 +111,7 @@ inline void lockMemory(void* addr, std::size_t len, std::error_code* ec = nullpt
 {
     if (VirtualLock(addr, len) == 0)
     {
-        std::error_code err(GetLastError(), std::system_category());
+        std::error_code err(static_cast<int>(GetLastError()), std::system_category());
         if (ec)
             *ec = err;
         else
@@ -123,7 +123,7 @@ inline void unlockMemory(void* addr, std::size_t len, std::error_code* ec = null
 {
     if (VirtualUnlock(addr, len) == 0)
     {
-        std::error_code err(GetLastError(), std::system_category());
+        std::error_code err(static_cast<int>(GetLastError()), std::system_category());
         if (ec)
             *ec = err;
         else
