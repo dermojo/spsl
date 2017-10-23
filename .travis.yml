@@ -116,7 +116,7 @@ before_install:
 
 before_script:
   - cd /usr/src/gtest
-  - [[ $MYCC =~ *mingw* ]] && ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake -Dgtest_disable_pthreads=ON"
+  - if [[ "$MYCC" == *mingw* ]] ; then ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake -Dgtest_disable_pthreads=ON"; fi
   - sudo cmake -DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX $ADD_OPTS .
   - sudo cmake --build .
   - sudo mv libg* /usr/local/lib/
@@ -125,7 +125,7 @@ before_script:
 script:
   - mkdir build
   - cd build
-  - [[ $MYCC =~ *mingw* ]] && ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake"
+  - if [[ "$MYCC" == *mingw* ]] ; then ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake"; fi
   - cmake -DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX ..
   - make
   - make runtest
