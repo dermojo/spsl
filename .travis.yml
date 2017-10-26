@@ -117,7 +117,7 @@ before_script:
   - |
     if [[ "$MYCC" == *mingw* ]] ; then
       ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake -Dgtest_disable_pthreads=ON"
-      ln -s /usr/include/gtest/ .
+      sudo ln -s /usr/include/gtest/ .
     else
       ADD_OPTS="-DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX"
     fi
@@ -132,6 +132,7 @@ script:
   - |
     if [[ "$MYCC" == *mingw* ]] ; then
       ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake"
+      ln -s /usr/include/gtest/ .
     else
       ADD_OPTS="-DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX"
     fi
