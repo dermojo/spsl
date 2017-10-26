@@ -132,6 +132,9 @@ script:
   - |
     if [[ "$MYCC" == *mingw* ]] ; then
       ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake"
+      ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=/usr/local/lib/libgtest.a"
+      ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=/usr/local/lib/libgtest_main.a"
+      ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=/us/local/include"
       ln -s /usr/include/gtest/ .
     else
       ADD_OPTS="-DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX"
