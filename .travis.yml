@@ -60,7 +60,7 @@ matrix:
         apt:
           packages:
             - g++-mingw-w64-x86-64
-      env: MYCC=x86_64-w64-mingw32-gcc MYCXX=x86_64-w64-mingw32-g++
+      env: MYCC=/usr/bin/x86_64-w64-mingw32-gcc MYCXX=/usr/bin/x86_64-w64-mingw32-g++
     - os: linux
       env:
         - TEST="Clang Format"
@@ -114,8 +114,14 @@ before_install:
 
 before_script:
   - cd /usr/src/gtest
-  - if [[ "$MYCC" == *mingw* ]] ; then ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake -Dgtest_disable_pthreads=ON"; fi
-  - sudo cmake -DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX $ADD_OPTS .
+  - |
+    if [[ "$MYCC" == *mingw* ]] ; then
+      ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake -Dgtest_disable_pthreads=ON"
+      ln -s /usr/include/gtest/ .
+    else
+      ADD_OPTS="-DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX"
+    fi
+  - sudo cmake $ADD_OPTS .
   - sudo cmake --build .
   - sudo mv libg* /usr/local/lib/
   - cd $TRAVIS_BUILD_DIR
@@ -123,8 +129,13 @@ before_script:
 script:
   - mkdir build
   - cd build
-  - if [[ "$MYCC" == *mingw* ]] ; then ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake"; fi
-  - cmake -DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX ..
+  - |
+    if [[ "$MYCC" == *mingw* ]] ; then
+      ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake"
+    else
+      ADD_OPTS="-DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX"
+    fi
+  - cmake $ADD_OPTS ..
   - make
   - make runtest
 
