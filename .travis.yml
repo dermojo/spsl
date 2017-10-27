@@ -3,53 +3,53 @@ language: cpp
 
 matrix:
   include:
-#    - compiler: gcc
-#      addons:
-#        apt:
-#          sources:
-#            - ubuntu-toolchain-r-test
-#          packages:
-#            - g++-4.9
-#            - libgtest-dev
-#      env: MYCC=gcc-4.9 MYCXX=g++-4.9
-#    - compiler: gcc
-#      addons:
-#        apt:
-#          sources:
-#            - ubuntu-toolchain-r-test
-#          packages:
-#            - g++-5
-#            - libgtest-dev
-#      env: MYCC=gcc-5 MYCXX=g++-5
-#    - compiler: gcc
-#      addons:
-#        apt:
-#          sources:
-#            - ubuntu-toolchain-r-test
-#          packages:
-#            - g++-6
-#            - libgtest-dev
-#      env: MYCC=gcc-6 MYCXX=g++-6
-#    - compiler: clang
-#      addons:
-#        apt:
-#          sources:
-#            - ubuntu-toolchain-r-test
-#            - llvm-toolchain-trusty
-#          packages:
-#            - clang-3.8
-#            - libgtest-dev
-#      env: MYCC=clang-3.8 MYCXX=clang++-3.8
-#    - compiler: clang
-#      addons:
-#        apt:
-#          sources:
-#            - ubuntu-toolchain-r-test
-#            - llvm-toolchain-trusty-3.9
-#          packages:
-#            - clang-3.9
-#            - libgtest-dev
-#      env: MYCC=clang-3.9 MYCXX=clang++-3.9
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+            - libgtest-dev
+      env: MYCC=gcc-4.9 MYCXX=g++-4.9
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+            - libgtest-dev
+      env: MYCC=gcc-5 MYCXX=g++-5
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+            - libgtest-dev
+      env: MYCC=gcc-6 MYCXX=g++-6
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty
+          packages:
+            - clang-3.8
+            - libgtest-dev
+      env: MYCC=clang-3.8 MYCXX=clang++-3.8
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-3.9
+          packages:
+            - clang-3.9
+            - libgtest-dev
+      env: MYCC=clang-3.9 MYCXX=clang++-3.9
     - compiler: clang
       addons:
         apt:
