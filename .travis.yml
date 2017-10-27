@@ -74,9 +74,9 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty
+            - llvm-toolchain-trusty-4.0
           packages:
-            - clang-format
+            - clang-format-4.0
             - clang-4.0
             - libgtest-dev
       script:
@@ -86,6 +86,7 @@ matrix:
         - ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest.a"
         - ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest_main.a"
         - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest"
+        - ADD_OPTS="$ADD_OPTS -DCLANG_FORMAT=/usr/bin/clang-format-4.0"
         - cmake $ADD_OPTS ..
         - make format
         - |

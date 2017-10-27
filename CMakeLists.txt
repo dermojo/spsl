@@ -87,25 +87,22 @@ list(APPEND CLANG_FORMAT_ARGS
     ${CMAKE_SOURCE_DIR}/test/*.cpp
 )
 
-if(NOT WIN32 STREQUAL "1")
-    add_custom_target(
-        format
-        COMMAND clang-format ${CLANG_FORMAT_ARGS}
-        COMMENT "running clang-format"
-    )
-else()
-    add_custom_target(
-        format
-        COMMAND clang-format.exe ${CLANG_FORMAT_ARGS}
-        COMMENT "running clang-format"
-    )
+if(NOT DEFINED CLANG_FORMAT)
+    set(CLANG_FORMAT clang-format-4.0)
 endif()
+add_custom_target(
+    format
+    COMMAND ${CLANG_FORMAT} ${CLANG_FORMAT_ARGS}
+    COMMENT "running clang-format"
+)
 
 # clang tidy support (using version 4.0 atm)
 # (since this is a header-only library, it's sufficient to check a single source that includes
 #  everything)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CLANG_TIDY /usr/bin/clang-tidy-4.0)
+if(NOT DEFINED CLANG_TIDY)
+    set(CLANG_TIDY clang-tidy-4.0)
+endif()
 list(APPEND CLANG_TIDY_ARGS
     -p .
     ${CMAKE_SOURCE_DIR}/test/example.cpp
