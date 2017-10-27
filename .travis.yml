@@ -119,7 +119,7 @@ matrix:
 
 before_script:
   - mkdir gtest
-  - push gtest
+  - pushd gtest
   - |
     if [[ "$MYCC" == *mingw* ]] ; then
       ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake -Dgtest_disable_pthreads=ON"
