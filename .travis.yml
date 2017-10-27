@@ -77,6 +77,7 @@ matrix:
             - llvm-toolchain-trusty
           packages:
             - clang-format
+            - clang-4.0
             - libgtest-dev
       script:
         - mkdir build
@@ -84,7 +85,7 @@ matrix:
         - ADD_OPTS="-DCMAKE_C_COMPILER=clang-4.0 -DCMAKE_CXX_COMPILER=clang++-4.0"
         - ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest.a"
         - ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest_main.a"
-        - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest/include"
+        - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest"
         - cmake $ADD_OPTS ..
         - make format
         - |
@@ -112,7 +113,7 @@ matrix:
         - ADD_OPTS="-DCMAKE_C_COMPILER=clang-4.0 -DCMAKE_CXX_COMPILER=clang++-4.0"
         - ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest.a"
         - ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest_main.a"
-        - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest/include"
+        - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest"
         - cmake $ADD_OPTS ..
         - make tidy >output.txt
         - |
@@ -153,7 +154,7 @@ script:
     fi
   - ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest.a"
   - ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest_main.a"
-  - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest/include"
+  - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest"
   - cmake $ADD_OPTS ..
   - make
   - if [[ "$MYCC" != *mingw* ]] ; then make runtest; fi
