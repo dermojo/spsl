@@ -34,7 +34,7 @@ add_executable(example
 add_test(testlib testlib)
 
 # the default for ctest is very short... also the dependency to re-build testlib is missing
-add_custom_target(runtest COMMAND ./testlib)
+add_custom_target(runtest COMMAND ./testlib${CMAKE_EXECUTABLE_SUFFIX})
 add_dependencies(runtest testlib)
 
 #
@@ -63,10 +63,10 @@ string(TOLOWER "${CMAKE_BUILD_TOOL}" MY_BUILDTOOL)
 if(MY_BUILDTOOL MATCHES "(msdev|devenv|nmake|msbuild)")
     target_compile_options(testlib PUBLIC /W4 /WX)
 else()
-    target_compile_options(testlib PUBLIC -Wall -Weffc++ -Werror -Wextra -pedantic
-                                          -Wunused -Wredundant-decls  -Wunreachable-code
+    target_compile_options(testlib PUBLIC -Wall -Werror -Wextra -pedantic
+                                          -Wunused -Wredundant-decls -Wunreachable-code
                                           -Wold-style-cast -Wshadow
-                                          -Wconversion -Wsign-conversion  -Wno-conversion-null
+                                          -Wconversion -Wsign-conversion -Wno-conversion-null
                                           -Wcast-align)
     # These are enabled on Clang and don't help...
     target_compile_options(testlib PUBLIC -Wno-missing-braces)
