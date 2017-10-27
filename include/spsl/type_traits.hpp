@@ -81,15 +81,16 @@ public:
  */
 template <typename CharType, typename SizeType, typename Class>
 struct is_compatible_string
-  : public std::integral_constant<bool, has_data<CharType, Class>::value &&
-                                          has_size<SizeType, Class>::value>
+  : public std::integral_constant<
+      bool, has_data<CharType, Class>::value && has_size<SizeType, Class>::value>
 {
 };
 
 template <typename MyString, typename Class>
 struct is_compatible_string2
-  : public std::integral_constant<bool, has_data<typename MyString::char_type, Class>::value &&
-                                          has_size<typename MyString::size_type, Class>::value>
+  : public std::integral_constant<bool,
+                                  has_data<typename MyString::char_type, Class>::value &&
+                                    has_size<typename MyString::size_type, Class>::value>
 {
 };
 

@@ -34,7 +34,7 @@ add_executable(example
 add_test(testlib testlib)
 
 # the default for ctest is very short... also the dependency to re-build testlib is missing
-add_custom_target(runtest COMMAND ./testlib)
+add_custom_target(runtest COMMAND ./testlib${CMAKE_EXECUTABLE_SUFFIX})
 add_dependencies(runtest testlib)
 
 #
@@ -63,10 +63,10 @@ string(TOLOWER "${CMAKE_BUILD_TOOL}" MY_BUILDTOOL)
 if(MY_BUILDTOOL MATCHES "(msdev|devenv|nmake|msbuild)")
     target_compile_options(testlib PUBLIC /W4 /WX)
 else()
-    target_compile_options(testlib PUBLIC -Wall -Weffc++ -Werror -Wextra -pedantic
-                                          -Wunused -Wredundant-decls  -Wunreachable-code
+    target_compile_options(testlib PUBLIC -Wall -Werror -Wextra -pedantic
+                                          -Wunused -Wredundant-decls -Wunreachable-code
                                           -Wold-style-cast -Wshadow
-                                          -Wconversion -Wsign-conversion  -Wno-conversion-null
+                                          -Wconversion -Wsign-conversion -Wno-conversion-null
                                           -Wcast-align)
     # These are enabled on Clang and don't help...
     target_compile_options(testlib PUBLIC -Wno-missing-braces)
@@ -87,25 +87,22 @@ list(APPEND CLANG_FORMAT_ARGS
     ${CMAKE_SOURCE_DIR}/test/*.cpp
 )
 
-if(NOT WIN32 STREQUAL "1")
-    add_custom_target(
-        format
-        COMMAND clang-format ${CLANG_FORMAT_ARGS}
-        COMMENT "running clang-format"
-    )
-else()
-    add_custom_target(
-        format
-        COMMAND clang-format.exe ${CLANG_FORMAT_ARGS}
-        COMMENT "running clang-format"
-    )
+if(NOT DEFINED CLANG_FORMAT)
+    set(CLANG_FORMAT clang-format-4.0)
 endif()
+add_custom_target(
+    format
+    COMMAND ${CLANG_FORMAT} ${CLANG_FORMAT_ARGS}
+    COMMENT "running clang-format"
+)
 
 # clang tidy support (using version 4.0 atm)
 # (since this is a header-only library, it's sufficient to check a single source that includes
 #  everything)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CLANG_TIDY /usr/bin/clang-tidy-4.0)
+if(NOT DEFINED CLANG_TIDY)
+    set(CLANG_TIDY clang-tidy-4.0)
+endif()
 list(APPEND CLANG_TIDY_ARGS
     -p .
     ${CMAKE_SOURCE_DIR}/test/example.cpp

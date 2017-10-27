@@ -1,4 +1,3 @@
-sudo: required
 dist: trusty
 language: cpp
 
@@ -11,6 +10,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-4.9
+            - libgtest-dev
       env: MYCC=gcc-4.9 MYCXX=g++-4.9
     - compiler: gcc
       addons:
@@ -19,6 +19,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-5
+            - libgtest-dev
       env: MYCC=gcc-5 MYCXX=g++-5
     - compiler: gcc
       addons:
@@ -27,6 +28,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-6
+            - libgtest-dev
       env: MYCC=gcc-6 MYCXX=g++-6
     - compiler: clang
       addons:
@@ -36,6 +38,7 @@ matrix:
             - llvm-toolchain-trusty
           packages:
             - clang-3.8
+            - libgtest-dev
       env: MYCC=clang-3.8 MYCXX=clang++-3.8
     - compiler: clang
       addons:
@@ -45,6 +48,7 @@ matrix:
             - llvm-toolchain-trusty-3.9
           packages:
             - clang-3.9
+            - libgtest-dev
       env: MYCC=clang-3.9 MYCXX=clang++-3.9
     - compiler: clang
       addons:
@@ -54,7 +58,15 @@ matrix:
             - llvm-toolchain-trusty-4.0
           packages:
             - clang-4.0
+            - libgtest-dev
       env: MYCC=clang-4.0 MYCXX=clang++-4.0
+    - compiler: gcc
+      addons:
+        apt:
+          packages:
+            - g++-mingw-w64-x86-64
+            - libgtest-dev
+      env: MYCC=/usr/bin/x86_64-w64-mingw32-gcc MYCXX=/usr/bin/x86_64-w64-mingw32-g++
     - os: linux
       env:
         - TEST="Clang Format"
@@ -62,13 +74,20 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty
+            - llvm-toolchain-trusty-4.0
           packages:
-            - clang-format
+            - clang-format-4.0
+            - clang-4.0
+            - libgtest-dev
       script:
         - mkdir build
         - cd build
-        - cmake ..
+        - ADD_OPTS="-DCMAKE_C_COMPILER=clang-4.0 -DCMAKE_CXX_COMPILER=clang++-4.0"
+        - ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest.a"
+        - ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest_main.a"
+        - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest"
+        - ADD_OPTS="$ADD_OPTS -DCLANG_FORMAT=/usr/bin/clang-format-4.0"
+        - cmake $ADD_OPTS ..
         - make format
         - |
           if [[ -n $(git diff) ]]; then
@@ -88,10 +107,15 @@ matrix:
           packages:
             - clang-tidy-4.0
             - clang-4.0
+            - libgtest-dev
       script:
         - mkdir build
         - cd build
-        - cmake .. -DCMAKE_C_COMPILER=clang-4.0 -DCMAKE_CXX_COMPILER=clang++-4.0
+        - ADD_OPTS="-DCMAKE_C_COMPILER=clang-4.0 -DCMAKE_CXX_COMPILER=clang++-4.0"
+        - ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest.a"
+        - ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest_main.a"
+        - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest"
+        - cmake $ADD_OPTS ..
         - make tidy >output.txt
         - |
           if [[ -n $(grep "warning: " output.txt) ]] || [[ -n $(grep "error: " output.txt) ]]; then
@@ -103,20 +127,36 @@ matrix:
               echo -e "\033[1;32m\xE2\x9C\x93 passed:\033[0m $1";
           fi
 
-before_install:
-  - sudo apt-get install -y libgtest-dev
-
 before_script:
-  - cd /usr/src/gtest
-  - sudo cmake -DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX .
-  - sudo cmake --build .
-  - sudo mv libg* /usr/local/lib/
-  - cd $TRAVIS_BUILD_DIR
+  - mkdir gtest
+  - pushd gtest
+  - ln -s /usr/include/gtest .
+  - ln -s /usr/src/gtest/src .
+  - ln -s /usr/src/gtest/CMakeLists.txt .
+  - ln -s /usr/src/gtest/cmake .
+  - |
+    if [[ "$MYCC" == *mingw* ]] ; then
+      ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake -Dgtest_disable_pthreads=ON"
+    else
+      ADD_OPTS="-DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX"
+    fi
+  - cmake $ADD_OPTS .
+  - cmake --build .
+  - popd
 
 script:
   - mkdir build
   - cd build
-  - cmake -DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX ..
+  - |
+    if [[ "$MYCC" == *mingw* ]] ; then
+      ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake"
+    else
+      ADD_OPTS="-DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX"
+    fi
+  - ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest.a"
+  - ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest_main.a"
+  - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest"
+  - cmake $ADD_OPTS ..
   - make
-  - make runtest
+  - if [[ "$MYCC" != *mingw* ]] ; then make runtest; fi
 
