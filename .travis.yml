@@ -81,7 +81,11 @@ matrix:
       script:
         - mkdir build
         - cd build
-        - cmake ..
+        - ADD_OPTS="-DCMAKE_C_COMPILER=clang-4.0 -DCMAKE_CXX_COMPILER=clang++-4.0"
+        - ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest.a"
+        - ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest_main.a"
+        - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest/include"
+        - cmake $ADD_OPTS ..
         - make format
         - |
           if [[ -n $(git diff) ]]; then
@@ -105,7 +109,11 @@ matrix:
       script:
         - mkdir build
         - cd build
-        - cmake .. -DCMAKE_C_COMPILER=clang-4.0 -DCMAKE_CXX_COMPILER=clang++-4.0
+        - ADD_OPTS="-DCMAKE_C_COMPILER=clang-4.0 -DCMAKE_CXX_COMPILER=clang++-4.0"
+        - ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest.a"
+        - ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest_main.a"
+        - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest/include"
+        - cmake $ADD_OPTS ..
         - make tidy >output.txt
         - |
           if [[ -n $(grep "warning: " output.txt) ]] || [[ -n $(grep "error: " output.txt) ]]; then
@@ -120,16 +128,18 @@ matrix:
 before_script:
   - mkdir gtest
   - pushd gtest
+  - ln -s /usr/include/gtest .
+  - ln -s /usr/src/gtest/src .
+  - ln -s /usr/src/gtest/CMakeLists.txt .
+  - ln -s /usr/src/gtest/cmake .
   - |
     if [[ "$MYCC" == *mingw* ]] ; then
       ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake -Dgtest_disable_pthreads=ON"
     else
       ADD_OPTS="-DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX"
     fi
-  - cmake $ADD_OPTS /usr/src/gtest
+  - cmake $ADD_OPTS .
   - cmake --build .
-  - mkdir include
-  - cp -r /usr/include/gtest include
   - popd
 
 script:
