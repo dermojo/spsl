@@ -352,7 +352,7 @@ inline size_t hash_impl<64>(const void* buffer, size_t len, uint32_t seed)
                                      result[1]);
 
     // ignore what we don't need...
-    return result[0];
+    return static_cast<size_t>(result[0]);
 }
 
 /**
