@@ -19,7 +19,7 @@ struct WipeCheckAllocator
     using pointer = T*;
     using size_type = std::size_t;
 
-    pointer allocate(size_type n, const void* = 0)
+    pointer allocate(size_type n, const void* = nullptr)
     {
         if (n > this->max_size())
             throw std::bad_alloc();
