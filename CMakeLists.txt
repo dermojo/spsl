@@ -1,9 +1,9 @@
 #
 # Special Purpose Strings Library
 #
-# Requires CMAke 3.2 or higher (use PPA for Travis CI)
+# Requires CMake 3.2 or higher (use PPA for Travis CI)
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
-project(spsl VERSION 0.1 LANGUAGES CXX)
+project(spsl VERSION 1.3 LANGUAGES CXX)
 
 # Release version with debug info: Compiles with optimizations, and if a unit test crashes,
 # there may be hope for analysis...
@@ -62,6 +62,8 @@ set_property(TARGET example PROPERTY CXX_STANDARD_REQUIRED ON)
 string(TOLOWER "${CMAKE_BUILD_TOOL}" MY_BUILDTOOL)
 if(MY_BUILDTOOL MATCHES "(msdev|devenv|nmake|msbuild)")
     target_compile_options(testlib PUBLIC /W4 /WX)
+    # Prevent deprecation errors for std::tr1 in googletest
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING")
 else()
     target_compile_options(testlib PUBLIC -Wall -Werror -Wextra -pedantic
                                           -Wunused -Wredundant-decls -Wunreachable-code
