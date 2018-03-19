@@ -1,11 +1,9 @@
 # Windows Build Configuration for AppVeyor
 
-environment:
-  matrix:
-    - msvc: '"Visual Studio 12 2013"'
-      buildcfg: Release
-    - msvc: '"Visual Studio 14 2015"'
-      buildcfg: Release
+image:
+- Visual Studio 2013
+- Visual Studio 2015
+- Visual Studio 2017
 
 
 build_script:
