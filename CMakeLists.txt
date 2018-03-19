@@ -75,6 +75,13 @@ else()
     target_link_libraries(testlib pthread)
 endif()
 
+option(ENABLE_ASAN "Enable address sanitizer instrumentation" OFF)
+
+if(ENABLE_ASAN)
+    set (CMAKE_CXX_FLAGS    "${CMAKE_CXX_FLAGS}    -fsanitize=address")
+    set (CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fsanitize=address")
+endif()
+
 # use this to enable C++17 tests (esp. string_view) with GCC/Clang
 # (but comment the CXX_STANDARD* settings above)
 #target_compile_options(testlib PUBLIC -std=c++1z)
