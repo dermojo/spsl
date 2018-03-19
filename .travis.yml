@@ -60,6 +60,16 @@ matrix:
             - clang-4.0
             - libgtest-dev
       env: MYCC=clang-4.0 MYCXX=clang++-4.0
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+            - libgtest-dev
+      env: MYCC=clang-5.0 MYCXX=clang++-5.0
     - compiler: gcc
       addons:
         apt:
