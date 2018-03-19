@@ -70,6 +70,16 @@ matrix:
             - clang-5.0
             - libgtest-dev
       env: MYCC=clang-5.0 MYCXX=clang++-5.0
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+            - libgtest-dev
+      env: MYCC=clang-5.0 MYCXX=clang++-5.0 ENABLE_ASAN=on
     - compiler: gcc
       addons:
         apt:
@@ -166,6 +176,10 @@ script:
   - ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest.a"
   - ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest_main.a"
   - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest"
+  - |
+    if [[ -n "$ENABLE_ASAN" ]] ; then
+      ADD_OPTS="$ADD_OPTS -DENABLE_ASAN=$ENABLE_ASAN"
+    fi
   - cmake $ADD_OPTS ..
   - make
   - if [[ "$MYCC" != *mingw* ]] ; then make runtest; fi
