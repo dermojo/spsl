@@ -7,7 +7,7 @@ project(spsl VERSION 1.3 LANGUAGES CXX)
 
 # Release version with debug info: Compiles with optimizations, and if a unit test crashes,
 # there may be hope for analysis...
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
+#set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 # Setup testing using GTEST
 enable_testing()
