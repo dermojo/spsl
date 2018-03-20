@@ -188,12 +188,12 @@ script:
   - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest"
   - |
     if [[ -n "$ENABLE_ASAN" ]] ; then
-      ADD_OPTS="$ADD_OPTS -DENABLE_ASAN=$ENABLE_ASAN"
+      ADD_OPTS="$ADD_OPTS -DENABLE_ASAN=$ENABLE_ASAN -DCMAKE_BUILD_TYPE=Debug"
       export ASAN_OPTIONS=verbosity=2
     fi
   - |
     if [[ -n "$ENABLE_UBSAN" ]] ; then
-      ADD_OPTS="$ADD_OPTS -DENABLE_UBSAN=$ENABLE_UBSAN"
+      ADD_OPTS="$ADD_OPTS -DENABLE_UBSAN=$ENABLE_UBSAN -DCMAKE_BUILD_TYPE=Debug"
     fi
   - cmake $ADD_OPTS ..
   - make
