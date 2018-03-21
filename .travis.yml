@@ -30,6 +30,16 @@ matrix:
             - g++-6
             - libgtest-dev
       env: MYCC=gcc-6 MYCXX=g++-6
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+            - libgtest-dev
+            - lcov
+      env: MYCC=gcc-6 MYCXX=g++-6 CODE_COVERAGE=on
     - compiler: clang
       addons:
         apt:
@@ -199,8 +209,19 @@ script:
       ADD_OPTS="$ADD_OPTS -DENABLE_UBSAN=$ENABLE_UBSAN"
       BUILD_TYPE=Debug
     fi
+  - |
+    if [[ -n "$CODE_COVERAGE" ]] ; then
+      ADD_OPTS="$ADD_OPTS -DCMAKE_CXX_FLAGS='-fprofile-arcs -ftest-coverage'"
+      BUILD_TYPE=Debug
+    fi
   - ADD_OPTS="$ADD_OPTS -DCMAKE_BUILD_TYPE=$BUILD_TYPE"
   - cmake $ADD_OPTS ..
   - make
   - if [[ "$MYCC" != *mingw* ]] ; then make runtest; fi
-
+  - |
+    if [[ -n "$CODE_COVERAGE" ]] ; then
+      lcov -d . -c -o coverage.info                      # parse coverage data
+      lcov -r coverage.info "/usr*" -o coverage.info     # remove data for system headers
+      lcov -l coverage.info                              # just list a short summary of the results
+      bash <(curl -s https://codecov.io/bash)
+    fi
