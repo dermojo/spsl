@@ -89,6 +89,13 @@ if(ENABLE_UBSAN)
     set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fsanitize=undefined")
 endif()
 
+option(ENABLE_COVERAGE "Enable code coverage flags" OFF)
+
+if(ENABLE_COVERAGE)
+    set(CMAKE_CXX_FLAGS    "${CMAKE_CXX_FLAGS}    -fprofile-arcs -ftest-coverage")
+    set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+endif()
+
 # use this to enable C++17 tests (esp. string_view) with GCC/Clang
 # (but comment the CXX_STANDARD* settings above)
 #target_compile_options(testlib PUBLIC -std=c++1z)

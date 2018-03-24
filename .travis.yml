@@ -211,7 +211,7 @@ script:
     fi
   - |
     if [[ -n "$CODE_COVERAGE" ]] ; then
-      ADD_OPTS="$ADD_OPTS -DCMAKE_CXX_FLAGS='-fprofile-arcs -ftest-coverage'"
+      ADD_OPTS="$ADD_OPTS -DENABLE_COVERAGE=$CODE_COVERAGE"
       BUILD_TYPE=Debug
     fi
   - ADD_OPTS="$ADD_OPTS -DCMAKE_BUILD_TYPE=$BUILD_TYPE"
