@@ -1,27 +1,27 @@
 # Windows Build Configuration for AppVeyor
 
-environment:
-  matrix:
-    - msvc: '"Visual Studio 12 2013"'
-      buildcfg: Release
-    - msvc: '"Visual Studio 14 2015"'
-      buildcfg: Release
+image:
+- Visual Studio 2013
+- Visual Studio 2015
+- Visual Studio 2017
 
 
 build_script:
+  - set buildcfg=Release
+  - set gtestargs=-DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
   - appveyor DownloadFile https://github.com/google/googletest/archive/release-1.8.0.zip -FileName googletest-release-1.8.0.zip
   - 7z x googletest-release-1.8.0.zip > NUL
   - cd googletest-release-1.8.0
   - md build
   - cd build
-  - cmake -G %msvc% -Dgtest_force_shared_crt=ON ..\googletest
+  - cmake -Dgtest_force_shared_crt=ON %gtestargs% ..\googletest
   - cmake --build . --config %buildcfg%
   - cd ..
   - cd ..
   - md build
   - cd build
   - set GTEST=%APPVEYOR_BUILD_FOLDER%\googletest-release-1.8.0
-  - cmake -G %msvc% -DGTEST_LIBRARY=%GTEST%\build\%buildcfg%\gtest.lib -DGTEST_MAIN_LIBRARY=%GTEST%\build\%buildcfg%\gtest_main.lib -DGTEST_INCLUDE_DIR=%GTEST%\googletest\include ..
+  - cmake -DGTEST_LIBRARY=%GTEST%\build\%buildcfg%\gtest.lib -DGTEST_MAIN_LIBRARY=%GTEST%\build\%buildcfg%\gtest_main.lib -DGTEST_INCLUDE_DIR=%GTEST%\googletest\include ..
   - cmake --build . --config %buildcfg%
 
 test_script:

@@ -30,6 +30,16 @@ matrix:
             - g++-6
             - libgtest-dev
       env: MYCC=gcc-6 MYCXX=g++-6
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+            - libgtest-dev
+            - lcov
+      env: MYCC=gcc-6 MYCXX=g++-6 CODE_COVERAGE=on
     - compiler: clang
       addons:
         apt:
@@ -60,6 +70,38 @@ matrix:
             - clang-4.0
             - libgtest-dev
       env: MYCC=clang-4.0 MYCXX=clang++-4.0
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+            - libgtest-dev
+      env: MYCC=clang-5.0 MYCXX=clang++-5.0
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+            - libgtest-dev
+      env: MYCC=clang-5.0 MYCXX=clang++-5.0 ENABLE_ASAN=on
+      # workaround for missing PTRACE capability, see https://github.com/travis-ci/travis-ci/issues/8836
+      sudo: required
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+            - libgtest-dev
+      env: MYCC=clang-5.0 MYCXX=clang++-5.0 ENABLE_UBSAN=on
     - compiler: gcc
       addons:
         apt:
@@ -147,6 +189,7 @@ before_script:
 script:
   - mkdir build
   - cd build
+  - BUILD_TYPE=Release
   - |
     if [[ "$MYCC" == *mingw* ]] ; then
       ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake"
@@ -156,7 +199,29 @@ script:
   - ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest.a"
   - ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest_main.a"
   - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest"
+  - |
+    if [[ -n "$ENABLE_ASAN" ]] ; then
+      ADD_OPTS="$ADD_OPTS -DENABLE_ASAN=$ENABLE_ASAN"
+      BUILD_TYPE=Debug
+    fi
+  - |
+    if [[ -n "$ENABLE_UBSAN" ]] ; then
+      ADD_OPTS="$ADD_OPTS -DENABLE_UBSAN=$ENABLE_UBSAN"
+      BUILD_TYPE=Debug
+    fi
+  - |
+    if [[ -n "$CODE_COVERAGE" ]] ; then
+      ADD_OPTS="$ADD_OPTS -DENABLE_COVERAGE=$CODE_COVERAGE"
+      BUILD_TYPE=Debug
+    fi
+  - ADD_OPTS="$ADD_OPTS -DCMAKE_BUILD_TYPE=$BUILD_TYPE"
   - cmake $ADD_OPTS ..
   - make
   - if [[ "$MYCC" != *mingw* ]] ; then make runtest; fi
-
+  - |
+    if [[ -n "$CODE_COVERAGE" ]] ; then
+      lcov -d . -c -o coverage.info                      # parse coverage data
+      lcov -r coverage.info "/usr*" -o coverage.info     # remove data for system headers
+      lcov -l coverage.info                              # just list a short summary of the results
+      bash <(curl -s https://codecov.io/bash)
+    fi
