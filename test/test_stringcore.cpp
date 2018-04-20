@@ -927,9 +927,13 @@ TYPED_TEST(StringCoreTest, ComparisonFunctions)
     ASSERT_EQ(s.compare(0, s.size(), ref.c_str()), 0);
     ASSERT_LT(s.compare(0, s.size() - 1, ref.c_str()), 0);
     if (s[0] > s[1])
+    {
         ASSERT_LT(s.compare(1, s.size(), ref.c_str()), 0);
+    }
     else if (s[0] < s[1])
+    {
         ASSERT_GT(s.compare(1, s.size(), ref.c_str()), 0);
+    }
     ASSERT_EQ(s.compare(1, s.size() - 1, ref.c_str() + 1), 0);
     ref.pop_back();
     ASSERT_GT(s.compare(0, s.size(), ref.c_str()), 0);
@@ -942,9 +946,13 @@ TYPED_TEST(StringCoreTest, ComparisonFunctions)
     ASSERT_GT(s.compare(0, s.size() - 2, ref.c_str(), ref.size() - 3), 0);
     ASSERT_LT(s.compare(0, s.size() - 1, ref.c_str(), ref.size()), 0);
     if (s[0] > s[1])
+    {
         ASSERT_LT(s.compare(1, s.size(), ref.c_str(), ref.size()), 0);
+    }
     else if (s[0] < s[1])
+    {
         ASSERT_GT(s.compare(1, s.size(), ref.c_str(), ref.size()), 0);
+    }
     ASSERT_EQ(s.compare(1, s.size() - 1, ref.c_str() + 1, ref.size() - 1), 0);
     ref.pop_back();
     ASSERT_GT(s.compare(0, s.size(), ref.c_str(), ref.size()), 0);
@@ -968,9 +976,13 @@ TYPED_TEST(StringCoreTest, ComparisonFunctions)
     ASSERT_EQ(s.compare(0, s.size(), ref), 0);
     ASSERT_LT(s.compare(0, s.size() - 1, ref), 0);
     if (s[0] > s[1])
+    {
         ASSERT_LT(s.compare(1, s.size(), ref), 0);
+    }
     else if (s[0] < s[1])
+    {
         ASSERT_GT(s.compare(1, s.size(), ref), 0);
+    }
     auto ref2 = ref.substr(1);
     ASSERT_EQ(s.compare(1, s.size() - 1, ref2), 0);
     ref.pop_back();

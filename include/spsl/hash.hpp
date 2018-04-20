@@ -167,10 +167,10 @@ inline void MurmurHash3_x86_32(const uint8_t* data, const uint32_t len, uint32_t
     {
     case 3:
         k1 ^= static_cast<uint32_t>(tail[2] << 16);
-    /* no break */
+    /* fallthrough */
     case 2:
         k1 ^= static_cast<uint32_t>(tail[1] << 8);
-    /* no break */
+    /* fallthrough */
     case 1:
         k1 ^= tail[0];
         k1 *= c1;
@@ -241,51 +241,51 @@ inline void MurmurHash3_x64_128(const uint8_t* data, const std::size_t len, cons
     {
     case 15:
         k2 ^= (static_cast<uint64_t>(tail[14])) << 48;
-    /* no break */
+    /* fallthrough */
     case 14:
         k2 ^= (static_cast<uint64_t>(tail[13])) << 40;
-    /* no break */
+    /* fallthrough */
     case 13:
         k2 ^= (static_cast<uint64_t>(tail[12])) << 32;
-    /* no break */
+    /* fallthrough */
     case 12:
         k2 ^= (static_cast<uint64_t>(tail[11])) << 24;
-    /* no break */
+    /* fallthrough */
     case 11:
         k2 ^= (static_cast<uint64_t>(tail[10])) << 16;
-    /* no break */
+    /* fallthrough */
     case 10:
         k2 ^= (static_cast<uint64_t>(tail[9])) << 8;
-    /* no break */
+    /* fallthrough */
     case 9:
         k2 ^= (static_cast<uint64_t>(tail[8])) << 0;
         k2 *= c2;
         k2 = SPSL_ROTL64(k2, 33);
         k2 *= c1;
         h2 ^= k2;
-    /* no break */
+    /* fallthrough */
 
     case 8:
         k1 ^= (static_cast<uint64_t>(tail[7])) << 56;
-    /* no break */
+    /* fallthrough */
     case 7:
         k1 ^= (static_cast<uint64_t>(tail[6])) << 48;
-    /* no break */
+    /* fallthrough */
     case 6:
         k1 ^= (static_cast<uint64_t>(tail[5])) << 40;
-    /* no break */
+    /* fallthrough */
     case 5:
         k1 ^= (static_cast<uint64_t>(tail[4])) << 32;
-    /* no break */
+    /* fallthrough */
     case 4:
         k1 ^= (static_cast<uint64_t>(tail[3])) << 24;
-    /* no break */
+    /* fallthrough */
     case 3:
         k1 ^= (static_cast<uint64_t>(tail[2])) << 16;
-    /* no break */
+    /* fallthrough */
     case 2:
         k1 ^= (static_cast<uint64_t>(tail[1])) << 8;
-    /* no break */
+    /* fallthrough */
     case 1:
         k1 ^= (static_cast<uint64_t>(tail[0])) << 0;
         k1 *= c1;
