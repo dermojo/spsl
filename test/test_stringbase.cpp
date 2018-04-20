@@ -438,7 +438,7 @@ TYPED_TEST(StringBaseTest, EraseFunctions)
         ASSERT_EQ(refResult, ref.begin());
 
         sResult = s.erase(s.cbegin() + 4);
-        refResult = ref.erase(ref.cbegin() + 4);
+        refResult = ref.erase(ref.begin() + 4);
         ASSERT_EQ(s, ref);
         ASSERT_EQ(sResult, s.begin() + 4);
         ASSERT_EQ(refResult, ref.begin() + 4);
