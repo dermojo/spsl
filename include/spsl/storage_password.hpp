@@ -280,16 +280,15 @@ public:
     }
 
 
-    void erase(size_type index, size_type count)
+    void erase(size_type index, size_type count) noexcept
     {
         // move all following characters here
         const size_type n = size() - index - count;
         traits_type::move(data() + index, data() + index + count, n);
 
-        // wipe the rest
-        _wipe(index + count, n);
-
         _l.m_length -= count;
+        // wipe the rest
+        _wipe(_l.m_length, n);
     }
 
 

@@ -397,6 +397,72 @@ TYPED_TEST(StringBaseTest, FindLastNotOfFunctions)
     ASSERT_EQ(s.find_last_not_of(chars1, s.size() + 2048), 11);
 }
 
+/* erase functions */
+TYPED_TEST(StringBaseTest, EraseFunctions)
+{
+    using StringType = TypeParam; // gtest specific
+    using StorageType = typename StringType::storage_type;
+    using CharType = typename StorageType::char_type;
+    const TestData<CharType> data{};
+    using RefType = std::basic_string<CharType>;
+
+    // by index
+    {
+        StringType s(data.hello_world);
+        RefType ref(data.hello_world);
+        s.erase(2, 3);
+        ref.erase(2, 3);
+        ASSERT_EQ(s, ref);
+
+        // need to disambiguate since our iterators are actually plain pointers
+        constexpr size_t pos = 0;
+        s.erase(pos);
+        ref.erase(0u);
+        ASSERT_EQ(s, ref);
+
+        // no-op
+        s.erase(s.length());
+        ASSERT_EQ(s, ref);
+
+        ASSERT_THROW(s.erase(s.length() + 1), std::out_of_range);
+    }
+
+    // single iterator
+    {
+        StringType s(data.hello_world);
+        RefType ref(data.hello_world);
+        auto sResult = s.erase(s.begin());
+        auto refResult = ref.erase(ref.begin());
+        ASSERT_EQ(s, ref);
+        ASSERT_EQ(sResult, s.begin());
+        ASSERT_EQ(refResult, ref.begin());
+
+        sResult = s.erase(s.cbegin() + 4);
+        refResult = ref.erase(ref.cbegin() + 4);
+        ASSERT_EQ(s, ref);
+        ASSERT_EQ(sResult, s.begin() + 4);
+        ASSERT_EQ(refResult, ref.begin() + 4);
+
+        ASSERT_THROW(s.erase(s.end() + 1), std::out_of_range);
+    }
+
+    // iterator range
+    {
+        StringType s(data.hello_world);
+        RefType ref(data.hello_world);
+        auto sResult = s.erase(s.begin() + 1, s.begin() + 3);
+        auto refResult = ref.erase(ref.begin() + 1, ref.begin() + 3);
+        ASSERT_EQ(s, ref);
+        ASSERT_EQ(sResult, s.begin() + 1);
+        ASSERT_EQ(refResult, ref.begin() + 1);
+
+        sResult = s.erase(s.begin(), s.end());
+        ASSERT_TRUE(s.empty());
+        ASSERT_EQ(sResult, s.begin());
+        ASSERT_EQ(sResult, s.end());
+    }
+}
+
 /*
  * The following class templates are a big workaround for std::initializer_list problems on
  * Windows / MSVC. Here, we cannot use an initializer_list declared somewhere else, because

@@ -760,3 +760,37 @@ TYPED_TEST(StorageArrayTest, ReplaceLengthErrorTests)
     ASSERT_EQ(arr.size(), ref.size());
     ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
 }
+
+/* erase function */
+TYPED_TEST(StorageArrayTest, EraseTests)
+{
+    using CharType = TypeParam; // gtest specific
+    using ArrayType = spsl::StorageArray<CharType, 64>;
+    using Traits = typename ArrayType::traits_type;
+    const TestData<CharType> data{};
+    using RefType = std::basic_string<CharType>;
+
+    // void erase(size_type index, size_type count)
+    ArrayType arr;
+    RefType ref;
+    arr.assign(data.hello_world, data.hello_world_len);
+    ref = data.hello_world;
+    ASSERT_EQ(arr.size(), ref.size());
+    ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+
+    arr.erase(0, 1);
+    ref.erase(0, 1);
+    ASSERT_EQ(arr.size(), ref.size());
+    ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+
+    arr.erase(5, 3);
+    ref.erase(5, 3);
+    ASSERT_EQ(arr.size(), ref.size());
+    ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+
+    arr.erase(0, arr.size());
+    ref.erase(0, ref.size());
+    ASSERT_EQ(arr.size(), ref.size());
+    ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+    ASSERT_TRUE(arr.empty());
+}

@@ -623,3 +623,37 @@ TYPED_TEST(StoragePasswordTest, CopyAndMoveTests)
     ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc1);
     ASSERT_EQ(string5.getAllocator().pageAllocator(), defaultAlloc);
 }
+
+/* erase function */
+TYPED_TEST(StoragePasswordTest, EraseTests)
+{
+    using CharType = TypeParam; // gtest specific
+    using StorageType = spsl::StoragePassword<CharType>;
+    using Traits = typename StorageType::traits_type;
+    const TestData<CharType> data{};
+    using RefType = std::basic_string<CharType>;
+
+    // void erase(size_type index, size_type count)
+    StorageType s;
+    RefType ref;
+    s.assign(data.hello_world, data.hello_world_len);
+    ref = data.hello_world;
+    ASSERT_EQ(s.size(), ref.size());
+    ASSERT_TRUE(Traits::compare(s.data(), ref.data(), ref.size()) == 0);
+
+    s.erase(0, 1);
+    ref.erase(0, 1);
+    ASSERT_EQ(s.size(), ref.size());
+    ASSERT_TRUE(Traits::compare(s.data(), ref.data(), ref.size()) == 0);
+
+    s.erase(5, 3);
+    ref.erase(5, 3);
+    ASSERT_EQ(s.size(), ref.size());
+    ASSERT_TRUE(Traits::compare(s.data(), ref.data(), ref.size()) == 0);
+
+    s.erase(0, s.size());
+    ref.erase(0, ref.size());
+    ASSERT_EQ(s.size(), ref.size());
+    ASSERT_TRUE(Traits::compare(s.data(), ref.data(), ref.size()) == 0);
+    ASSERT_TRUE(s.empty());
+}

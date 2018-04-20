@@ -248,16 +248,19 @@ public:
         if (position < cbegin() || position > cend())
             throw std::out_of_range("invalid iterator in erase()");
 
-        m_storage.erase(position - cbegin(), 1);
-        return position;
+        size_type pos = static_cast<size_type>(position - cbegin());
+        m_storage.erase(pos, 1);
+        return begin() + pos;
     }
     iterator erase(const_iterator first, const_iterator last)
     {
         if (first < cbegin() || last > cend() || first > last)
             throw std::out_of_range("invalid iterator(s) in erase()");
 
-        m_storage.erase(first - cbegin(), last - first);
-        return first;
+        size_type pos = static_cast<size_type>(first - cbegin());
+        size_type cnt = static_cast<size_type>(last - first);
+        m_storage.erase(pos, cnt);
+        return begin() + pos;
     }
 
 
