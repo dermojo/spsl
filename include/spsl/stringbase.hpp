@@ -49,38 +49,38 @@ public:
     using reverse_iterator = typename base_type::reverse_iterator;
 
     // "inherit" everything else as well
-    using base_type::npos;
-    using base_type::nul;
     using base_type::assign;
     using base_type::c_str;
     using base_type::data;
+    using base_type::npos;
+    using base_type::nul;
     using base_type::operator[];
+    using base_type::append;
     using base_type::at;
-    using base_type::front;
     using base_type::back;
     using base_type::begin;
+    using base_type::capacity;
     using base_type::cbegin;
-    using base_type::rbegin;
-    using base_type::crbegin;
-    using base_type::end;
     using base_type::cend;
-    using base_type::rend;
+    using base_type::clear;
+    using base_type::copy;
+    using base_type::crbegin;
     using base_type::crend;
     using base_type::empty;
-    using base_type::max_size;
-    using base_type::capacity;
+    using base_type::end;
+    using base_type::front;
     using base_type::length;
-    using base_type::size;
-    using base_type::reserve;
-    using base_type::shrink_to_fit;
-    using base_type::clear;
-    using base_type::push_back;
+    using base_type::max_size;
     using base_type::pop_back;
-    using base_type::substr;
-    using base_type::copy;
+    using base_type::push_back;
+    using base_type::rbegin;
+    using base_type::rend;
+    using base_type::reserve;
     using base_type::resize;
+    using base_type::shrink_to_fit;
+    using base_type::size;
+    using base_type::substr;
     using base_type::swap;
-    using base_type::append;
     using base_type::operator+=;
     using base_type::compare;
     using base_type::find;
@@ -107,9 +107,8 @@ public:
     explicit StringBase(const storage_type& storage) : base_type(storage) {}
 
     /// construct from another string-like container (may even be a vector...)
-    template <typename StringClass,
-              typename std::enable_if<
-                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass, typename std::enable_if<is_compatible_string<
+                                      char_type, size_type, StringClass>::value>::type* = nullptr>
     explicit StringBase(const StringClass& s) : base_type(s)
     {
     }
@@ -142,9 +141,8 @@ public:
     }
 
     /// allow assignment from another string-like container (may even be a vector...)
-    template <typename StringClass,
-              typename std::enable_if<
-                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass, typename std::enable_if<is_compatible_string<
+                                      char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& operator=(const StringClass& s)
     {
         assign(s.data(), s.size());
@@ -197,17 +195,15 @@ public:
         return *this;
     }
     // another string-like class
-    template <typename StringClass,
-              typename std::enable_if<
-                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass, typename std::enable_if<is_compatible_string<
+                                      char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& insert(size_type index, const StringClass& s)
     {
         return insert(index, s.data(), s.size());
     }
     // another string-like class with index and count
-    template <typename StringClass,
-              typename std::enable_if<
-                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass, typename std::enable_if<is_compatible_string<
+                                      char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& insert(size_type index, const StringClass& s, size_type index_str,
                       size_type count = npos)
     {
@@ -248,7 +244,7 @@ public:
         if (position < cbegin() || position > cend())
             throw std::out_of_range("invalid iterator in erase()");
 
-        size_type pos = static_cast<size_type>(position - cbegin());
+        auto pos = static_cast<size_type>(position - cbegin());
         m_storage.erase(pos, 1);
         return begin() + pos;
     }
@@ -257,8 +253,8 @@ public:
         if (first < cbegin() || last > cend() || first > last)
             throw std::out_of_range("invalid iterator(s) in erase()");
 
-        size_type pos = static_cast<size_type>(first - cbegin());
-        size_type cnt = static_cast<size_type>(last - first);
+        auto pos = static_cast<size_type>(first - cbegin());
+        auto cnt = static_cast<size_type>(last - first);
         m_storage.erase(pos, cnt);
         return begin() + pos;
     }
@@ -333,26 +329,23 @@ public:
                        ilist.begin(), ilist.size());
     }
 
-    template <typename StringClass,
-              typename std::enable_if<
-                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass, typename std::enable_if<is_compatible_string<
+                                      char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& replace(size_type pos, size_type count, const StringClass& s)
     {
         return replace(pos, count, s.data(), s.size());
     }
 
-    template <typename StringClass,
-              typename std::enable_if<
-                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass, typename std::enable_if<is_compatible_string<
+                                      char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& replace(const_iterator first, const_iterator last, const StringClass& s)
     {
         return replace(static_cast<size_type>(first - data()), static_cast<size_type>(last - first),
                        s.data(), s.size());
     }
 
-    template <typename StringClass,
-              typename std::enable_if<
-                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass, typename std::enable_if<is_compatible_string<
+                                      char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& replace(size_type pos, size_type count, const StringClass& s, size_type pos2,
                        size_type count2 = npos)
     {
@@ -389,9 +382,8 @@ public:
     {
         return find_first_of(s, pos, traits_type::length(s));
     }
-    template <typename StringClass,
-              typename std::enable_if<
-                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass, typename std::enable_if<is_compatible_string<
+                                      char_type, size_type, StringClass>::value>::type* = nullptr>
     size_type find_first_of(const StringClass& s, size_type pos = 0) const noexcept
     {
         return find_first_of(s.data(), pos, s.size());
@@ -428,9 +420,8 @@ public:
     {
         return find_first_not_of(s, pos, traits_type::length(s));
     }
-    template <typename StringClass,
-              typename std::enable_if<
-                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass, typename std::enable_if<is_compatible_string<
+                                      char_type, size_type, StringClass>::value>::type* = nullptr>
     size_type find_first_not_of(const StringClass& s, size_type pos = 0) const noexcept
     {
         return find_first_not_of(s.data(), pos, s.size());
@@ -466,9 +457,8 @@ public:
     {
         return find_last_of(s, pos, traits_type::length(s));
     }
-    template <typename StringClass,
-              typename std::enable_if<
-                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass, typename std::enable_if<is_compatible_string<
+                                      char_type, size_type, StringClass>::value>::type* = nullptr>
     size_type find_last_of(const StringClass& s, size_type pos = npos) const noexcept
     {
         return find_last_of(s.data(), pos, s.size());
@@ -519,9 +509,8 @@ public:
     {
         return find_last_not_of(s, pos, traits_type::length(s));
     }
-    template <typename StringClass,
-              typename std::enable_if<
-                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass, typename std::enable_if<is_compatible_string<
+                                      char_type, size_type, StringClass>::value>::type* = nullptr>
     size_type find_last_not_of(const StringClass& s, size_type pos = npos) const noexcept
     {
         return find_last_not_of(s.data(), pos, s.size());
@@ -573,6 +562,6 @@ struct hash<spsl::StringBase<StorageType>>
         return spsl::hash::hash_impl(s.data(), s.size() * sizeof(char_type));
     }
 };
-}
+} // namespace std
 
 #endif /* SPSL_STRINGBASE_HPP_ */
