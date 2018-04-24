@@ -218,14 +218,16 @@ public:
     iterator insert(const_iterator pos, char_type ch) { return insert(pos, 1, ch); }
     iterator insert(const_iterator pos, size_type count, char_type ch)
     {
-        m_storage.insert(pos - begin(), count, ch);
-        return pos;
+        const auto offset = static_cast<size_t>(pos - begin());
+        m_storage.insert(offset, count, ch);
+        return begin() + offset;
     }
     template <class InputIt, typename = checkInputIter<InputIt>>
     iterator insert(const_iterator pos, InputIt first, InputIt last)
     {
-        m_storage.insert(pos - begin(), first, last);
-        return pos;
+        const auto offset = static_cast<size_t>(pos - begin());
+        m_storage.insert(offset, first, last);
+        return begin() + offset;
     }
     iterator insert(const_iterator pos, std::initializer_list<char_type> ilist)
     {
