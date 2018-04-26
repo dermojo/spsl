@@ -460,6 +460,11 @@ TYPED_TEST(StringBaseTest, EraseFunctions)
         ASSERT_TRUE(s.empty());
         ASSERT_EQ(sResult, s.begin());
         ASSERT_EQ(sResult, s.end());
+
+        s.assign(data.hello_world, data.hello_world_len);
+        ASSERT_THROW(s.erase(s.end() + 1, s.end() + 2), std::out_of_range);
+        ASSERT_THROW(s.erase(s.begin() - 1, s.end()), std::out_of_range);
+        ASSERT_THROW(s.erase(s.end(), s.begin()), std::out_of_range);
     }
 }
 
@@ -611,6 +616,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         // exceptions
         // (1) invalid pos raises out_of_range
         ASSERT_THROW(s1.replace(s1.size(), s1.size() + 3, repl1), std::out_of_range);
+        ASSERT_THROW(s1.replace(s1.size() + 1, s1.size() + 3, repl1), std::out_of_range);
         // (2) in our class, an invalid count does the same
         ASSERT_THROW(s1.replace(0, s1.size() + 1, repl1), std::out_of_range);
     }
@@ -655,6 +661,12 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         ASSERT_TRUE(s1.empty());
         ASSERT_TRUE(s2.empty());
+
+        // exceptions
+        // (1) invalid 'first' raises out_of_range
+        ASSERT_THROW(s1.replace(s1.end() + 1, s1.end() + 2, repl1), std::out_of_range);
+        // (2) in our class, an invalid 'last' does the same
+        ASSERT_THROW(s1.replace(s1.begin(), s1.end() + 1, repl1), std::out_of_range);
     }
 
     // replace(size_type pos, size_type count, const this_type& str, size_type pos2, size_type

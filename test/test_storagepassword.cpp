@@ -208,6 +208,40 @@ TYPED_TEST(StoragePasswordTest, InsertTests)
         ASSERT_EQ(s[i], ch);
 }
 
+/* std::out_of_range when trying to insert past the end */
+TYPED_TEST(StoragePasswordTest, InsertRangeErrorTests)
+{
+    using CharType = TypeParam; // gtest specific
+    using StorageType = spsl::StoragePassword<CharType>;
+    const TestData<CharType> data{};
+
+    StorageType s;
+    const CharType ch = data.hello_world[0];
+    s.assign(3, ch);
+
+    // void insert(size_type index, size_type count, char_type ch)
+    ASSERT_THROW(s.insert(s.size() + 1, 100, ch), std::out_of_range);
+    // the content is unchanged
+    ASSERT_EQ(s.length(), 3);
+    for (size_t i = 0; i < s.length(); ++i)
+        ASSERT_EQ(s[i], ch);
+
+    // void insert(size_type index, const char_type* s, size_type n)
+    ASSERT_THROW(s.insert(s.size() + 1, data.hello_world, data.hello_world_len), std::out_of_range);
+    // the content is unchanged
+    ASSERT_EQ(s.length(), 3);
+    for (size_t i = 0; i < s.length(); ++i)
+        ASSERT_EQ(s[i], ch);
+
+    // void insert(size_type index, InputIt first, InputIt last)
+    const std::basic_string<CharType> ref(data.hello_world);
+    ASSERT_THROW(s.insert(s.size() + 1, ref.begin(), ref.end()), std::out_of_range);
+    // the content is unchanged
+    ASSERT_EQ(s.length(), 3);
+    for (size_t i = 0; i < s.length(); ++i)
+        ASSERT_EQ(s[i], ch);
+}
+
 /* append functions */
 TYPED_TEST(StoragePasswordTest, AppendTests)
 {

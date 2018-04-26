@@ -168,8 +168,8 @@ public:
                 is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& assign(const StringClass& s, size_type pos, size_type count = npos)
     {
-        if (pos >= s.size())
-            throw std::out_of_range("pos >= size()");
+        if (pos > s.size())
+            throw std::out_of_range("pos > size()");
         return assign(s.data() + pos, (count == npos ? s.size() - pos : count));
     }
 
@@ -304,8 +304,8 @@ public:
                 is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& append(const StringClass& s, size_type pos, size_type count = npos)
     {
-        if (pos >= s.size())
-            throw std::out_of_range("pos >= size()");
+        if (pos > s.size())
+            throw std::out_of_range("pos > size()");
         return append(s.data() + pos, (count == npos ? s.size() - pos : count));
     }
 

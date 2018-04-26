@@ -404,6 +404,14 @@ TYPED_TEST(StringCoreTest, AssignmentFunctions)
     ASSERT_EQ(s.size(), sub.size());
     ASSERT_TRUE(Traits::compare(s.c_str(), sub.data(), sub.size()) == 0);
     ASSERT_TRUE(s == sub);
+
+    // special case: empty range
+    s.assign(str, str.size(), StringType::npos);
+    ASSERT_EQ(s.size(), 0u);
+    ASSERT_TRUE(s.empty());
+
+    // throws if pos is out of range
+    ASSERT_THROW(s.assign(str, str.size() + 1), std::out_of_range);
 }
 
 
@@ -895,6 +903,16 @@ TYPED_TEST(StringCoreTest, AppendFunctions)
     ASSERT_TRUE(s1 == s2);
     ASSERT_EQ(s1.size(), s2.size());
     ASSERT_TRUE(Traits::compare(s1.c_str(), s2.c_str(), s1.size()) == 0);
+
+    // special case: empty range
+    s1.append(s2, s2.size(), StringType::npos);
+    // still the same content
+    ASSERT_TRUE(s1 == s2);
+    ASSERT_EQ(s1.size(), s2.size());
+    ASSERT_TRUE(Traits::compare(s1.c_str(), s2.c_str(), s1.size()) == 0);
+
+    // throws if pos is out of range
+    ASSERT_THROW(s1.append(s2, s2.size() + 1), std::out_of_range);
 }
 
 /* comparison functions */
@@ -1032,6 +1050,11 @@ TYPED_TEST(StringCoreTest, FindFunctions)
     ASSERT_EQ(s.find(world, 0, world_len), 6);
     ASSERT_EQ(s.find(world, 0, 1), 6);
     ASSERT_EQ(s.find(world, 7, world_len), npos);
+    // searching for an empty string finds the current position (if valid)
+    ASSERT_EQ(s.find(world, 0, 0), 0);
+    ASSERT_EQ(s.find(world, 3, 0), 3);
+    ASSERT_EQ(s.find(world, s.size(), 0), s.size());
+    ASSERT_EQ(s.find(world, s.size() + 1, 0), npos);
 
     // find: char_type, pos
     ASSERT_EQ(s.find(b, 0), npos);
@@ -1045,6 +1068,14 @@ TYPED_TEST(StringCoreTest, FindFunctions)
     ASSERT_EQ(s.find(world), 6);
     ASSERT_EQ(s.find(world, 0), 6);
     ASSERT_EQ(s.find(world, 7), npos);
+    // searching for an empty string finds the current position (if valid)
+    {
+        const CharType empty[1] = { StringType::nul };
+        ASSERT_EQ(s.find(empty, 0, 0), 0);
+        ASSERT_EQ(s.find(empty, 3, 0), 3);
+        ASSERT_EQ(s.find(empty, s.size(), 0), s.size());
+        ASSERT_EQ(s.find(empty, s.size() + 1, 0), npos);
+    }
 
     // find: String, pos
     const std::basic_string<CharType> ref(world);
@@ -1053,6 +1084,14 @@ TYPED_TEST(StringCoreTest, FindFunctions)
     ASSERT_EQ(s.find(ref), 6);
     ASSERT_EQ(s.find(ref, 0), 6);
     ASSERT_EQ(s.find(ref, 7), npos);
+    // searching for an empty string finds the current position (if valid)
+    {
+        const std::basic_string<CharType> empty;
+        ASSERT_EQ(s.find(empty), 0);
+        ASSERT_EQ(s.find(empty, 3), 3);
+        ASSERT_EQ(s.find(empty, s.size()), s.size());
+        ASSERT_EQ(s.find(empty, s.size() + 1), npos);
+    }
 
     // rfind: char_type*, pos, count
     ASSERT_EQ(s.rfind(s.data(), s.size() - 1, s.size()), 0);
