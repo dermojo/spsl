@@ -10,7 +10,6 @@
 
 #include <system_error>
 
-#define SPSL_HAS_NOEXCEPT
 #define SPSL_HAS_CONSTEXPR_ARRAY
 
 #ifdef _WIN32   // Windows
@@ -20,12 +19,6 @@
 #include <crtdefs.h>
 typedef intptr_t ssize_t;
 
-// noexcept and constexpr are supported since Visual Studio 2015
-#if _MSC_VER < 1900
-#define noexcept
-#define constexpr const
-#undef SPSL_HAS_NOEXCEPT
-#endif
 
 // can't use constexpr values in array definitions...
 #undef SPSL_HAS_CONSTEXPR_ARRAY

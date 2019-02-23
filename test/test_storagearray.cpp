@@ -29,10 +29,8 @@ TYPED_TEST(StorageArrayTest, StaticSize)
     using size_type = typename ArrayType::size_type;
 
     ASSERT_EQ(ArrayType::max_size(), 64u);
-#ifdef SPSL_HAS_NOEXCEPT
     static_assert(ArrayType::max_size() == 64,
                   "Size of StorageArray has to be available at compile time");
-#endif
 
     // and check the size requirements (there may be some padding, but max. 1 word)
     constexpr size_t minSize = sizeof(size_type) + sizeof(CharType) * (ArrayType::max_size() + 1);

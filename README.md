@@ -39,10 +39,15 @@ are for you.
 
 The SPSL itself only relies on the STL and has no dependencies. To compile the tests, you'll need:
 * [CMake](https://cmake.org/) 3.2 or higher
-* [GoogleTest](https://github.com/google/googletest) 1.8
+* [GoogleTest](https://github.com/google/googletest) (as [git submodule](https://git-scm.com/docs/git-submodule))
 
-Supported compilers (we'll, the ones I've tested) include GCC 4.9/5/6 and clang 3.8/3.9/4.0
-on Linux, Microsoft Visual Studio 2013 (Update 5) and Microsoft Visual Studio 2015.
+Supported compilers (we'll, the ones I've tested) include GCC 4.9+ and clang 3.8+
+on Linux and Microsoft Visual Studio 2015.
+
+Make sure to clone this repository with:
+```bash
+git clone --recurse-submodules https://github.com/dermojo/spsl.git
+```
 
 
 ## Running the tests
@@ -50,31 +55,15 @@ on Linux, Microsoft Visual Studio 2013 (Update 5) and Microsoft Visual Studio 20
 SPSL comes with a lot of unit tests. They are compiled into the `testlib` executable, which can
 be run standalone or from cmake/ctest.
 
-To build on Linux, simply run CMake and execute the tests:
+To build and run all tests, run the usual CMake commands:
 
 ```bash
 mkdir build
 cd build
 cmake ..
-cmake runtest    # or run ./testlib
+cmake --build .
+ctest -VV
 ```
-
-(Note: "runtest" is a custom build target. You can use the default `cmake test`, but I prefer
-more verbose output :-) .)
-
-For Windows, there is a helper batch script (`run_cmake.bat`) to run cmake with the appropriate
-options. You probably need to edit it to change the paths for GoogleTest. Then open a command prompt
-and execute (note: cmake needs to be in your PATH):
-
-```batch
-md build_msvc
-cd build_msvc
-..\cmake.bat
-```
-
-Now there should be a "spsl.sln" solution file that you can use to compile the tests with
-Visual Studio. When done, execute `RelWithDebInfo\testlib.exe` to run them.
-
 
 ## License
 
