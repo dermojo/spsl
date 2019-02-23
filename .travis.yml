@@ -77,10 +77,19 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-5.0
+            - llvm-toolchain-trusty-6.0
           packages:
-            - clang-5.0
-      env: MYCC=clang-5.0 MYCXX=clang++-5.0 ENABLE_ASAN=on
+            - clang-6.0
+      env: MYCC=clang-6.0 MYCXX=clang++-6.0
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-6.0
+          packages:
+            - clang-6.0
+      env: MYCC=clang-6.0 MYCXX=clang++-6.0 ENABLE_ASAN=on
       # workaround for missing PTRACE capability, see https://github.com/travis-ci/travis-ci/issues/8836
       sudo: required
     - compiler: clang
@@ -88,10 +97,10 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-5.0
+            - llvm-toolchain-trusty-6.0
           packages:
-            - clang-5.0
-      env: MYCC=clang-5.0 MYCXX=clang++-5.0 ENABLE_UBSAN=on
+            - clang-6.0
+      env: MYCC=clang-6.0 MYCXX=clang++-6.0 ENABLE_UBSAN=on
     - compiler: gcc
       addons:
         apt:
@@ -105,15 +114,15 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-4.0
+            - llvm-toolchain-trusty-6.0
           packages:
-            - clang-format-4.0
-            - clang-4.0
+            - clang-format-6.0
+            - clang-6.0
       script:
         - mkdir build
         - cd build
-        - ADD_OPTS="-DCMAKE_C_COMPILER=clang-4.0 -DCMAKE_CXX_COMPILER=clang++-4.0"
-        - ADD_OPTS="$ADD_OPTS -DCLANG_FORMAT=/usr/bin/clang-format-4.0"
+        - ADD_OPTS="-DCMAKE_C_COMPILER=clang-6.0 -DCMAKE_CXX_COMPILER=clang++-6.0"
+        - ADD_OPTS="$ADD_OPTS -DCLANG_FORMAT=/usr/bin/clang-format-6.0"
         - cmake $ADD_OPTS ..
         - make format
         - |
@@ -130,14 +139,14 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-4.0
+            - llvm-toolchain-trusty-6.0
           packages:
-            - clang-tidy-4.0
-            - clang-4.0
+            - clang-tidy-6.0
+            - clang-6.0
       script:
         - mkdir build
         - cd build
-        - ADD_OPTS="-DCMAKE_C_COMPILER=clang-4.0 -DCMAKE_CXX_COMPILER=clang++-4.0"
+        - ADD_OPTS="-DCMAKE_C_COMPILER=clang-6.0 -DCMAKE_CXX_COMPILER=clang++-6.0"
         - cmake $ADD_OPTS ..
         - make tidy >output.txt
         - |

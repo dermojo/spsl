@@ -110,7 +110,7 @@ list(APPEND CLANG_FORMAT_ARGS
 )
 
 if(NOT DEFINED CLANG_FORMAT)
-    set(CLANG_FORMAT clang-format-4.0)
+    set(CLANG_FORMAT clang-format-6.0)
 endif()
 add_custom_target(
     format
@@ -123,7 +123,7 @@ add_custom_target(
 #  everything)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if(NOT DEFINED CLANG_TIDY)
-    set(CLANG_TIDY clang-tidy-4.0)
+    set(CLANG_TIDY clang-tidy-6.0)
 endif()
 list(APPEND CLANG_TIDY_ARGS
     -p .
