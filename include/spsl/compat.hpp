@@ -165,7 +165,7 @@ inline void* allocatePageAligned(std::size_t pageSize, std::size_t n)
  */
 inline void deallocatePageAligned(void* addr)
 {
-    free(addr);
+    free(addr); // NOLINT
 }
 
 /**
