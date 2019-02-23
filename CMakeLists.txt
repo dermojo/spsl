@@ -17,6 +17,7 @@ if (WIN32)
     set(gtest_force_shared_crt ON CACHE BOOL "" force)
 endif()
 add_subdirectory(extern/googletest)
+enable_testing()
 
 #
 # Build targets
@@ -71,7 +72,8 @@ else()
                                           -Wconversion -Wsign-conversion -Wno-conversion-null
                                           -Wcast-align)
     # These are enabled on Clang and don't help...
-    target_compile_options(testlib PUBLIC -Wno-missing-braces)
+    target_compile_options(testlib PUBLIC -Wno-missing-braces
+                                          -Wno-gnu-zero-variadic-macro-arguments)
     target_link_libraries(testlib pthread)
 endif()
 

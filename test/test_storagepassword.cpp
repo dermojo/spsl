@@ -48,7 +48,7 @@ class StoragePasswordTest : public ::testing::Test
 using CharTypes = testing::Types<char, wchar_t>;
 
 
-TYPED_TEST_CASE(StoragePasswordTest, CharTypes);
+TYPED_TEST_SUITE(StoragePasswordTest, CharTypes);
 
 /* constructor tests */
 TYPED_TEST(StoragePasswordTest, ConstructorTests)

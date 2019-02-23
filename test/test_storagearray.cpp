@@ -19,7 +19,7 @@ class StorageArrayTest : public ::testing::Test
 using CharTypes = testing::Types<char, wchar_t>;
 
 
-TYPED_TEST_CASE(StorageArrayTest, CharTypes);
+TYPED_TEST_SUITE(StorageArrayTest, CharTypes);
 
 /* check if size is checkable on type at run/compile time */
 TYPED_TEST(StorageArrayTest, StaticSize)

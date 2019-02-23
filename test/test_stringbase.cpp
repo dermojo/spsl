@@ -30,7 +30,7 @@ using SpecificTypes = testing::Types<
   spsl::ArrayStringW<128, spsl::policy::overflow::Throw>>;
 
 
-TYPED_TEST_CASE(StringBaseTest, SpecificTypes);
+TYPED_TEST_SUITE(StringBaseTest, SpecificTypes);
 
 
 /* find_first_of functions */

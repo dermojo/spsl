@@ -44,10 +44,16 @@ struct TestData<char>
 
     std::initializer_list<char> initializerList() const
     {
-        return { 'T', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', 'n', ' ', 'a', 's',
-                 's', 'i', 'g', 'n', 'm', 'e', 'n', 't', ' ', 't', 'e', 's', 't' };
+        static const std::initializer_list<char> list{ 'T', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a',
+                                                       'n', ' ', 'a', 's', 's', 'i', 'g', 'n', 'm',
+                                                       'e', 'n', 't', ' ', 't', 'e', 's', 't' };
+        return list;
     }
-    std::initializer_list<char> initializerList2() const { return { 'T', 'e', 's', 't' }; }
+    std::initializer_list<char> initializerList2() const
+    {
+        static const std::initializer_list<char> list{ 'T', 'e', 's', 't' };
+        return list;
+    }
 };
 
 template <>
@@ -69,10 +75,17 @@ struct TestData<wchar_t>
 
     std::initializer_list<wchar_t> initializerList() const
     {
-        return { L'T', L'h', L'i', L's', L' ', L'i', L's', L' ', L'a', L'n', L' ', L'a', L's',
-                 L's', L'i', L'g', L'n', L'm', L'e', L'n', L't', L' ', L't', L'e', L's', L't' };
+        static const std::initializer_list<wchar_t> list{ L'T', L'h', L'i', L's', L' ', L'i', L's',
+                                                          L' ', L'a', L'n', L' ', L'a', L's', L's',
+                                                          L'i', L'g', L'n', L'm', L'e', L'n', L't',
+                                                          L' ', L't', L'e', L's', L't' };
+        return list;
     }
-    std::initializer_list<wchar_t> initializerList2() const { return { L'T', L'e', L's', L't' }; }
+    std::initializer_list<wchar_t> initializerList2() const
+    {
+        static const std::initializer_list<wchar_t> list{ L'T', L'e', L's', L't' };
+        return list;
+    }
 };
 
 #endif /* TESTDATA_HPP_ */

@@ -34,7 +34,7 @@ using SpecificTypes = testing::Types<
   spsl::PasswordStringW>;
 
 
-TYPED_TEST_CASE(StringCoreTest, SpecificTypes);
+TYPED_TEST_SUITE(StringCoreTest, SpecificTypes);
 
 
 /* check constructor availability */
