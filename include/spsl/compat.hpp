@@ -123,8 +123,8 @@ inline void unlockMemory(void* addr, std::size_t len, std::error_code* ec = null
             throw std::system_error(err);
     }
 }
-}
-}
+} // namespace os
+} // namespace spsl
 
 #else // Linux
 
@@ -262,8 +262,8 @@ inline void unlockMemory(void* addr, std::size_t len, std::error_code* ec = null
             throw std::system_error(err);
     }
 }
-}
-}
+} // namespace os
+} // namespace spsl
 
 #endif
 

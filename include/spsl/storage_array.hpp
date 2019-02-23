@@ -327,6 +327,6 @@ protected:
     /// the underlying buffer: an array that can hold MaxSize characters (+ terminating NUL)
     std::array<char_type, MaxSize + 1> m_buffer;
 };
-}
+} // namespace spsl
 
 #endif /* SPSL_STORAGE_ARRAY_HPP_ */

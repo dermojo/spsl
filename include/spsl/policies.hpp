@@ -116,9 +116,9 @@ struct Throw
         return n;
     }
 };
-}
-}
-}
+} // namespace overflow
+} // namespace policy
+} // namespace spsl
 
 
 #endif /* SPSL_POLICIES_HPP_ */

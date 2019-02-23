@@ -52,7 +52,7 @@ using ArrayStringW = StringBase<StorageArray<wchar_t, MaxSize, OverflowPolicy>>;
  */
 using PasswordString = StringCore<StoragePassword<char>>;
 using PasswordStringW = StringCore<StoragePassword<wchar_t>>;
-}
+} // namespace spsl
 
 
 #endif /* SPSL_SPSL_HPP_ */

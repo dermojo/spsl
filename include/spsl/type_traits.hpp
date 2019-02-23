@@ -81,16 +81,15 @@ public:
  */
 template <typename CharType, typename SizeType, typename Class>
 struct is_compatible_string
-  : public std::integral_constant<
-      bool, has_data<CharType, Class>::value && has_size<SizeType, Class>::value>
+  : public std::integral_constant<bool, has_data<CharType, Class>::value &&
+                                          has_size<SizeType, Class>::value>
 {
 };
 
 template <typename MyString, typename Class>
 struct is_compatible_string2
-  : public std::integral_constant<bool,
-                                  has_data<typename MyString::char_type, Class>::value &&
-                                    has_size<typename MyString::size_type, Class>::value>
+  : public std::integral_constant<bool, has_data<typename MyString::char_type, Class>::value &&
+                                          has_size<typename MyString::size_type, Class>::value>
 {
 };
 
@@ -100,6 +99,6 @@ struct is_compatible_string2
 template <typename Iter>
 using checkInputIter = typename std::enable_if<std::is_convertible<
   typename std::iterator_traits<Iter>::iterator_category, std::input_iterator_tag>::value>::type;
-}
+} // namespace spsl
 
 #endif /* SPSL_TYPE_TRAITS_HPP_ */

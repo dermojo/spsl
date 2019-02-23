@@ -263,7 +263,7 @@ inline void MurmurHash3_x64_128(const uint8_t* data, const std::size_t len, cons
         k2 = SPSL_ROTL64(k2, 33);
         k2 *= c1;
         h2 ^= k2;
-    /* fallthrough */
+        /* fallthrough */
 
     case 8:
         k1 ^= (static_cast<uint64_t>(tail[7])) << 56;
@@ -314,7 +314,7 @@ inline void MurmurHash3_x64_128(const uint8_t* data, const std::size_t len, cons
 }
 
 //-----------------------------------------------------------------------------
-}
+} // namespace murmurhash3
 
 using std::size_t;
 
@@ -367,8 +367,8 @@ inline std::size_t hash_impl(const void* buffer, size_t len, uint32_t seed = 0)
 {
     return hash_impl<sizeof(size_t) * 8>(buffer, len, seed);
 }
-}
-}
+} // namespace hash
+} // namespace spsl
 
 
 #endif /* SPSL_HASH_HPP_ */
