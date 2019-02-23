@@ -28,7 +28,7 @@ TYPED_TEST(StorageArrayTest, StaticSize)
     using ArrayType = spsl::StorageArray<CharType, 64>;
     using size_type = typename ArrayType::size_type;
 
-    ASSERT_EQ(ArrayType::max_size(), 64);
+    ASSERT_EQ(ArrayType::max_size(), 64u);
 #ifdef SPSL_HAS_NOEXCEPT
     static_assert(ArrayType::max_size() == 64,
                   "Size of StorageArray has to be available at compile time");
@@ -56,11 +56,11 @@ TYPED_TEST(StorageArrayTest, ConstructorTests)
     const CharType nul = ArrayType::nul;
 
     const ArrayType s1;
-    ASSERT_EQ(s1.capacity(), 64);
-    ASSERT_EQ(s1.max_size(), 64);
+    ASSERT_EQ(s1.capacity(), 64u);
+    ASSERT_EQ(s1.max_size(), 64u);
 
     ASSERT_TRUE(s1.empty());
-    ASSERT_EQ(s1.length(), 0);
+    ASSERT_EQ(s1.length(), 0u);
     ASSERT_EQ(s1.length(), s1.size());
     ASSERT_EQ(s1.capacity_left(), s1.max_size());
     // valid content?
@@ -96,7 +96,7 @@ TYPED_TEST(StorageArrayTest, AssignmentTests)
     // assign a repeated character
     const CharType ch = data.hello_world[0];
     arr.assign(33, ch);
-    ASSERT_EQ(arr.length(), 33);
+    ASSERT_EQ(arr.length(), 33u);
     for (size_t i = 0; i < 33; ++i)
     {
         ASSERT_EQ(arr[i], ch);
@@ -136,7 +136,7 @@ TYPED_TEST(StorageArrayTest, PushPopTests)
         arr.pop_back();
         ASSERT_EQ(arr.length(), data.hello_world_len - i - 1);
     }
-    ASSERT_EQ(arr.length(), 0);
+    ASSERT_EQ(arr.length(), 0u);
     ASSERT_TRUE(arr.empty());
 }
 
@@ -152,14 +152,14 @@ TYPED_TEST(StorageArrayTest, InsertTests)
     ArrayType arr;
     const CharType ch = data.hello_world[0];
     arr.insert(0, 5, ch);
-    ASSERT_EQ(arr.length(), 5);
+    ASSERT_EQ(arr.length(), 5u);
     for (size_t i = 0; i < 5; ++i)
         ASSERT_EQ(arr[i], ch);
 
     // insert again at the beginning
     const CharType ch2 = data.hello_world[1];
     arr.insert(0, 5, ch2);
-    ASSERT_EQ(arr.length(), 10);
+    ASSERT_EQ(arr.length(), 10u);
     for (size_t i = 0; i < 5; ++i)
         ASSERT_EQ(arr[i], ch2);
     for (size_t i = 5; i < 10; ++i)
@@ -168,7 +168,7 @@ TYPED_TEST(StorageArrayTest, InsertTests)
     // insert in the middle
     const CharType ch3 = data.hello_world[2];
     arr.insert(5, 10, ch3);
-    ASSERT_EQ(arr.length(), 20);
+    ASSERT_EQ(arr.length(), 20u);
     for (size_t i = 0; i < 5; ++i)
         ASSERT_EQ(arr[i], ch2);
     for (size_t i = 5; i < 15; ++i)
@@ -267,17 +267,17 @@ TYPED_TEST(StorageArrayTest, SwapTests)
     arr1.assign(data.hello_world, data.hello_world_len);
     ASSERT_EQ(arr1.length(), data.hello_world_len);
     ASSERT_TRUE(Traits::compare(arr1.data(), data.hello_world, data.hello_world_len) == 0);
-    ASSERT_EQ(arr2.length(), 0);
+    ASSERT_EQ(arr2.length(), 0u);
     arr1.swap(arr2);
     ASSERT_EQ(arr2.length(), data.hello_world_len);
     ASSERT_TRUE(Traits::compare(arr2.data(), data.hello_world, data.hello_world_len) == 0);
-    ASSERT_EQ(arr1.length(), 0);
+    ASSERT_EQ(arr1.length(), 0u);
 
     // swap back
     arr1.swap(arr2);
     ASSERT_EQ(arr1.length(), data.hello_world_len);
     ASSERT_TRUE(Traits::compare(arr1.data(), data.hello_world, data.hello_world_len) == 0);
-    ASSERT_EQ(arr2.length(), 0);
+    ASSERT_EQ(arr2.length(), 0u);
 
     // now swap 2 non-empty strings
     arr1.assign(data.hello_world, data.hello_world_len);
@@ -304,38 +304,38 @@ TYPED_TEST(StorageArrayTest, ResizeTests)
     // we'll stay within max_size() here
     ArrayType arr;
     // empty
-    ASSERT_EQ(arr.size(), 0);
-    ASSERT_EQ(arr.length(), 0);
-    ASSERT_EQ(arr.max_size(), 64);
-    ASSERT_EQ(arr.capacity_left(), 64);
+    ASSERT_EQ(arr.size(), 0u);
+    ASSERT_EQ(arr.length(), 0u);
+    ASSERT_EQ(arr.max_size(), 64u);
+    ASSERT_EQ(arr.capacity_left(), 64u);
     const CharType ch = data.hello_world[0];
 
     // resize + 10 characters
     arr.resize(10, ch);
-    ASSERT_EQ(arr.size(), 10);
-    ASSERT_EQ(arr.length(), 10);
-    ASSERT_EQ(arr.max_size(), 64);
-    ASSERT_EQ(arr.capacity_left(), 54);
+    ASSERT_EQ(arr.size(), 10u);
+    ASSERT_EQ(arr.length(), 10u);
+    ASSERT_EQ(arr.max_size(), 64u);
+    ASSERT_EQ(arr.capacity_left(), 54u);
     for (size_t i = 0; i < 10; ++i)
         ASSERT_EQ(arr[i], ch);
     ASSERT_EQ(arr[10], nul);
 
     // again + 10 characters
     arr.resize(20, ch);
-    ASSERT_EQ(arr.size(), 20);
-    ASSERT_EQ(arr.length(), 20);
-    ASSERT_EQ(arr.max_size(), 64);
-    ASSERT_EQ(arr.capacity_left(), 44);
+    ASSERT_EQ(arr.size(), 20u);
+    ASSERT_EQ(arr.length(), 20u);
+    ASSERT_EQ(arr.max_size(), 64u);
+    ASSERT_EQ(arr.capacity_left(), 44u);
     for (size_t i = 0; i < 20; ++i)
         ASSERT_EQ(arr[i], ch);
     ASSERT_EQ(arr[20], nul);
 
     // shrink 3 characters
     arr.resize(17, ch);
-    ASSERT_EQ(arr.size(), 17);
-    ASSERT_EQ(arr.length(), 17);
-    ASSERT_EQ(arr.max_size(), 64);
-    ASSERT_EQ(arr.capacity_left(), 47);
+    ASSERT_EQ(arr.size(), 17u);
+    ASSERT_EQ(arr.length(), 17u);
+    ASSERT_EQ(arr.max_size(), 64u);
+    ASSERT_EQ(arr.capacity_left(), 47u);
     for (size_t i = 0; i < 17; ++i)
         ASSERT_EQ(arr[i], ch);
     ASSERT_EQ(arr[17], nul);
@@ -363,7 +363,7 @@ TYPED_TEST(StorageArrayTest, AssignTruncationTests)
     ASSERT_NO_THROW(arr.assign(too_large, ch));
     ASSERT_EQ(arr.length(), arr.max_size());
     ASSERT_EQ(arr.size(), arr.max_size());
-    ASSERT_EQ(arr.capacity_left(), 0);
+    ASSERT_EQ(arr.capacity_left(), 0u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ch);
 
@@ -377,7 +377,7 @@ TYPED_TEST(StorageArrayTest, AssignTruncationTests)
     ASSERT_NO_THROW(arr.assign(ref.data(), ref.size()));
     ASSERT_EQ(arr.length(), arr.max_size());
     ASSERT_EQ(arr.size(), arr.max_size());
-    ASSERT_EQ(arr.capacity_left(), 0);
+    ASSERT_EQ(arr.capacity_left(), 0u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ref[i]);
 
@@ -388,7 +388,7 @@ TYPED_TEST(StorageArrayTest, AssignTruncationTests)
     ASSERT_NO_THROW(arr.assign(ref.begin(), ref.end()));
     ASSERT_EQ(arr.length(), arr.max_size());
     ASSERT_EQ(arr.size(), arr.max_size());
-    ASSERT_EQ(arr.capacity_left(), 0);
+    ASSERT_EQ(arr.capacity_left(), 0u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ref[i]);
 
@@ -400,7 +400,7 @@ TYPED_TEST(StorageArrayTest, AssignTruncationTests)
     }
     ASSERT_EQ(arr.length(), arr.max_size());
     ASSERT_EQ(arr.size(), arr.max_size());
-    ASSERT_EQ(arr.capacity_left(), 0);
+    ASSERT_EQ(arr.capacity_left(), 0u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ref[i]);
 }
@@ -422,14 +422,14 @@ TYPED_TEST(StorageArrayTest, AssignLengthErrorTests)
     ASSERT_GT(too_large, arr.max_size());
     ASSERT_THROW(arr.reserve(1000), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3);
+    ASSERT_EQ(arr.length(), 3u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ch);
 
     // I can't assign as much as I want
     ASSERT_THROW(arr.assign(too_large, ch), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3);
+    ASSERT_EQ(arr.length(), 3u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ch);
 
@@ -439,14 +439,14 @@ TYPED_TEST(StorageArrayTest, AssignLengthErrorTests)
         ref += data.hello_world;
     ASSERT_THROW(arr.assign(ref.data(), ref.size()), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3);
+    ASSERT_EQ(arr.length(), 3u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ch);
 
     // and again using an iterator
     ASSERT_THROW(arr.assign(ref.begin(), ref.end()), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3);
+    ASSERT_EQ(arr.length(), 3u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ch);
 
@@ -478,7 +478,7 @@ TYPED_TEST(StorageArrayTest, InsertTruncationTests)
     ASSERT_NO_THROW(arr.insert(0, 100, ch));
     ASSERT_EQ(arr.length(), arr.max_size());
     ASSERT_EQ(arr.size(), arr.max_size());
-    ASSERT_EQ(arr.capacity_left(), 0);
+    ASSERT_EQ(arr.capacity_left(), 0u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ch);
 
@@ -489,7 +489,7 @@ TYPED_TEST(StorageArrayTest, InsertTruncationTests)
     ASSERT_NO_THROW(arr.insert(arr.length(), data.hello_world, data.hello_world_len));
     ASSERT_EQ(arr.length(), arr.max_size());
     ASSERT_EQ(arr.size(), arr.max_size());
-    ASSERT_EQ(arr.capacity_left(), 0);
+    ASSERT_EQ(arr.capacity_left(), 0u);
     for (size_t i = 0; i < arr.length() - n; ++i)
         ASSERT_EQ(arr[i], ch);
     for (size_t i = 0; i < n; ++i)
@@ -502,7 +502,7 @@ TYPED_TEST(StorageArrayTest, InsertTruncationTests)
     ASSERT_NO_THROW(arr.insert(arr.length(), ref.begin(), ref.end()));
     ASSERT_EQ(arr.length(), arr.max_size());
     ASSERT_EQ(arr.size(), arr.max_size());
-    ASSERT_EQ(arr.capacity_left(), 0);
+    ASSERT_EQ(arr.capacity_left(), 0u);
     for (size_t i = 0; i < arr.length() - n; ++i)
         ASSERT_EQ(arr[i], ch);
     for (size_t i = 0; i < n; ++i)
@@ -524,7 +524,7 @@ TYPED_TEST(StorageArrayTest, InsertLengthErrorTests)
     // insert too many characters
     ASSERT_THROW(arr.insert(0, 100, ch), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3);
+    ASSERT_EQ(arr.length(), 3u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ch);
 
@@ -532,14 +532,14 @@ TYPED_TEST(StorageArrayTest, InsertLengthErrorTests)
     const std::basic_string<CharType> ref(arr.max_size(), ch);
     ASSERT_THROW(arr.insert(arr.length(), ref.data(), ref.size()), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3);
+    ASSERT_EQ(arr.length(), 3u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ch);
 
     // and again using an iterator
     ASSERT_THROW(arr.insert(arr.length(), ref.begin(), ref.end()), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3);
+    ASSERT_EQ(arr.length(), 3u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ch);
 }
@@ -558,7 +558,7 @@ TYPED_TEST(StorageArrayTest, InsertRangeErrorTests)
     // void insert(size_type index, size_type count, char_type ch)
     ASSERT_THROW(arr.insert(arr.size() + 1, 100, ch), std::out_of_range);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3);
+    ASSERT_EQ(arr.length(), 3u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ch);
 
@@ -566,7 +566,7 @@ TYPED_TEST(StorageArrayTest, InsertRangeErrorTests)
     ASSERT_THROW(arr.insert(arr.size() + 1, data.hello_world, data.hello_world_len),
                  std::out_of_range);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3);
+    ASSERT_EQ(arr.length(), 3u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ch);
 
@@ -574,7 +574,7 @@ TYPED_TEST(StorageArrayTest, InsertRangeErrorTests)
     const std::basic_string<CharType> ref(data.hello_world);
     ASSERT_THROW(arr.insert(arr.size() + 1, ref.begin(), ref.end()), std::out_of_range);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3);
+    ASSERT_EQ(arr.length(), 3u);
     for (size_t i = 0; i < arr.length(); ++i)
         ASSERT_EQ(arr[i], ch);
 }

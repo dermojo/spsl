@@ -58,11 +58,11 @@ TYPED_TEST(StoragePasswordTest, ConstructorTests)
     const CharType nul = StorageType::nul;
 
     const StorageType s1;
-    ASSERT_EQ(s1.capacity(), 0);
+    ASSERT_EQ(s1.capacity(), 0u);
     ASSERT_EQ(s1.max_size(), static_cast<size_t>(-1) / sizeof(CharType));
 
     ASSERT_TRUE(s1.empty());
-    ASSERT_EQ(s1.length(), 0);
+    ASSERT_EQ(s1.length(), 0u);
     ASSERT_EQ(s1.length(), s1.size());
     // valid content?
     ASSERT_NE(s1.data(), nullptr);
@@ -98,7 +98,7 @@ TYPED_TEST(StoragePasswordTest, AssignmentTests)
     // assign a repeated character
     const CharType ch = data.hello_world[0];
     s.assign(33, ch);
-    ASSERT_EQ(s.length(), 33);
+    ASSERT_EQ(s.length(), 33u);
     for (size_t i = 0; i < 33; ++i)
     {
         ASSERT_EQ(s[i], ch);
@@ -139,7 +139,7 @@ TYPED_TEST(StoragePasswordTest, PushPopTests)
         s.pop_back();
         ASSERT_EQ(s.length(), data.hello_world_len - i - 1);
     }
-    ASSERT_EQ(s.length(), 0);
+    ASSERT_EQ(s.length(), 0u);
     ASSERT_TRUE(s.empty());
 }
 
@@ -155,14 +155,14 @@ TYPED_TEST(StoragePasswordTest, InsertTests)
     StorageType s;
     const CharType ch = data.hello_world[0];
     s.insert(0, 5, ch);
-    ASSERT_EQ(s.length(), 5);
+    ASSERT_EQ(s.length(), 5u);
     for (size_t i = 0; i < 5; ++i)
         ASSERT_EQ(s[i], ch);
 
     // insert again at the beginning
     const CharType ch2 = data.hello_world[1];
     s.insert(0, 5, ch2);
-    ASSERT_EQ(s.length(), 10);
+    ASSERT_EQ(s.length(), 10u);
     for (size_t i = 0; i < 5; ++i)
         ASSERT_EQ(s[i], ch2);
     for (size_t i = 5; i < 10; ++i)
@@ -171,7 +171,7 @@ TYPED_TEST(StoragePasswordTest, InsertTests)
     // insert in the middle
     const CharType ch3 = data.hello_world[2];
     s.insert(5, 10, ch3);
-    ASSERT_EQ(s.length(), 20);
+    ASSERT_EQ(s.length(), 20u);
     for (size_t i = 0; i < 5; ++i)
         ASSERT_EQ(s[i], ch2);
     for (size_t i = 5; i < 15; ++i)
@@ -222,14 +222,14 @@ TYPED_TEST(StoragePasswordTest, InsertRangeErrorTests)
     // void insert(size_type index, size_type count, char_type ch)
     ASSERT_THROW(s.insert(s.size() + 1, 100, ch), std::out_of_range);
     // the content is unchanged
-    ASSERT_EQ(s.length(), 3);
+    ASSERT_EQ(s.length(), 3u);
     for (size_t i = 0; i < s.length(); ++i)
         ASSERT_EQ(s[i], ch);
 
     // void insert(size_type index, const char_type* s, size_type n)
     ASSERT_THROW(s.insert(s.size() + 1, data.hello_world, data.hello_world_len), std::out_of_range);
     // the content is unchanged
-    ASSERT_EQ(s.length(), 3);
+    ASSERT_EQ(s.length(), 3u);
     for (size_t i = 0; i < s.length(); ++i)
         ASSERT_EQ(s[i], ch);
 
@@ -237,7 +237,7 @@ TYPED_TEST(StoragePasswordTest, InsertRangeErrorTests)
     const std::basic_string<CharType> ref(data.hello_world);
     ASSERT_THROW(s.insert(s.size() + 1, ref.begin(), ref.end()), std::out_of_range);
     // the content is unchanged
-    ASSERT_EQ(s.length(), 3);
+    ASSERT_EQ(s.length(), 3u);
     for (size_t i = 0; i < s.length(); ++i)
         ASSERT_EQ(s[i], ch);
 }
@@ -304,17 +304,17 @@ TYPED_TEST(StoragePasswordTest, SwapTests)
     str1.assign(data.hello_world, data.hello_world_len);
     ASSERT_EQ(str1.length(), data.hello_world_len);
     ASSERT_TRUE(Traits::compare(str1.data(), data.hello_world, data.hello_world_len) == 0);
-    ASSERT_EQ(str2.length(), 0);
+    ASSERT_EQ(str2.length(), 0u);
     str1.swap(str2);
     ASSERT_EQ(str2.length(), data.hello_world_len);
     ASSERT_TRUE(Traits::compare(str2.data(), data.hello_world, data.hello_world_len) == 0);
-    ASSERT_EQ(str1.length(), 0);
+    ASSERT_EQ(str1.length(), 0u);
 
     // swap back
     str1.swap(str2);
     ASSERT_EQ(str1.length(), data.hello_world_len);
     ASSERT_TRUE(Traits::compare(str1.data(), data.hello_world, data.hello_world_len) == 0);
-    ASSERT_EQ(str2.length(), 0);
+    ASSERT_EQ(str2.length(), 0u);
 
     // now swap 2 non-empty strings
     str1.assign(data.hello_world, data.hello_world_len);
@@ -342,30 +342,30 @@ TYPED_TEST(StoragePasswordTest, ResizeTests)
 
     StorageType s;
     // empty
-    ASSERT_EQ(s.size(), 0);
-    ASSERT_EQ(s.length(), 0);
+    ASSERT_EQ(s.size(), 0u);
+    ASSERT_EQ(s.length(), 0u);
     const CharType ch = data.hello_world[0];
 
     // resize + 10 characters
     s.resize(10, ch);
-    ASSERT_EQ(s.size(), 10);
-    ASSERT_EQ(s.length(), 10);
+    ASSERT_EQ(s.size(), 10u);
+    ASSERT_EQ(s.length(), 10u);
     for (size_t i = 0; i < 10; ++i)
         ASSERT_EQ(s[i], ch);
     ASSERT_EQ(s[10], nul);
 
     // again + 10 characters
     s.resize(20, ch);
-    ASSERT_EQ(s.size(), 20);
-    ASSERT_EQ(s.length(), 20);
+    ASSERT_EQ(s.size(), 20u);
+    ASSERT_EQ(s.length(), 20u);
     for (size_t i = 0; i < 20; ++i)
         ASSERT_EQ(s[i], ch);
     ASSERT_EQ(s[20], nul);
 
     // shrink 3 characters
     s.resize(17, ch);
-    ASSERT_EQ(s.size(), 17);
-    ASSERT_EQ(s.length(), 17);
+    ASSERT_EQ(s.size(), 17u);
+    ASSERT_EQ(s.length(), 17u);
     for (size_t i = 0; i < 17; ++i)
         ASSERT_EQ(s[i], ch);
     ASSERT_EQ(s[17], nul);
@@ -391,17 +391,17 @@ TYPED_TEST(StoragePasswordTest, ReallocTests)
     const CharType ch(data.hello_world[2]);
 
     StorageType s;
-    ASSERT_EQ(s.size(), 0);
-    ASSERT_EQ(s.capacity(), 0);
+    ASSERT_EQ(s.size(), 0u);
+    ASSERT_EQ(s.capacity(), 0u);
 
     // requesting < block_size allocates a full block
     s.reserve(block_size - 1);
-    ASSERT_EQ(s.size(), 0);
+    ASSERT_EQ(s.size(), 0u);
     ASSERT_EQ(s.capacity(), block_size);
 
     // now request more than 1 block
     s.reserve(block_size + 1);
-    ASSERT_EQ(s.size(), 0);
+    ASSERT_EQ(s.size(), 0u);
     ASSERT_EQ(s.capacity(), 2 * block_size);
 
     // the capacity won't change if we assign a string that fits
@@ -423,8 +423,8 @@ TYPED_TEST(StoragePasswordTest, ReallocTests)
     // clear + shrink frees all memory
     s.clear();
     s.shrink_to_fit();
-    ASSERT_EQ(s.size(), 0);
-    ASSERT_EQ(s.capacity(), 0);
+    ASSERT_EQ(s.size(), 0u);
+    ASSERT_EQ(s.capacity(), 0u);
 }
 
 /* wiping memory */

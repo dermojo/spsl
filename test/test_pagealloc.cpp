@@ -26,11 +26,9 @@ TEST(PageAllocTest, ConstructorTest)
     // for now, I only know of Solaris with 8K pages...
     ASSERT_TRUE(alloc.getChunksPerPage() <= 2);
 
-// note: this may fail on some exotic systems...
-#if 1
-    ASSERT_EQ(alloc.getPageSize(), 4096);
+    // note: this may fail on some exotic systems...
+    ASSERT_EQ(alloc.getPageSize(), 4096u);
     ASSERT_EQ(alloc.getChunksPerPage(), 1u);
-#endif
 }
 
 // test the bitmask calculation
@@ -65,8 +63,8 @@ TEST(PageAllocTest, ManagedAllocationTest1)
     spsl::SensitivePageAllocator alloc;
 
     // nothing allocated yet
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
+    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
 
     // ask for a few bytes
     constexpr std::size_t size1 = 16;
@@ -75,13 +73,13 @@ TEST(PageAllocTest, ManagedAllocationTest1)
     ASSERT_NE(mem, nullptr);
 
     ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 1 * alloc.getChunksPerPage());
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
 
     alloc.deallocate(mem, size1);
 
     // in the end, no allocation is left
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
+    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
 }
 
 using AllocationList = std::vector<spsl::SensitivePageAllocator::AllocationInfo>;
@@ -111,7 +109,7 @@ static void performAllocations(spsl::SensitivePageAllocator& alloc, AllocationLi
         allocations.emplace_back(mem, size);
 
         ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 1 * alloc.getChunksPerPage());
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
     }
 
     // and now the second one
@@ -125,7 +123,7 @@ static void performAllocations(spsl::SensitivePageAllocator& alloc, AllocationLi
         allocations.emplace_back(mem, size);
 
         ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 2 * alloc.getChunksPerPage());
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
     }
 }
 
@@ -135,8 +133,8 @@ TEST(PageAllocTest, ManagedAllocationTest2)
     spsl::SensitivePageAllocator alloc;
 
     // nothing allocated yet
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
+    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
 
     AllocationList allocations;
     performAllocations(alloc, allocations);
@@ -145,8 +143,8 @@ TEST(PageAllocTest, ManagedAllocationTest2)
         alloc.deallocate(entry.addr, entry.size);
 
     // in the end, no allocation is left
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
+    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
 }
 
 // allocate multiple segments and release them in reverse order
@@ -155,8 +153,8 @@ TEST(PageAllocTest, ManagedAllocationTest3)
     spsl::SensitivePageAllocator alloc;
 
     // nothing allocated yet
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
+    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
 
     AllocationList allocations;
     performAllocations(alloc, allocations);
@@ -166,8 +164,8 @@ TEST(PageAllocTest, ManagedAllocationTest3)
         alloc.deallocate(entry.addr, entry.size);
 
     // in the end, no allocation is left
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
+    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
 }
 
 // allocate areas large than a page
@@ -177,33 +175,33 @@ TEST(PageAllocTest, UnmanagedAllocationTest)
     auto pageSize = alloc.getPageSize();
 
     // nothing allocated yet
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
+    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
 
     // allocating a page is managed
     {
         void* mem = alloc.allocate(pageSize);
         ASSERT_NE(mem, nullptr);
-        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 1);
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 1u);
+        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
         alloc.deallocate(mem, pageSize);
-        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0);
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
+        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
     }
     // allocating more is "unmanaged"
     {
         void* mem = alloc.allocate(pageSize + 1);
         ASSERT_NE(mem, nullptr);
-        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0);
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 1);
+        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
+        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 1u);
         alloc.deallocate(mem, pageSize + 1);
-        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0);
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
+        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
     }
 
     // in the end, no allocation is left
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
+    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
 }
 
 
@@ -234,18 +232,18 @@ TEST(PageAllocTest, LeakCheckTest1)
             alloc.deallocate(entry.addr, entry.size);
 
         // there is one page left
-        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 1);
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 1u);
+        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
     }
 
     // now check the leaks
     ASSERT_EQ(myLeaks.size(), cbLeaks.size());
-    ASSERT_EQ(cbLeaks.size(), 1);
+    ASSERT_EQ(cbLeaks.size(), 1u);
     ASSERT_EQ(myInstance, cbInstance);
     ASSERT_EQ(cbLeaks[0].addr, myLeaks[0].addr);
     // these aren't identical because the allocator reserves more space than required
     // ASSERT_EQ(cbLeaks[0].size, myLeaks[0].size);
-    ASSERT_EQ(cbLeaks[0].size, 64);
+    ASSERT_EQ(cbLeaks[0].size, 64u);
 }
 
 
@@ -271,7 +269,7 @@ TEST(PageAllocTest, LeakCheckTest2)
         performAllocations(alloc, allocations);
 
         // 128 allocations: insert some "scattered" leaks and one contiguous
-        ASSERT_EQ(allocations.size(), 128);
+        ASSERT_EQ(allocations.size(), 128u);
         std::array<std::size_t, 8> indexes{ 127, 123, 122, 121, 65, 17, 15, 0 };
         for (auto index : indexes)
         {
@@ -285,25 +283,25 @@ TEST(PageAllocTest, LeakCheckTest2)
             alloc.deallocate(entry.addr, entry.size);
 
         // there is one page left
-        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 2);
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0);
+        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 2u);
+        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
     }
 
     // now check the leaks
     ASSERT_GT(myLeaks.size(), cbLeaks.size());
-    ASSERT_EQ(cbLeaks.size(), 6);
+    ASSERT_EQ(cbLeaks.size(), 6u);
     ASSERT_EQ(myInstance, cbInstance);
     // 0 - 15 - 17 - 65 - 121-123 - 127
     for (std::size_t i = 0; i < 4; ++i)
     {
         ASSERT_EQ(cbLeaks[i].addr, myLeaks[i].addr);
-        ASSERT_EQ(cbLeaks[i].size, 64);
+        ASSERT_EQ(cbLeaks[i].size, 64u);
     }
     // 121-123 get "merged"
     ASSERT_EQ(cbLeaks[4].addr, myLeaks[4].addr);
-    ASSERT_EQ(cbLeaks[4].size, 3 * 64);
+    ASSERT_EQ(cbLeaks[4].size, 3 * 64u);
     ASSERT_EQ(cbLeaks[5].addr, myLeaks[7].addr);
-    ASSERT_EQ(cbLeaks[5].size, 64);
+    ASSERT_EQ(cbLeaks[5].size, 64u);
 }
 
 // TODO: test other page sizes

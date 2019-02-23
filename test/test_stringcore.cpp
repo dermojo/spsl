@@ -49,8 +49,8 @@ TYPED_TEST(StringCoreTest, Constructors)
     // default constructor
     {
         const StringType s;
-        ASSERT_EQ(s.length(), 0);
-        ASSERT_EQ(s.size(), 0);
+        ASSERT_EQ(s.length(), 0u);
+        ASSERT_EQ(s.size(), 0u);
         ASSERT_TRUE(s.empty());
         // same pointer
         ASSERT_EQ(s.c_str(), s.data());
@@ -103,8 +103,8 @@ TYPED_TEST(StringCoreTest, Constructors)
     {
         const CharType ch = data.blablabla[0];
         const StringType s{ ch, ch, ch, ch, ch };
-        ASSERT_EQ(s.length(), 5);
-        ASSERT_EQ(s.size(), 5);
+        ASSERT_EQ(s.length(), 5u);
+        ASSERT_EQ(s.size(), 5u);
         ASSERT_FALSE(s.empty());
         ASSERT_EQ(s.c_str(), s.data());
         for (size_t i = 0; i < s.length(); ++i)
@@ -261,7 +261,7 @@ TYPED_TEST(StringCoreTest, AssignmentOperators)
     // char_type
     const CharType ch = data.hello_world[0];
     s = ch;
-    ASSERT_EQ(s.size(), 1);
+    ASSERT_EQ(s.size(), 1u);
     ASSERT_TRUE(Traits::compare(s.c_str(), &ch, 1) == 0);
     ASSERT_TRUE(s[0] == ch);
 
@@ -326,7 +326,7 @@ TYPED_TEST(StringCoreTest, AssignmentFunctions)
 
     // count + character
     s.assign(42, ch);
-    ASSERT_EQ(s.size(), 42);
+    ASSERT_EQ(s.size(), 42u);
     for (auto c : s)
         ASSERT_EQ(c, ch);
     for (size_t i = 0; i < s.size(); ++i)
@@ -501,8 +501,8 @@ TYPED_TEST(StringCoreTest, AccessFunctions)
         // here, data() is writeable
         s.data()[0] = nul;
         ASSERT_FALSE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
-        ASSERT_EQ(Traits::length(s.data()), 0);
-        ASSERT_EQ(Traits::length(s.c_str()), 0);
+        ASSERT_EQ(Traits::length(s.data()), 0u);
+        ASSERT_EQ(Traits::length(s.c_str()), 0u);
     }
 }
 
@@ -618,8 +618,8 @@ TYPED_TEST(StringCoreTest, CapacityFunctions)
 
     StringType s;
     ASSERT_TRUE(s.empty());
-    ASSERT_EQ(s.size(), 0);
-    ASSERT_EQ(s.length(), 0);
+    ASSERT_EQ(s.size(), 0u);
+    ASSERT_EQ(s.length(), 0u);
     ASSERT_GT(s.max_size(), 0u);
     ASSERT_GE(s.capacity(), 0u);
     // note: max is 64
@@ -1046,81 +1046,81 @@ TYPED_TEST(StringCoreTest, FindFunctions)
     const auto world_len = Traits::length(world);
 
     // find: char_type*, pos, count
-    ASSERT_EQ(s.find(s.data(), 0, s.size()), 0);
-    ASSERT_EQ(s.find(world, 0, world_len), 6);
-    ASSERT_EQ(s.find(world, 0, 1), 6);
+    ASSERT_EQ(s.find(s.data(), 0, s.size()), 0u);
+    ASSERT_EQ(s.find(world, 0, world_len), 6u);
+    ASSERT_EQ(s.find(world, 0, 1), 6u);
     ASSERT_EQ(s.find(world, 7, world_len), npos);
     // searching for an empty string finds the current position (if valid)
-    ASSERT_EQ(s.find(world, 0, 0), 0);
-    ASSERT_EQ(s.find(world, 3, 0), 3);
+    ASSERT_EQ(s.find(world, 0, 0), 0u);
+    ASSERT_EQ(s.find(world, 3, 0), 3u);
     ASSERT_EQ(s.find(world, s.size(), 0), s.size());
     ASSERT_EQ(s.find(world, s.size() + 1, 0), npos);
 
     // find: char_type, pos
     ASSERT_EQ(s.find(b, 0), npos);
-    ASSERT_EQ(s.find(W), 6);
-    ASSERT_EQ(s.find(H), 0);
+    ASSERT_EQ(s.find(W), 6u);
+    ASSERT_EQ(s.find(H), 0u);
     ASSERT_EQ(s.find(H, 1), npos);
 
     // find: char_type*, pos
-    ASSERT_EQ(s.find(s.data()), 0);
-    ASSERT_EQ(s.find(s.data(), 0), 0);
-    ASSERT_EQ(s.find(world), 6);
-    ASSERT_EQ(s.find(world, 0), 6);
+    ASSERT_EQ(s.find(s.data()), 0u);
+    ASSERT_EQ(s.find(s.data(), 0), 0u);
+    ASSERT_EQ(s.find(world), 6u);
+    ASSERT_EQ(s.find(world, 0), 6u);
     ASSERT_EQ(s.find(world, 7), npos);
     // searching for an empty string finds the current position (if valid)
     {
         const CharType empty[1] = { StringType::nul };
-        ASSERT_EQ(s.find(empty, 0, 0), 0);
-        ASSERT_EQ(s.find(empty, 3, 0), 3);
+        ASSERT_EQ(s.find(empty, 0, 0), 0u);
+        ASSERT_EQ(s.find(empty, 3, 0), 3u);
         ASSERT_EQ(s.find(empty, s.size(), 0), s.size());
         ASSERT_EQ(s.find(empty, s.size() + 1, 0), npos);
     }
 
     // find: String, pos
     const std::basic_string<CharType> ref(world);
-    ASSERT_EQ(s.find(s), 0);
-    ASSERT_EQ(s.find(s, 0), 0);
-    ASSERT_EQ(s.find(ref), 6);
-    ASSERT_EQ(s.find(ref, 0), 6);
+    ASSERT_EQ(s.find(s), 0u);
+    ASSERT_EQ(s.find(s, 0), 0u);
+    ASSERT_EQ(s.find(ref), 6u);
+    ASSERT_EQ(s.find(ref, 0), 6u);
     ASSERT_EQ(s.find(ref, 7), npos);
     // searching for an empty string finds the current position (if valid)
     {
         const std::basic_string<CharType> empty;
-        ASSERT_EQ(s.find(empty), 0);
-        ASSERT_EQ(s.find(empty, 3), 3);
+        ASSERT_EQ(s.find(empty), 0u);
+        ASSERT_EQ(s.find(empty, 3), 3u);
         ASSERT_EQ(s.find(empty, s.size()), s.size());
         ASSERT_EQ(s.find(empty, s.size() + 1), npos);
     }
 
     // rfind: char_type*, pos, count
-    ASSERT_EQ(s.rfind(s.data(), s.size() - 1, s.size()), 0);
-    ASSERT_EQ(s.rfind(s.data(), npos, s.size()), 0);
-    ASSERT_EQ(s.rfind(world, npos, world_len), 6);
-    ASSERT_EQ(s.rfind(world, npos, 1), 6);
+    ASSERT_EQ(s.rfind(s.data(), s.size() - 1, s.size()), 0u);
+    ASSERT_EQ(s.rfind(s.data(), npos, s.size()), 0u);
+    ASSERT_EQ(s.rfind(world, npos, world_len), 6u);
+    ASSERT_EQ(s.rfind(world, npos, 1), 6u);
     ASSERT_EQ(s.rfind(world, 5, world_len), npos);
 
     // rfind: char_type, pos
     ASSERT_EQ(s.rfind(b, npos), npos);
-    ASSERT_EQ(s.rfind(W), 6);
-    ASSERT_EQ(s.rfind(H), 0);
+    ASSERT_EQ(s.rfind(W), 6u);
+    ASSERT_EQ(s.rfind(H), 0u);
     ASSERT_EQ(s.rfind(W, 5), npos);
 
     // rfind: char_type*, pos
-    ASSERT_EQ(s.rfind(s.data()), 0);
-    ASSERT_EQ(s.rfind(s.data(), s.size() - 1), 0);
-    ASSERT_EQ(s.rfind(s.data(), npos), 0);
-    ASSERT_EQ(s.rfind(world), 6);
-    ASSERT_EQ(s.rfind(world, npos), 6);
+    ASSERT_EQ(s.rfind(s.data()), 0u);
+    ASSERT_EQ(s.rfind(s.data(), s.size() - 1), 0u);
+    ASSERT_EQ(s.rfind(s.data(), npos), 0u);
+    ASSERT_EQ(s.rfind(world), 6u);
+    ASSERT_EQ(s.rfind(world, npos), 6u);
     ASSERT_EQ(s.rfind(world, 5), npos);
 
     // rfind: String, pos
-    ASSERT_EQ(s.rfind(s), 0);
-    ASSERT_EQ(s.rfind(s, s.size() - 1), 0);
-    ASSERT_EQ(s.rfind(s, npos), 0);
-    ASSERT_EQ(s.rfind(ref), 6);
-    ASSERT_EQ(s.rfind(ref, s.size() - 1), 6);
-    ASSERT_EQ(s.rfind(ref, npos), 6);
+    ASSERT_EQ(s.rfind(s), 0u);
+    ASSERT_EQ(s.rfind(s, s.size() - 1), 0u);
+    ASSERT_EQ(s.rfind(s, npos), 0u);
+    ASSERT_EQ(s.rfind(ref), 6u);
+    ASSERT_EQ(s.rfind(ref, s.size() - 1), 6u);
+    ASSERT_EQ(s.rfind(ref, npos), 6u);
     ASSERT_EQ(s.rfind(ref, 5), npos);
 }
 
