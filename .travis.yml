@@ -10,7 +10,6 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-4.9
-            - libgtest-dev
       env: MYCC=gcc-4.9 MYCXX=g++-4.9
     - compiler: gcc
       addons:
@@ -19,7 +18,6 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-5
-            - libgtest-dev
       env: MYCC=gcc-5 MYCXX=g++-5
     - compiler: gcc
       addons:
@@ -28,7 +26,6 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-6
-            - libgtest-dev
       env: MYCC=gcc-6 MYCXX=g++-6
     - compiler: gcc
       addons:
@@ -37,7 +34,6 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-6
-            - libgtest-dev
             - lcov
       env: MYCC=gcc-6 MYCXX=g++-6 CODE_COVERAGE=on
     - compiler: clang
@@ -48,7 +44,6 @@ matrix:
             - llvm-toolchain-trusty
           packages:
             - clang-3.8
-            - libgtest-dev
       env: MYCC=clang-3.8 MYCXX=clang++-3.8
     - compiler: clang
       addons:
@@ -58,7 +53,6 @@ matrix:
             - llvm-toolchain-trusty-3.9
           packages:
             - clang-3.9
-            - libgtest-dev
       env: MYCC=clang-3.9 MYCXX=clang++-3.9
     - compiler: clang
       addons:
@@ -68,7 +62,6 @@ matrix:
             - llvm-toolchain-trusty-4.0
           packages:
             - clang-4.0
-            - libgtest-dev
       env: MYCC=clang-4.0 MYCXX=clang++-4.0
     - compiler: clang
       addons:
@@ -78,7 +71,6 @@ matrix:
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
-            - libgtest-dev
       env: MYCC=clang-5.0 MYCXX=clang++-5.0
     - compiler: clang
       addons:
@@ -88,7 +80,6 @@ matrix:
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
-            - libgtest-dev
       env: MYCC=clang-5.0 MYCXX=clang++-5.0 ENABLE_ASAN=on
       # workaround for missing PTRACE capability, see https://github.com/travis-ci/travis-ci/issues/8836
       sudo: required
@@ -100,14 +91,12 @@ matrix:
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
-            - libgtest-dev
       env: MYCC=clang-5.0 MYCXX=clang++-5.0 ENABLE_UBSAN=on
     - compiler: gcc
       addons:
         apt:
           packages:
             - g++-mingw-w64-x86-64
-            - libgtest-dev
       env: MYCC=/usr/bin/x86_64-w64-mingw32-gcc MYCXX=/usr/bin/x86_64-w64-mingw32-g++
     - os: linux
       env:
@@ -120,14 +109,10 @@ matrix:
           packages:
             - clang-format-4.0
             - clang-4.0
-            - libgtest-dev
       script:
         - mkdir build
         - cd build
         - ADD_OPTS="-DCMAKE_C_COMPILER=clang-4.0 -DCMAKE_CXX_COMPILER=clang++-4.0"
-        - ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest.a"
-        - ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest_main.a"
-        - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest"
         - ADD_OPTS="$ADD_OPTS -DCLANG_FORMAT=/usr/bin/clang-format-4.0"
         - cmake $ADD_OPTS ..
         - make format
@@ -149,14 +134,10 @@ matrix:
           packages:
             - clang-tidy-4.0
             - clang-4.0
-            - libgtest-dev
       script:
         - mkdir build
         - cd build
         - ADD_OPTS="-DCMAKE_C_COMPILER=clang-4.0 -DCMAKE_CXX_COMPILER=clang++-4.0"
-        - ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest.a"
-        - ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest_main.a"
-        - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest"
         - cmake $ADD_OPTS ..
         - make tidy >output.txt
         - |
@@ -169,22 +150,6 @@ matrix:
               echo -e "\033[1;32m\xE2\x9C\x93 passed:\033[0m $1";
           fi
 
-before_script:
-  - mkdir gtest
-  - pushd gtest
-  - ln -s /usr/include/gtest .
-  - ln -s /usr/src/gtest/src .
-  - ln -s /usr/src/gtest/CMakeLists.txt .
-  - ln -s /usr/src/gtest/cmake .
-  - |
-    if [[ "$MYCC" == *mingw* ]] ; then
-      ADD_OPTS="-DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/Toolchain-cross-mingw-linux.cmake -Dgtest_disable_pthreads=ON"
-    else
-      ADD_OPTS="-DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX"
-    fi
-  - cmake $ADD_OPTS .
-  - cmake --build .
-  - popd
 
 script:
   - mkdir build
@@ -196,9 +161,6 @@ script:
     else
       ADD_OPTS="-DCMAKE_C_COMPILER=$MYCC -DCMAKE_CXX_COMPILER=$MYCXX"
     fi
-  - ADD_OPTS="$ADD_OPTS -DGTEST_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest.a"
-  - ADD_OPTS="$ADD_OPTS -DGTEST_MAIN_LIBRARY=$TRAVIS_BUILD_DIR/gtest/libgtest_main.a"
-  - ADD_OPTS="$ADD_OPTS -DGTEST_INCLUDE_DIR=$TRAVIS_BUILD_DIR/gtest"
   - |
     if [[ -n "$ENABLE_ASAN" ]] ; then
       ADD_OPTS="$ADD_OPTS -DENABLE_ASAN=$ENABLE_ASAN"

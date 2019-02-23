@@ -10,9 +10,13 @@ project(spsl VERSION 1.3 LANGUAGES CXX)
 #set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 # Setup testing using GTEST
-enable_testing()
-find_package(GTest REQUIRED)
-include_directories(SYSTEM ${GTEST_INCLUDE_DIR})
+if (MINGW)
+    set(gtest_disable_pthreads ON CACHE BOOL "" force)
+endif()
+if (WIN32)
+    set(gtest_force_shared_crt ON CACHE BOOL "" force)
+endif()
+add_subdirectory(extern/googletest)
 
 #
 # Build targets
@@ -48,19 +52,15 @@ target_include_directories(testlib PUBLIC include)
 target_include_directories(example PUBLIC include)
 
 # Link test executable against gtest & gtest_main
-target_link_libraries(testlib ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY})
+target_link_libraries(testlib gtest_main )
 
 set_property(TARGET testlib PROPERTY CXX_STANDARD 11)
 set_property(TARGET testlib PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET example PROPERTY CXX_STANDARD 11)
 set_property(TARGET example PROPERTY CXX_STANDARD_REQUIRED ON)
 
-# uncomment to use Clang instead of GCC
-#set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
-
 # We want a lot of warnings!
-string(TOLOWER "${CMAKE_BUILD_TOOL}" MY_BUILDTOOL)
-if(MY_BUILDTOOL MATCHES "(msdev|devenv|nmake|msbuild)")
+if(MSVC)
     target_compile_options(testlib PUBLIC /W4 /WX)
     # Prevent deprecation errors for std::tr1 in googletest
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING")
@@ -96,9 +96,6 @@ if(ENABLE_COVERAGE)
     set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
 endif()
 
-# use this to enable C++17 tests (esp. string_view) with GCC/Clang
-# (but comment the CXX_STANDARD* settings above)
-#target_compile_options(testlib PUBLIC -std=c++1z)
 
 # run clang-format on all files
 list(APPEND CLANG_FORMAT_ARGS
