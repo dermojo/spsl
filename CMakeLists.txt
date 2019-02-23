@@ -1,7 +1,7 @@
 #
 # Special Purpose Strings Library
 #
-# Requires CMake 3.2 or higher (use PPA for Travis CI)
+# Requires CMake 3.2 or higher
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 project(spsl VERSION 1.3 LANGUAGES CXX)
 
@@ -10,11 +10,11 @@ project(spsl VERSION 1.3 LANGUAGES CXX)
 #set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 # Setup testing using GTEST
-if (MINGW)
-    set(gtest_disable_pthreads ON CACHE BOOL "" force)
+if(MINGW)
+    set(gtest_disable_pthreads ON CACHE BOOL "" FORCE)
 endif()
-if (WIN32)
-    set(gtest_force_shared_crt ON CACHE BOOL "" force)
+if(MSVC)
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 endif()
 add_subdirectory(extern/googletest)
 enable_testing()
