@@ -10,6 +10,9 @@
 
 #include <cstddef>
 
+#include <gsl.hpp>
+
+
 // enable basic_string_view tests if available (according to http://stackoverflow.com/a/7132549)
 #if __cplusplus > 201402L
 #define TEST_STRING_VIEW
@@ -87,5 +90,76 @@ struct TestData<wchar_t>
         return list;
     }
 };
+
+/*
+ * Some global operators that help dealing with gsl::byte in our tests.
+ */
+
+/// used to declare literals
+constexpr gsl::byte operator""_b(char b)
+{
+    return gsl::to_byte(b);
+}
+
+/// prefix decrement
+inline gsl::byte& operator--(gsl::byte& b)
+{
+    unsigned char v = gsl::to_integer<unsigned char>(b);
+    return b = gsl::to_byte(v - 1);
+}
+/// prefix increment
+inline gsl::byte& operator++(gsl::byte& b)
+{
+    unsigned char v = gsl::to_integer<unsigned char>(b);
+    return b = gsl::to_byte(v + 1);
+}
+
+/// subtraction
+inline gsl::byte operator-(gsl::byte b, int i)
+{
+    unsigned char v = gsl::to_integer<unsigned char>(b);
+    return gsl::to_byte(v - i);
+}
+/// addition
+inline gsl::byte operator+(gsl::byte b, int i)
+{
+    unsigned char v = gsl::to_integer<unsigned char>(b);
+    return gsl::to_byte(v + i);
+}
+
+
+template <>
+struct TestData<gsl::byte>
+{
+    TestData() = default;
+    ~TestData() = default;
+    // not needed
+    TestData(const TestData&) = delete;
+    TestData(TestData&&) = delete;
+    TestData& operator=(const TestData&) = delete;
+    TestData& operator=(TestData&&) = delete;
+
+    const gsl::byte* const hello_world = reinterpret_cast<const gsl::byte*>("Hello World!");
+    const size_t hello_world_len = 12;
+    const gsl::byte* const blablabla = reinterpret_cast<const gsl::byte*>("blablabla");
+    const size_t blablabla_len = 9;
+    const gsl::byte* const empty = reinterpret_cast<const gsl::byte*>("");
+
+    std::initializer_list<gsl::byte> initializerList() const
+    {
+        static const std::initializer_list<gsl::byte> list{
+            'T'_b, 'h'_b, 'i'_b, 's'_b, ' '_b, 'i'_b, 's'_b, ' '_b, 'a'_b,
+            'n'_b, ' '_b, 'a'_b, 's'_b, 's'_b, 'i'_b, 'g'_b, 'n'_b, 'm'_b,
+            'e'_b, 'n'_b, 't'_b, ' '_b, 't'_b, 'e'_b, 's'_b, 't'_b
+        };
+        return list;
+    }
+    std::initializer_list<gsl::byte> initializerList2() const
+    {
+        static const std::initializer_list<gsl::byte> list{ 'T'_b, 'e'_b, 's'_b, 't'_b };
+        return list;
+    }
+};
+
 
 #endif /* TESTDATA_HPP_ */

@@ -45,7 +45,7 @@ class StoragePasswordTest : public ::testing::Test
 };
 
 // all character types we want to test
-using CharTypes = testing::Types<char, wchar_t>;
+using CharTypes = testing::Types<char, wchar_t, gsl::byte>;
 
 
 TYPED_TEST_SUITE(StoragePasswordTest, CharTypes);
@@ -55,7 +55,7 @@ TYPED_TEST(StoragePasswordTest, ConstructorTests)
 {
     using CharType = TypeParam; // gtest specific
     using StorageType = spsl::StoragePassword<CharType>;
-    const CharType nul = StorageType::nul;
+    const CharType nul = StorageType::nul();
 
     const StorageType s1;
     ASSERT_EQ(s1.capacity(), 0u);
@@ -338,7 +338,7 @@ TYPED_TEST(StoragePasswordTest, ResizeTests)
     using StorageType = spsl::StoragePassword<CharType, 32>;
     const TestData<CharType> data{};
     using size_type = typename StorageType::size_type;
-    const CharType nul = StorageType::nul;
+    const CharType nul = StorageType::nul();
 
     StorageType s;
     // empty
@@ -387,7 +387,7 @@ TYPED_TEST(StoragePasswordTest, ReallocTests)
     using size_type = typename StorageType::size_type;
     const size_type block_size = StorageType::block_size();
     const TestData<CharType> data{};
-    const CharType nul = StorageType::nul;
+    const CharType nul = StorageType::nul();
     const CharType ch(data.hello_world[2]);
 
     StorageType s;
@@ -438,7 +438,7 @@ TYPED_TEST(StoragePasswordTest, WipeTests)
     using size_type = typename StorageType::size_type;
     const TestData<CharType> data{};
     const CharType ch = data.blablabla[0];
-    const CharType nul = StorageType::nul;
+    const CharType nul = StorageType::nul();
 
     StorageType s;
     s.assign(data.hello_world, data.hello_world_len);

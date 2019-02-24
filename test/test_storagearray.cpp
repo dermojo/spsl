@@ -16,7 +16,7 @@ class StorageArrayTest : public ::testing::Test
 };
 
 // all character types we want to test
-using CharTypes = testing::Types<char, wchar_t>;
+using CharTypes = testing::Types<char, wchar_t, gsl::byte>;
 
 
 TYPED_TEST_SUITE(StorageArrayTest, CharTypes);
@@ -51,7 +51,7 @@ TYPED_TEST(StorageArrayTest, ConstructorTests)
 {
     using CharType = TypeParam; // gtest specific
     using ArrayType = spsl::StorageArray<CharType, 64>;
-    const CharType nul = ArrayType::nul;
+    const CharType nul = ArrayType::nul();
 
     const ArrayType s1;
     ASSERT_EQ(s1.capacity(), 64u);
@@ -297,7 +297,7 @@ TYPED_TEST(StorageArrayTest, ResizeTests)
     using CharType = TypeParam; // gtest specific
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const TestData<CharType> data{};
-    const CharType nul = ArrayType::nul;
+    const CharType nul = ArrayType::nul();
 
     // we'll stay within max_size() here
     ArrayType arr;

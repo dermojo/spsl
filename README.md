@@ -40,6 +40,8 @@ are for you.
 The SPSL itself only relies on the STL and has no dependencies. To compile the tests, you'll need:
 * [CMake](https://cmake.org/) 3.2 or higher
 * [GoogleTest](https://github.com/google/googletest) (as [git submodule](https://git-scm.com/docs/git-submodule))
+* [GSL-Lite](https://github.com/martinmoene/gsl-lite) (as [git submodule](https://git-scm.com/docs/git-submodule)):
+  Used to test compatibility with `gsl::byte`.
 
 Supported compilers (we'll, the ones I've tested) include GCC 4.9+ and clang 3.8+
 on Linux and Microsoft Visual Studio 2015.

@@ -19,6 +19,9 @@ endif()
 add_subdirectory(extern/googletest)
 enable_testing()
 
+# include GSL-Lite for unit testing
+add_subdirectory(extern/gsl-lite)
+
 #
 # Build targets
 #
@@ -50,10 +53,11 @@ add_dependencies(runtest testlib)
 # compiling the library, and will be added to consumers' build
 # paths.
 target_include_directories(testlib PUBLIC include)
+target_include_directories(testlib SYSTEM PUBLIC extern/gsl-lite/include)
 target_include_directories(example PUBLIC include)
 
 # Link test executable against gtest & gtest_main
-target_link_libraries(testlib gtest_main )
+target_link_libraries(testlib gtest_main gtest)
 
 set_property(TARGET testlib PROPERTY CXX_STANDARD 11)
 set_property(TARGET testlib PROPERTY CXX_STANDARD_REQUIRED ON)

@@ -27,7 +27,10 @@ using SpecificTypes = testing::Types<
   spsl::ArrayString<128, spsl::policy::overflow::Truncate>,
   spsl::ArrayStringW<128, spsl::policy::overflow::Truncate>,
   spsl::ArrayString<128, spsl::policy::overflow::Throw>,
-  spsl::ArrayStringW<128, spsl::policy::overflow::Throw>>;
+  spsl::ArrayStringW<128, spsl::policy::overflow::Throw>,
+  // BYTE tests (using GSL)
+  spsl::StringBase<spsl::StorageArray<gsl::byte, 64, spsl::policy::overflow::Truncate>>,
+  spsl::StringBase<spsl::StoragePassword<gsl::byte, 32>>>;
 
 
 TYPED_TEST_SUITE(StringBaseTest, SpecificTypes);
@@ -41,7 +44,7 @@ TYPED_TEST(StringBaseTest, FindFirstOfFunctions)
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data{};
     const auto npos = StringType::npos;
-    const auto nul = StringType::nul;
+    const auto nul = StringType::nul();
 
     const StringType s(data.hello_world);
     StringType sWithNul(s);
@@ -121,7 +124,7 @@ TYPED_TEST(StringBaseTest, FindFirstNotOfFunctions)
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data{};
     const auto npos = StringType::npos;
-    const auto nul = StringType::nul;
+    const auto nul = StringType::nul();
 
     const StringType s(data.hello_world);
     const CharType H = data.hello_world[0];
@@ -205,7 +208,7 @@ TYPED_TEST(StringBaseTest, FindLastOfFunctions)
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data{};
     const auto npos = StringType::npos;
-    const auto nul = StringType::nul;
+    const auto nul = StringType::nul();
 
     const StringType s(data.hello_world);
     StringType sWithNul(s);
@@ -306,7 +309,7 @@ TYPED_TEST(StringBaseTest, FindLastNotOfFunctions)
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data{};
     const auto npos = StringType::npos;
-    const auto nul = StringType::nul;
+    const auto nul = StringType::nul();
 
     const StringType s(data.hello_world);
     StringType sWithNul(s);

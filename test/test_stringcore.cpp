@@ -31,7 +31,10 @@ using SpecificTypes = testing::Types<
   spsl::ArrayStringW<128, spsl::policy::overflow::Truncate>,
   spsl::ArrayString<128, spsl::policy::overflow::Throw>,
   spsl::ArrayStringW<128, spsl::policy::overflow::Throw>, spsl::PasswordString,
-  spsl::PasswordStringW>;
+  spsl::PasswordStringW,
+  // BYTE tests (using GSL)
+  spsl::StringCore<spsl::StorageArray<gsl::byte, 64, spsl::policy::overflow::Truncate>>,
+  spsl::StringBase<spsl::StoragePassword<gsl::byte>>>;
 
 
 TYPED_TEST_SUITE(StringCoreTest, SpecificTypes);
@@ -319,7 +322,7 @@ TYPED_TEST(StringCoreTest, AssignmentFunctions)
     using Traits = typename StringType::traits_type;
     const TestData<CharType> data{};
     std::initializer_list<CharType> initList = data.initializerList();
-    const CharType nul = StorageType::nul;
+    const CharType nul = StorageType::nul();
 
     StringType s;
     const CharType ch = data.hello_world[0];
@@ -423,7 +426,7 @@ TYPED_TEST(StringCoreTest, AccessFunctions)
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
     const TestData<CharType> data{};
-    const CharType nul = StorageType::nul;
+    const CharType nul = StorageType::nul();
 
     // 1. empty string, const
     {
@@ -498,7 +501,7 @@ TYPED_TEST(StringCoreTest, AccessFunctions)
         ASSERT_EQ(s.front(), data.hello_world[0]);
         ASSERT_EQ(s.back(), data.hello_world[data.hello_world_len - 1]);
 
-        // here, data() is writeable
+        // here, data() is writable
         s.data()[0] = nul;
         ASSERT_FALSE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
         ASSERT_EQ(Traits::length(s.data()), 0u);
@@ -652,7 +655,7 @@ TYPED_TEST(StringCoreTest, Operations)
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
     const TestData<CharType> data{};
-    const CharType nul = StorageType::nul;
+    const CharType nul = StorageType::nul();
 
     StringType s1;
     const CharType ch = data.hello_world[3];
@@ -929,7 +932,8 @@ TYPED_TEST(StringCoreTest, ComparisonFunctions)
 
     // char_type*
     ASSERT_EQ(s.compare(ref.c_str()), 0);
-    ref[0]++;
+    ++ref[0];
+    ;
     ASSERT_LT(s.compare(ref.c_str()), 0);
     ref[0] = static_cast<CharType>(ref[0] - 2);
     ASSERT_GT(s.compare(ref.c_str()), 0);
@@ -978,7 +982,8 @@ TYPED_TEST(StringCoreTest, ComparisonFunctions)
     // other string class
     ref = s.c_str();
     ASSERT_EQ(s.compare(ref), 0);
-    ref[0]++;
+    ++ref[0];
+    ;
     ASSERT_LT(s.compare(ref), 0);
     ref[0] = static_cast<CharType>(ref[0] - 2);
     ASSERT_GT(s.compare(ref), 0);
@@ -1037,6 +1042,7 @@ TYPED_TEST(StringCoreTest, FindFunctions)
     using Traits = typename StringType::traits_type;
     const TestData<CharType> data{};
     const auto npos = StringType::npos;
+    const CharType nul = StorageType::nul();
 
     const StringType s(data.hello_world);
     const CharType H = data.hello_world[0];
@@ -1070,7 +1076,7 @@ TYPED_TEST(StringCoreTest, FindFunctions)
     ASSERT_EQ(s.find(world, 7), npos);
     // searching for an empty string finds the current position (if valid)
     {
-        const CharType empty[1] = { StringType::nul };
+        const CharType empty[1] = { nul };
         ASSERT_EQ(s.find(empty, 0, 0), 0u);
         ASSERT_EQ(s.find(empty, 3, 0), 3u);
         ASSERT_EQ(s.find(empty, s.size(), 0), s.size());
@@ -1146,7 +1152,7 @@ TYPED_TEST(StringCoreTest, ComparisonOperators)
     ASSERT_FALSE(s < data.hello_world);
     ASSERT_FALSE(s > data.hello_world);
     ref = data.hello_world;
-    ref[0]--;
+    --ref[0];
     ASSERT_TRUE(s > ref.c_str());
     ASSERT_TRUE(s >= ref.c_str());
     ASSERT_FALSE(s < ref.c_str());
@@ -1166,7 +1172,7 @@ TYPED_TEST(StringCoreTest, ComparisonOperators)
     ASSERT_FALSE(data.hello_world > s);
     ASSERT_FALSE(data.hello_world < s);
     ref = data.hello_world;
-    ref[0]--;
+    --ref[0];
     ASSERT_TRUE(ref.c_str() < s);
     ASSERT_TRUE(ref.c_str() <= s);
     ASSERT_FALSE(ref.c_str() > s);
@@ -1189,7 +1195,7 @@ TYPED_TEST(StringCoreTest, ComparisonOperators)
     ASSERT_FALSE(s < hello);
     ASSERT_FALSE(s > hello);
     StringType ref2 = data.hello_world;
-    ref2[0]--;
+    --ref2[0];
     ASSERT_TRUE(s > ref2);
     ASSERT_TRUE(s >= ref2);
     ASSERT_FALSE(s < ref2);
@@ -1214,7 +1220,7 @@ TYPED_TEST(StringCoreTest, ComparisonOperators)
     ASSERT_TRUE(s >= ref);
     ASSERT_FALSE(s < ref);
     ASSERT_FALSE(s > ref);
-    ref[0]--;
+    --ref[0];
     ASSERT_TRUE(s > ref);
     ASSERT_TRUE(s >= ref);
     ASSERT_FALSE(s < ref);
@@ -1239,7 +1245,7 @@ TYPED_TEST(StringCoreTest, ComparisonOperators)
     ASSERT_TRUE(ref >= s);
     ASSERT_FALSE(ref < s);
     ASSERT_FALSE(ref > s);
-    ref[0]--;
+    --ref[0];
     ASSERT_TRUE(ref < s);
     ASSERT_TRUE(ref <= s);
     ASSERT_FALSE(ref > s);

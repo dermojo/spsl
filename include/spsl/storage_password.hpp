@@ -63,7 +63,7 @@ public:
     using traits_type = typename std::char_traits<char_type>;
     using allocator = Allocator;
 
-    static constexpr char_type nul = static_cast<char_type>(0);
+    static constexpr char_type nul() { return char_type{}; }
 
     // size information functions
     size_type max_size() const
@@ -107,7 +107,7 @@ public:
             if (size())
                 traits_type::copy(newbuf, m_buffer, size() + 1);
             else
-                newbuf[0] = 0;
+                newbuf[0] = nul();
 
             // wipe all existing data
             if (m_buffer != _b)
@@ -136,9 +136,7 @@ public:
     void _set_length(size_type n)
     {
         _l.m_length = n;
-        // workaround to pass nul as reference
-        char_type _term = nul;
-        traits_type::assign(m_buffer[n], _term);
+        traits_type::assign(m_buffer[n], nul());
     }
 
     // default constructor
@@ -226,9 +224,7 @@ public:
     {
         reserve(size() + 1);
         traits_type::assign(m_buffer[_l.m_length++], c);
-        // workaround to pass nul as reference
-        char_type _term = nul;
-        traits_type::assign(m_buffer[_l.m_length], _term);
+        traits_type::assign(m_buffer[_l.m_length], nul());
     }
     void pop_back()
     {
@@ -395,7 +391,7 @@ public:
         if (count < size())
         {
             // wipe the remaining content
-            traits_type::assign(m_buffer + count, size() - count, nul);
+            traits_type::assign(m_buffer + count, size() - count, nul());
         }
         else if (count > size())
         {
