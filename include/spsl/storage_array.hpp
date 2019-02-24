@@ -43,7 +43,7 @@ public:
     using this_type = StorageArray<char_type, MaxSize, overflow_policy>;
     using traits_type = typename std::char_traits<char_type>;
 
-    static constexpr char_type nul() { return char_type{}; }
+    static constexpr char_type nul() { return {}; }
 
     // size information functions
     constexpr static size_type max_size() { return MaxSize; }

@@ -48,7 +48,7 @@ public:
     using allocator_type = storage_type;
 
     static constexpr size_type npos = static_cast<size_type>(-1);
-    static constexpr char_type nul() { return char_type{}; }
+    static constexpr char_type nul() { return {}; }
 
 
     // TODO For now, we use plain pointers. If this isn't sufficient, we need to roll our own...

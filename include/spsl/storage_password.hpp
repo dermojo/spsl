@@ -63,7 +63,7 @@ public:
     using traits_type = typename std::char_traits<char_type>;
     using allocator = Allocator;
 
-    static constexpr char_type nul() { return char_type{}; }
+    static constexpr char_type nul() { return {}; }
 
     // size information functions
     size_type max_size() const
