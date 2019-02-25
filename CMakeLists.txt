@@ -80,6 +80,8 @@ else()
         target_compile_options(testlib PUBLIC -Wno-missing-braces
                                               -Wno-gnu-zero-variadic-macro-arguments)
     endif()
+    # raised for gsl::byte
+    target_compile_options(testlib PUBLIC -Wno-missing-field-initializers)
     target_link_libraries(testlib pthread)
 endif()
 
