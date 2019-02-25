@@ -96,7 +96,7 @@ struct TestData<wchar_t>
  */
 
 /// used to declare literals
-constexpr gsl::byte operator""_b(char b)
+constexpr gsl::byte operator"" _b(char b)
 {
     return gsl::to_byte(b);
 }
