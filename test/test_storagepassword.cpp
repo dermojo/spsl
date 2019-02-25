@@ -29,9 +29,10 @@ struct WipeCheckAllocator
 
     void deallocate(pointer ptr, size_type size)
     {
+        constexpr T nul{};
         for (size_t i = 0; i < size; ++i)
         {
-            ASSERT_EQ(ptr[i], static_cast<T>(0));
+            ASSERT_EQ(ptr[i], nul);
         }
         free(ptr);
     }
@@ -49,6 +50,20 @@ using CharTypes = testing::Types<char, wchar_t, gsl::byte>;
 
 
 TYPED_TEST_SUITE(StoragePasswordTest, CharTypes);
+
+// helper functions that convert bytes into characters...
+inline const char* asString(const char* s)
+{
+    return s;
+}
+inline const wchar_t* asString(const wchar_t* s)
+{
+    return s;
+}
+inline const char* asString(const gsl::byte* s)
+{
+    return reinterpret_cast<const char*>(s);
+}
 
 /* constructor tests */
 TYPED_TEST(StoragePasswordTest, ConstructorTests)
@@ -615,24 +630,24 @@ TYPED_TEST(StoragePasswordTest, CopyAndMoveTests)
     string2.assign(data.hello_world, data.hello_world_len);
 
     // same content, different allocators
-    ASSERT_STREQ(string1.data(), string2.data());
+    ASSERT_STREQ(asString(string1.data()), asString(string2.data()));
     ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc1);
     ASSERT_EQ(string2.getAllocator().pageAllocator(), &alloc2);
 
     // swap: allocators are swapped, too
     std::swap(string1, string2);
-    ASSERT_STREQ(string1.data(), string2.data());
+    ASSERT_STREQ(asString(string1.data()), asString(string2.data()));
     ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc2);
     ASSERT_EQ(string2.getAllocator().pageAllocator(), &alloc1);
 
     // change the content and swap back
     string1.assign(data.blablabla, data.blablabla_len);
-    ASSERT_STREQ(string1.data(), data.blablabla);
-    ASSERT_STREQ(string2.data(), data.hello_world);
-    ASSERT_STRNE(string1.data(), string2.data());
+    ASSERT_STREQ(asString(string1.data()), asString(data.blablabla));
+    ASSERT_STREQ(asString(string2.data()), asString(data.hello_world));
+    ASSERT_STRNE(asString(string1.data()), asString(string2.data()));
     std::swap(string1, string2);
-    ASSERT_STREQ(string1.data(), data.hello_world);
-    ASSERT_STREQ(string2.data(), data.blablabla);
+    ASSERT_STREQ(asString(string1.data()), asString(data.hello_world));
+    ASSERT_STREQ(asString(string2.data()), asString(data.blablabla));
     ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc1);
     ASSERT_EQ(string2.getAllocator().pageAllocator(), &alloc2);
 

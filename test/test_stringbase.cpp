@@ -563,6 +563,51 @@ public:
     }
 };
 
+template <typename StringType>
+class TestReplaceInitializerList<gsl::byte, StringType>
+{
+public:
+    void run()
+    {
+        TestData<gsl::byte> data;
+        TestData<char> sdata;
+        using Traits = std::char_traits<gsl::byte>;
+
+        StringType s1(data.hello_world);
+        std::string s2(sdata.hello_world);
+        const size_t initListSize = 4;
+
+        // same length
+        s1.replace(s1.cbegin(), s1.cbegin() + initListSize, { 'T'_b, 'e'_b, 's'_b, 't'_b });
+        s2.replace(s2.begin(), s2.begin() + initListSize, { 'T', 'e', 's', 't' });
+        ASSERT_EQ(s1.size(), s2.size());
+        ASSERT_TRUE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
+                                    s1.size()) == 0);
+
+        // longer (forcing a reallocation for Password, but shorter than the max. array)
+        s1.replace(s1.cbegin(), s1.cbegin() + 1, { 'T'_b, 'e'_b, 's'_b, 't'_b });
+        s2.replace(s2.begin(), s2.begin() + 1, { 'T', 'e', 's', 't' });
+        ASSERT_EQ(s1.size(), s2.size());
+        ASSERT_TRUE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
+                                    s1.size()) == 0);
+
+        // shorter
+        s1.replace(s1.cbegin(), s1.cbegin() + initListSize + 3, { 'T'_b, 'e'_b, 's'_b, 't'_b });
+        s2.replace(s2.begin(), s2.begin() + initListSize + 3, { 'T', 'e', 's', 't' });
+        ASSERT_EQ(s1.size(), s2.size());
+        ASSERT_TRUE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
+                                    s1.size()) == 0);
+
+        // with offset
+        s1.replace(s1.begin() + 3, s1.begin() + 5, { 'T'_b, 'e'_b, 's'_b, 't'_b });
+        s2.replace(s2.begin() + 3, s2.begin() + 5, { 'T', 'e', 's', 't' });
+        ASSERT_EQ(s1.size(), s2.size());
+        ASSERT_TRUE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
+                                    s1.size()) == 0);
+    }
+};
+
+
 /* replace functions */
 TYPED_TEST(StringBaseTest, ReplaceFunctions)
 {
@@ -1504,12 +1549,9 @@ TYPED_TEST(StringBaseTest, InsertFunctions)
     }
 }
 
-/* operator<< */
-TYPED_TEST(StringBaseTest, OutputStream)
+template <class StringType, class CharType>
+void runStreamTests(StringType, CharType)
 {
-    using StringType = TypeParam; // gtest specific
-    using StorageType = typename StringType::storage_type;
-    using CharType = typename StorageType::char_type;
     const TestData<CharType> data{};
 
     const StringType s(data.hello_world);
@@ -1519,4 +1561,19 @@ TYPED_TEST(StringBaseTest, OutputStream)
     std::basic_stringstream<CharType> outputStream;
     outputStream << s;
     ASSERT_EQ(outputStream.str(), ref);
+}
+
+// disable for gsl::byte
+template <class StringType>
+void runStreamTests(StringType, gsl::byte)
+{
+}
+
+/* operator<< */
+TYPED_TEST(StringBaseTest, OutputStream)
+{
+    using StringType = TypeParam; // gtest specific
+    using StorageType = typename StringType::storage_type;
+    using CharType = typename StorageType::char_type;
+    runStreamTests(StringType(), CharType());
 }
