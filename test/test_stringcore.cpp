@@ -15,6 +15,36 @@ class StringCoreTest : public ::testing::Test
 {
 };
 
+static std::string hexdump(const void* ptr, size_t buflen)
+{
+    std::string buffer;
+    const char* buf = reinterpret_cast<const char*>(ptr);
+    char tmp[64];
+    for (size_t i = 0; i < buflen; i += 16)
+    {
+        snprintf(tmp, sizeof(tmp), "%06zu: ", i);
+        buffer += tmp;
+        for (size_t j = 0; j < 16; j++)
+        {
+            if (i + j < buflen)
+                snprintf(tmp, sizeof(tmp), "%02x ", buf[i + j]);
+            else
+                snprintf(tmp, sizeof(tmp), "   ");
+            buffer += tmp;
+        }
+        buffer += " ";
+        for (size_t j = 0; j < 16; j++)
+        {
+            if (i + j < buflen)
+            {
+                buffer += (isprint(buf[i + j]) ? buf[i + j] : '.');
+            }
+        }
+        buffer += '\n';
+    }
+    return buffer;
+}
+
 // all string types we want to test: we already include StringBase here to avoid copy & paste
 using SpecificTypes = testing::Types<
   spsl::StringCore<spsl::StorageArray<char, 64, spsl::policy::overflow::Truncate>>,
@@ -233,7 +263,8 @@ TYPED_TEST(StringCoreTest, ConstructorIterator)
             StringType s(other.begin(), other.end());
             ASSERT_EQ(s.length(), data.hello_world_len);
             ASSERT_EQ(s.size(), data.hello_world_len);
-            ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
+            ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0)
+              << hexdump(s.data(), s.size() * sizeof(CharType));
             ASSERT_TRUE(s == data.hello_world);
         }
     }
@@ -1144,7 +1175,7 @@ TYPED_TEST(StringCoreTest, ComparisonOperators)
     std::basic_string<CharType> ref;
 
     // 1. StringCore, char_type*
-    ASSERT_TRUE(s == data.hello_world);
+    ASSERT_TRUE(s == data.hello_world) << hexdump(s.data(), s.size() * sizeof(CharType));
     ASSERT_TRUE(s != data.blablabla);
     ASSERT_FALSE(s == data.blablabla);
     ASSERT_TRUE(s <= data.hello_world);
