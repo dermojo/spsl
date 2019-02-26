@@ -141,11 +141,11 @@ struct TestData<gsl::byte>
     TestData& operator=(const TestData&) = delete;
     TestData& operator=(TestData&&) = delete;
 
-    const gsl::byte* const hello_world = reinterpret_cast<const gsl::byte*>("Hello World!");
+    const gsl::byte* const hello_world = reinterpret_cast<const gsl::byte*>("Hello World!\0");
     const size_t hello_world_len = 12;
-    const gsl::byte* const blablabla = reinterpret_cast<const gsl::byte*>("blablabla");
+    const gsl::byte* const blablabla = reinterpret_cast<const gsl::byte*>("blablabla\0");
     const size_t blablabla_len = 9;
-    const gsl::byte* const empty = reinterpret_cast<const gsl::byte*>("");
+    const gsl::byte* const empty = reinterpret_cast<const gsl::byte*>("\0");
 
     std::initializer_list<gsl::byte> initializerList() const
     {
