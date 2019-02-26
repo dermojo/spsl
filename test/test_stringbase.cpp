@@ -1446,7 +1446,9 @@ TYPED_TEST(StringBaseTest, InsertFunctions)
         s1.insert(3, 13, data.hello_world[0]);
         s2.insert(3, 13, data.hello_world[0]);
         ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0)
+          << hexdump(s1.data(), s1.size()) << "\n"
+          << hexdump(s2.data(), s2.size());
     }
     // this_type& insert(size_type index, const char_type* s)
     {

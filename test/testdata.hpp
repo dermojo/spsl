@@ -9,6 +9,8 @@
 #define TESTDATA_HPP_
 
 #include <cstddef>
+#include <cstring>
+#include <string>
 
 #include <gsl.hpp>
 
@@ -161,5 +163,35 @@ struct TestData<gsl::byte>
     }
 };
 
+
+inline std::string hexdump(const void* ptr, size_t buflen)
+{
+    std::string buffer;
+    const char* buf = reinterpret_cast<const char*>(ptr);
+    char tmp[64];
+    for (size_t i = 0; i < buflen; i += 16)
+    {
+        snprintf(tmp, sizeof(tmp), "%06zu: ", i);
+        buffer += tmp;
+        for (size_t j = 0; j < 16; j++)
+        {
+            if (i + j < buflen)
+                snprintf(tmp, sizeof(tmp), "%02x ", buf[i + j]);
+            else
+                snprintf(tmp, sizeof(tmp), "   ");
+            buffer += tmp;
+        }
+        buffer += " ";
+        for (size_t j = 0; j < 16; j++)
+        {
+            if (i + j < buflen)
+            {
+                buffer += (isprint(buf[i + j]) ? buf[i + j] : '.');
+            }
+        }
+        buffer += '\n';
+    }
+    return buffer;
+}
 
 #endif /* TESTDATA_HPP_ */

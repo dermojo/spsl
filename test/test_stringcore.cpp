@@ -15,35 +15,6 @@ class StringCoreTest : public ::testing::Test
 {
 };
 
-static std::string hexdump(const void* ptr, size_t buflen)
-{
-    std::string buffer;
-    const char* buf = reinterpret_cast<const char*>(ptr);
-    char tmp[64];
-    for (size_t i = 0; i < buflen; i += 16)
-    {
-        snprintf(tmp, sizeof(tmp), "%06zu: ", i);
-        buffer += tmp;
-        for (size_t j = 0; j < 16; j++)
-        {
-            if (i + j < buflen)
-                snprintf(tmp, sizeof(tmp), "%02x ", buf[i + j]);
-            else
-                snprintf(tmp, sizeof(tmp), "   ");
-            buffer += tmp;
-        }
-        buffer += " ";
-        for (size_t j = 0; j < 16; j++)
-        {
-            if (i + j < buflen)
-            {
-                buffer += (isprint(buf[i + j]) ? buf[i + j] : '.');
-            }
-        }
-        buffer += '\n';
-    }
-    return buffer;
-}
 
 // all string types we want to test: we already include StringBase here to avoid copy & paste
 using SpecificTypes = testing::Types<
@@ -239,7 +210,9 @@ TYPED_TEST(StringCoreTest, ConstructorIterator)
             StringType s(ref.begin(), ref.end());
             ASSERT_EQ(s.length(), data.hello_world_len);
             ASSERT_EQ(s.size(), data.hello_world_len);
-            ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
+            ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0)
+              << hexdump(s.c_str(), s.size()) << "\n"
+              << hexdump(data.hello_world, data.hello_world_len);
             ASSERT_TRUE(s == data.hello_world);
         }
 
@@ -962,9 +935,9 @@ TYPED_TEST(StringCoreTest, ComparisonFunctions)
     // note: if the prefix is identical, comparing with a shorter string yields rc > 0
 
     // char_type*
-    ASSERT_EQ(s.compare(ref.c_str()), 0);
+    ASSERT_EQ(s.compare(ref.c_str()), 0) << hexdump(s.c_str(), s.size()) << "\n"
+                                         << hexdump(ref.c_str(), ref.size());
     ++ref[0];
-    ;
     ASSERT_LT(s.compare(ref.c_str()), 0);
     ref[0] = static_cast<CharType>(ref[0] - 2);
     ASSERT_GT(s.compare(ref.c_str()), 0);
@@ -1303,7 +1276,9 @@ TYPED_TEST(StringCoreTest, SwapSpecialization)
     StringType s2(data.blablabla);
     ASSERT_TRUE(s1.empty());
     ASSERT_FALSE(s2.empty());
-    ASSERT_TRUE(s2 == data.blablabla);
+    ASSERT_TRUE(s2 == data.blablabla) << hexdump(s2.c_str(), s2.size()) << "\n"
+                                      << hexdump(data.blablabla, data.blablabla_len);
+
     std::swap(s1, s2);
     ASSERT_TRUE(s2.empty());
     ASSERT_FALSE(s1.empty());
