@@ -1,4 +1,4 @@
-dist: trusty
+dist: xenial
 language: cpp
 
 matrix:
@@ -36,6 +36,22 @@ matrix:
             - g++-6
             - lcov
       env: MYCC=gcc-6 MYCXX=g++-6 CODE_COVERAGE=on
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env: MYCC=gcc-7 MYCXX=g++-7
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+      env: MYCC=gcc-8 MYCXX=g++-8
     - compiler: clang
       addons:
         apt:
@@ -59,7 +75,7 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-4.0
+            - llvm-toolchain-xenial
           packages:
             - clang-4.0
       env: MYCC=clang-4.0 MYCXX=clang++-4.0
@@ -68,7 +84,7 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-5.0
+            - llvm-toolchain-xenial
           packages:
             - clang-5.0
       env: MYCC=clang-5.0 MYCXX=clang++-5.0
@@ -77,27 +93,34 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-6.0
+            - llvm-toolchain-xenial-6.0
           packages:
             - clang-6.0
       env: MYCC=clang-6.0 MYCXX=clang++-6.0
+    - compiler: clang-7
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-xenial-7
+          packages:
+            - clang-7
+      env: MYCC=clang MYCXX=clang++
     - compiler: clang
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-6.0
+            - llvm-toolchain-xenial-6.0
           packages:
             - clang-6.0
       env: MYCC=clang-6.0 MYCXX=clang++-6.0 ENABLE_ASAN=on
-      # workaround for missing PTRACE capability, see https://github.com/travis-ci/travis-ci/issues/8836
-      sudo: required
     - compiler: clang
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-6.0
+            - llvm-toolchain-xenial-6.0
           packages:
             - clang-6.0
       env: MYCC=clang-6.0 MYCXX=clang++-6.0 ENABLE_UBSAN=on
@@ -114,7 +137,7 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-6.0
+            - llvm-toolchain-xenial-6.0
           packages:
             - clang-format-6.0
             - clang-6.0
