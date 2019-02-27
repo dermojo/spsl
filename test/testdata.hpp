@@ -15,11 +15,11 @@
 #include <gsl.hpp>
 
 
-// enable basic_string_view tests if available (according to http://stackoverflow.com/a/7132549)
-#if __cplusplus > 201402L
+// enable basic_string_view tests if available
+#if __cplusplus >= 201703L
 #define TEST_STRING_VIEW
 
-#include <experimental/string_view>
+#include <string_view>
 
 #endif
 
@@ -33,7 +33,7 @@ struct TestData
 template <>
 struct TestData<char>
 {
-    TestData() = default;
+    TestData() {}
     ~TestData() = default;
     // not needed
     TestData(const TestData&) = delete;
@@ -64,7 +64,7 @@ struct TestData<char>
 template <>
 struct TestData<wchar_t>
 {
-    TestData() = default;
+    TestData() {}
     ~TestData() = default;
     // not needed
     TestData(const TestData&) = delete;
@@ -133,7 +133,7 @@ inline gsl::byte operator+(gsl::byte b, int i)
 template <>
 struct TestData<gsl::byte>
 {
-    TestData() = default;
+    TestData() {}
     ~TestData() = default;
     // not needed
     TestData(const TestData&) = delete;
