@@ -48,7 +48,7 @@ TYPED_TEST(StringCoreTest, Constructors)
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     // default constructor
     {
@@ -199,7 +199,7 @@ TYPED_TEST(StringCoreTest, ConstructorIterator)
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     // construct from input iterators
     {
@@ -250,7 +250,7 @@ TYPED_TEST(StringCoreTest, AssignmentOperators)
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     std::initializer_list<CharType> initList = data.initializerList();
 
     StringType s;
@@ -324,7 +324,7 @@ TYPED_TEST(StringCoreTest, AssignmentFunctions)
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     std::initializer_list<CharType> initList = data.initializerList();
     const CharType nul = StorageType::nul();
 
@@ -429,7 +429,7 @@ TYPED_TEST(StringCoreTest, AccessFunctions)
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     const CharType nul = StorageType::nul();
 
     // 1. empty string, const
@@ -519,7 +519,7 @@ TYPED_TEST(StringCoreTest, IteratorFunctions)
     using StringType = TypeParam; // gtest specific
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     // 1. constant
     {
@@ -621,7 +621,7 @@ TYPED_TEST(StringCoreTest, CapacityFunctions)
     using StringType = TypeParam; // gtest specific
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     StringType s;
     ASSERT_TRUE(s.empty());
@@ -658,7 +658,7 @@ TYPED_TEST(StringCoreTest, Operations)
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     const CharType nul = StorageType::nul();
 
     StringType s1;
@@ -814,7 +814,7 @@ TYPED_TEST(StringCoreTest, AppendFunctions)
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     std::initializer_list<CharType> initList = data.initializerList();
     const CharType ch = data.hello_world[5];
 
@@ -928,7 +928,7 @@ TYPED_TEST(StringCoreTest, ComparisonFunctions)
     using StringType = TypeParam; // gtest specific
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     const StringType s(data.hello_world);
     StringType ref(data.hello_world);
@@ -1044,7 +1044,7 @@ TYPED_TEST(StringCoreTest, FindFunctions)
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     const auto npos = StringType::npos;
     const CharType nul = StorageType::nul();
 
@@ -1140,7 +1140,7 @@ TYPED_TEST(StringCoreTest, ComparisonOperators)
     using StringType = TypeParam; // gtest specific
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     const StringType s(data.hello_world);
     const StringType bla(data.blablabla);
@@ -1268,7 +1268,7 @@ TYPED_TEST(StringCoreTest, SwapSpecialization)
     using StringType = TypeParam; // gtest specific
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     StringType s1;
 
@@ -1298,7 +1298,7 @@ TYPED_TEST(StringCoreTest, HashSpecialization)
     using StringType = TypeParam; // gtest specific
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     StringType s1;
     std::hash<StringType> hash;

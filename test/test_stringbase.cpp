@@ -42,7 +42,7 @@ TYPED_TEST(StringBaseTest, FindFirstOfFunctions)
     using StringType = TypeParam; // gtest specific
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     const auto npos = StringType::npos;
     const auto nul = StringType::nul();
 
@@ -122,7 +122,7 @@ TYPED_TEST(StringBaseTest, FindFirstNotOfFunctions)
     using StringType = TypeParam; // gtest specific
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     const auto npos = StringType::npos;
     const auto nul = StringType::nul();
 
@@ -206,7 +206,7 @@ TYPED_TEST(StringBaseTest, FindLastOfFunctions)
     using StringType = TypeParam; // gtest specific
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     const auto npos = StringType::npos;
     const auto nul = StringType::nul();
 
@@ -307,7 +307,7 @@ TYPED_TEST(StringBaseTest, FindLastNotOfFunctions)
     using StringType = TypeParam; // gtest specific
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     const auto npos = StringType::npos;
     const auto nul = StringType::nul();
 
@@ -406,7 +406,7 @@ TYPED_TEST(StringBaseTest, EraseFunctions)
     using StringType = TypeParam; // gtest specific
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     using RefType = std::basic_string<CharType>;
 
     // by index
@@ -615,7 +615,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StorageType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     const auto npos = StringType::npos;
 
     using RefType = std::basic_string<CharType>;
@@ -1434,7 +1434,7 @@ TYPED_TEST(StringBaseTest, InsertFunctions)
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StorageType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     using RefType = std::basic_string<CharType>;
 
@@ -1554,7 +1554,7 @@ TYPED_TEST(StringBaseTest, InsertFunctions)
 template <class StringType, class CharType>
 void runStreamTests(StringType, CharType)
 {
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     const StringType s(data.hello_world);
     const std::basic_string<CharType> ref(data.hello_world);

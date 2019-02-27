@@ -75,7 +75,7 @@ TYPED_TEST(StorageArrayTest, AssignmentTests)
 {
     using CharType = TypeParam; // gtest specific
     using ArrayType = spsl::StorageArray<CharType, 64>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     using Traits = typename ArrayType::traits_type;
 
     ArrayType arr;
@@ -113,7 +113,7 @@ TYPED_TEST(StorageArrayTest, PushPopTests)
 {
     using CharType = TypeParam; // gtest specific
     using ArrayType = spsl::StorageArray<CharType, 64>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     using Traits = typename ArrayType::traits_type;
 
     ArrayType arr;
@@ -143,7 +143,7 @@ TYPED_TEST(StorageArrayTest, InsertTests)
 {
     using CharType = TypeParam; // gtest specific
     using ArrayType = spsl::StorageArray<CharType, 64>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     using Traits = typename ArrayType::traits_type;
 
     // prototype: void insert(size_type index, size_type count, char_type ch)
@@ -208,7 +208,7 @@ TYPED_TEST(StorageArrayTest, AppendTests)
 {
     using CharType = TypeParam; // gtest specific
     using ArrayType = spsl::StorageArray<CharType, 64>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     // apply all functions to the array and std::basic_string at the same time and make sure they
     // stay identical
@@ -250,7 +250,7 @@ TYPED_TEST(StorageArrayTest, SwapTests)
 {
     using CharType = TypeParam; // gtest specific
     using ArrayType = spsl::StorageArray<CharType, 64>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     using Traits = typename ArrayType::traits_type;
 
     ArrayType arr1, arr2;
@@ -296,7 +296,7 @@ TYPED_TEST(StorageArrayTest, ResizeTests)
 {
     using CharType = TypeParam; // gtest specific
     using ArrayType = spsl::StorageArray<CharType, 64>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     const CharType nul = ArrayType::nul();
 
     // we'll stay within max_size() here
@@ -348,7 +348,7 @@ TYPED_TEST(StorageArrayTest, AssignTruncationTests)
     using CharType = TypeParam; // gtest specific
     // this variant definitely won't throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     // I can reserve as much as I want - it'll be ignored
     const size_t too_large = 1000;
@@ -409,7 +409,7 @@ TYPED_TEST(StorageArrayTest, AssignLengthErrorTests)
     using CharType = TypeParam; // gtest specific
     // this variant definitely will throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Throw>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     ArrayType arr;
     const CharType ch = data.hello_world[0];
@@ -465,7 +465,7 @@ TYPED_TEST(StorageArrayTest, InsertTruncationTests)
     using CharType = TypeParam; // gtest specific
     // this variant definitely won't throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     const CharType ch = data.hello_world[0];
     ArrayType arr;
@@ -513,7 +513,7 @@ TYPED_TEST(StorageArrayTest, InsertLengthErrorTests)
     using CharType = TypeParam; // gtest specific
     // this variant definitely will throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Throw>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     ArrayType arr;
     const CharType ch = data.hello_world[0];
@@ -547,7 +547,7 @@ TYPED_TEST(StorageArrayTest, InsertRangeErrorTests)
 {
     using CharType = TypeParam; // gtest specific
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     ArrayType arr;
     const CharType ch = data.hello_world[0];
@@ -584,7 +584,7 @@ TYPED_TEST(StorageArrayTest, ReplaceTests)
     using CharType = TypeParam; // gtest specific
     using ArrayType = spsl::StorageArray<CharType, 64>;
     using Traits = typename ArrayType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     using RefType = std::basic_string<CharType>;
 
     // replace(size_type pos, size_type count, const char_type* cstr, size_type count2)
@@ -714,7 +714,7 @@ TYPED_TEST(StorageArrayTest, ReplaceTruncationTests)
     // this variant definitely won't throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
     using Traits = typename ArrayType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     const CharType ch = data.hello_world[0];
     const CharType ch2 = data.hello_world[1];
@@ -762,7 +762,7 @@ TYPED_TEST(StorageArrayTest, ReplaceLengthErrorTests)
     // this variant definitely will throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Throw>;
     using Traits = typename ArrayType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     const CharType ch = data.hello_world[0];
     const CharType ch2 = data.hello_world[1];
@@ -800,7 +800,7 @@ TYPED_TEST(StorageArrayTest, EraseTests)
     using CharType = TypeParam; // gtest specific
     using ArrayType = spsl::StorageArray<CharType, 64>;
     using Traits = typename ArrayType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     using RefType = std::basic_string<CharType>;
 
     // void erase(size_type index, size_type count)
