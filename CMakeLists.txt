@@ -30,8 +30,14 @@ add_subdirectory(extern/gsl-lite)
 add_executable(testlib
     test/test_storagearray.cpp
     test/test_storagepassword.cpp
-    test/test_stringcore.cpp
     test/test_stringbase.cpp
+    test/test_stringbase_erase.cpp
+    test/test_stringbase_find.cpp
+    test/test_stringbase_replace.cpp
+    test/test_stringcore.cpp
+    test/test_stringcore_access.cpp
+    test/test_stringcore_assign.cpp
+    test/test_stringcore_construct.cpp
     test/test_traits.cpp
     test/test_pagealloc.cpp
     )
@@ -70,6 +76,7 @@ if(MSVC)
     # Prevent deprecation errors for std::tr1 in googletest
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING")
 else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe")
     target_compile_options(testlib PUBLIC -Wall -Werror -Wextra -pedantic
                                           -Wunused -Wredundant-decls -Wunreachable-code
                                           -Wold-style-cast -Wshadow
