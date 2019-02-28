@@ -423,4 +423,16 @@ TYPED_TEST(StringCoreTest, HashSpecialization)
     ASSERT_EQ(val5, val6);
     ASSERT_NE(val1, val5);
     ASSERT_NE(val3, val5);
+
+    // repeat for every possible prefix
+    while (s1.size() > 1)
+    {
+        s1.pop_back();
+        std::size_t val7 = hash(s1);
+        std::size_t val8 = hash(s1);
+        ASSERT_EQ(val7, val8);
+        ASSERT_NE(val1, val7);
+        ASSERT_NE(val3, val7);
+        ASSERT_NE(val5, val7);
+    }
 }
