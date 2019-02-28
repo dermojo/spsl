@@ -33,8 +33,11 @@ TYPED_TEST(StringBaseTest, InsertFunctions)
         s2.insert(3, 13, data.hello_world[0]);
         ASSERT_EQ(s1.size(), s2.size());
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0)
+#ifdef ENABLE_HEXDUMP
           << hexdump(s1.data(), s1.size()) << "\n"
-          << hexdump(s2.data(), s2.size());
+          << hexdump(s2.data(), s2.size())
+#endif
+          ;
     }
     // this_type& insert(size_type index, const char_type* s)
     {

@@ -163,7 +163,7 @@ struct TestData<gsl::byte>
     }
 };
 
-
+#ifdef ENABLE_HEXDUMP
 inline std::string hexdump(const void* ptr, size_t buflen)
 {
     std::string buffer;
@@ -193,5 +193,6 @@ inline std::string hexdump(const void* ptr, size_t buflen)
     }
     return buffer;
 }
+#endif
 
 #endif /* TESTDATA_HPP_ */

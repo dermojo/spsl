@@ -181,8 +181,11 @@ TYPED_TEST(StringCoreTest, ConstructorIterator)
             ASSERT_EQ(s.length(), data.hello_world_len);
             ASSERT_EQ(s.size(), data.hello_world_len);
             ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0)
+#ifdef ENABLE_HEXDUMP
               << hexdump(s.c_str(), s.size()) << "\n"
-              << hexdump(data.hello_world, data.hello_world_len);
+              << hexdump(data.hello_world, data.hello_world_len)
+#endif
+              ;
             ASSERT_TRUE(s == data.hello_world);
         }
 
@@ -207,7 +210,10 @@ TYPED_TEST(StringCoreTest, ConstructorIterator)
             ASSERT_EQ(s.length(), data.hello_world_len);
             ASSERT_EQ(s.size(), data.hello_world_len);
             ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0)
-              << hexdump(s.data(), s.size() * sizeof(CharType));
+#ifdef ENABLE_HEXDUMP
+              << hexdump(s.data(), s.size() * sizeof(CharType))
+#endif
+              ;
             ASSERT_TRUE(s == data.hello_world);
         }
     }

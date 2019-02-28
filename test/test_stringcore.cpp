@@ -24,8 +24,12 @@ TYPED_TEST(StringCoreTest, ComparisonFunctions)
     // note: if the prefix is identical, comparing with a shorter string yields rc > 0
 
     // char_type*
-    ASSERT_EQ(s.compare(ref.c_str()), 0) << hexdump(s.c_str(), s.size()) << "\n"
-                                         << hexdump(ref.c_str(), ref.size());
+    ASSERT_EQ(s.compare(ref.c_str()), 0)
+#ifdef ENABLE_HEXDUMP
+      << hexdump(s.c_str(), s.size()) << "\n"
+      << hexdump(ref.c_str(), ref.size())
+#endif
+      ;
     ++ref[0];
     ASSERT_LT(s.compare(ref.c_str()), 0);
     ref[0] = static_cast<CharType>(ref[0] - 2);
@@ -237,7 +241,11 @@ TYPED_TEST(StringCoreTest, ComparisonOperators)
     std::basic_string<CharType> ref;
 
     // 1. StringCore, char_type*
-    ASSERT_TRUE(s == data.hello_world) << hexdump(s.data(), s.size() * sizeof(CharType));
+    ASSERT_TRUE(s == data.hello_world)
+#ifdef ENABLE_HEXDUMP
+      << hexdump(s.data(), s.size() * sizeof(CharType))
+#endif
+      ;
     ASSERT_TRUE(s != data.blablabla);
     ASSERT_FALSE(s == data.blablabla);
     ASSERT_TRUE(s <= data.hello_world);
@@ -365,8 +373,12 @@ TYPED_TEST(StringCoreTest, SwapSpecialization)
     StringType s2(data.blablabla);
     ASSERT_TRUE(s1.empty());
     ASSERT_FALSE(s2.empty());
-    ASSERT_TRUE(s2 == data.blablabla) << hexdump(s2.c_str(), s2.size()) << "\n"
-                                      << hexdump(data.blablabla, data.blablabla_len);
+    ASSERT_TRUE(s2 == data.blablabla)
+#ifdef ENABLE_HEXDUMP
+      << hexdump(s2.c_str(), s2.size()) << "\n"
+      << hexdump(data.blablabla, data.blablabla_len)
+#endif
+      ;
 
     swap(s1, s2);
     ASSERT_TRUE(s2.empty());
