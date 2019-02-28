@@ -548,8 +548,7 @@ public:
     SensitiveSegmentAllocator() : m_alloc(&SensitivePageAllocator::getDefaultInstance()) {}
     SensitiveSegmentAllocator(SensitivePageAllocator& alloc) noexcept : m_alloc(&alloc) {}
     SensitiveSegmentAllocator(const SensitiveSegmentAllocator& other) noexcept = default;
-    SensitiveSegmentAllocator(SensitiveSegmentAllocator&& other) noexcept
-      : SensitiveSegmentAllocator()
+    SensitiveSegmentAllocator(SensitiveSegmentAllocator&& other) noexcept : m_alloc(nullptr)
     {
         this->swap(other);
     }
@@ -586,7 +585,8 @@ public:
     std::size_t max_size() const noexcept { return m_alloc->max_size() / sizeof(T); }
 
 private:
-    /// non-owning pointer to the "real" allocator (never nullptr, but cannot use a reference...)
+    /// non-owning pointer to the "real" allocator
+    /// (nullptr is only possible in a moved-from state)
     SensitivePageAllocator* m_alloc;
 };
 } // namespace spsl
