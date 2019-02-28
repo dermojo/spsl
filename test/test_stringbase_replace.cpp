@@ -403,6 +403,19 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         ASSERT_TRUE(s1.empty());
         ASSERT_TRUE(s2.empty());
+
+        // exceptions: verify that they are thrown and that the string doesn't change
+        {
+            s1 = data.hello_world;
+            // (1) invalid pos raises out_of_range
+            ASSERT_THROW(s1.replace(s1.end() + 1, s1.end(), repl1.begin(), repl1.end()),
+                         std::out_of_range);
+            ASSERT_TRUE(s1 == data.hello_world);
+            // (2) in our class, an invalid count does the same
+            ASSERT_THROW(s1.replace(s1.begin(), s1.end() + 1, repl1.begin(), repl1.end()),
+                         std::out_of_range);
+            ASSERT_TRUE(s1 == data.hello_world);
+        }
     }
 
     // replace(size_type pos, size_type count, const char_type* cstr, size_type count2);
@@ -737,7 +750,7 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         {
             s1 = data.hello_world;
             // (1) invalid pos raises out_of_range
-            ASSERT_THROW(s1.replace(s1.size(), s1.size() + 3, 3, repl), std::out_of_range);
+            ASSERT_THROW(s1.replace(s1.size() + 1, 3, 3, repl), std::out_of_range);
             ASSERT_TRUE(s1 == data.hello_world);
             // (2) in our class, an invalid count does the same
             ASSERT_THROW(s1.replace(0, s1.size() + 1, 3, repl), std::out_of_range);
