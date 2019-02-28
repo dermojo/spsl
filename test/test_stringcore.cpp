@@ -351,7 +351,7 @@ TYPED_TEST(StringCoreTest, ComparisonOperators)
 }
 
 
-/* swap specialization */
+/* swap implementation */
 TYPED_TEST(StringCoreTest, SwapSpecialization)
 {
     using StringType = TypeParam; // gtest specific
@@ -368,12 +368,12 @@ TYPED_TEST(StringCoreTest, SwapSpecialization)
     ASSERT_TRUE(s2 == data.blablabla) << hexdump(s2.c_str(), s2.size()) << "\n"
                                       << hexdump(data.blablabla, data.blablabla_len);
 
-    std::swap(s1, s2);
+    swap(s1, s2);
     ASSERT_TRUE(s2.empty());
     ASSERT_FALSE(s1.empty());
     ASSERT_TRUE(s1 == data.blablabla);
     s2 = data.hello_world;
-    std::swap(s2, s1);
+    swap(s2, s1);
     ASSERT_FALSE(s1.empty());
     ASSERT_FALSE(s2.empty());
     ASSERT_TRUE(s1 == data.hello_world);

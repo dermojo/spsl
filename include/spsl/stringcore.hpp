@@ -619,17 +619,18 @@ bool operator>=(const StringClass& lhs, const StringCore<StorageType>& rhs)
 {
     return rhs.compare(lhs) <= 0;
 }
-} // namespace spsl
 
-namespace std
-{
-
-// partial specialization of std::swap
+// swap implementation
 template <typename StorageType>
 inline void swap(spsl::StringCore<StorageType>& lhs, spsl::StringCore<StorageType>& rhs)
 {
     lhs.swap(rhs);
 }
+
+} // namespace spsl
+
+namespace std
+{
 
 // partial specialization of std::hash
 template <typename StorageType>
