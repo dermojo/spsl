@@ -107,8 +107,9 @@ public:
     explicit StringBase(const storage_type& storage) : base_type(storage) {}
 
     /// construct from another string-like container (may even be a vector...)
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass,
+              typename std::enable_if<
+                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
     explicit StringBase(const StringClass& s) : base_type(s)
     {
     }
@@ -141,8 +142,9 @@ public:
     }
 
     /// allow assignment from another string-like container (may even be a vector...)
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass,
+              typename std::enable_if<
+                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& operator=(const StringClass& s)
     {
         assign(s.data(), s.size());
@@ -195,15 +197,17 @@ public:
         return *this;
     }
     // another string-like class
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass,
+              typename std::enable_if<
+                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& insert(size_type index, const StringClass& s)
     {
         return insert(index, s.data(), s.size());
     }
     // another string-like class with index and count
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass,
+              typename std::enable_if<
+                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& insert(size_type index, const StringClass& s, size_type index_str,
                       size_type count = npos)
     {
@@ -331,23 +335,26 @@ public:
                        ilist.begin(), ilist.size());
     }
 
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass,
+              typename std::enable_if<
+                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& replace(size_type pos, size_type count, const StringClass& s)
     {
         return replace(pos, count, s.data(), s.size());
     }
 
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass,
+              typename std::enable_if<
+                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& replace(const_iterator first, const_iterator last, const StringClass& s)
     {
         return replace(static_cast<size_type>(first - data()), static_cast<size_type>(last - first),
                        s.data(), s.size());
     }
 
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass,
+              typename std::enable_if<
+                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
     this_type& replace(size_type pos, size_type count, const StringClass& s, size_type pos2,
                        size_type count2 = npos)
     {
@@ -384,8 +391,9 @@ public:
     {
         return find_first_of(s, pos, traits_type::length(s));
     }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass,
+              typename std::enable_if<
+                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
     size_type find_first_of(const StringClass& s, size_type pos = 0) const noexcept
     {
         return find_first_of(s.data(), pos, s.size());
@@ -422,8 +430,9 @@ public:
     {
         return find_first_not_of(s, pos, traits_type::length(s));
     }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass,
+              typename std::enable_if<
+                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
     size_type find_first_not_of(const StringClass& s, size_type pos = 0) const noexcept
     {
         return find_first_not_of(s.data(), pos, s.size());
@@ -459,8 +468,9 @@ public:
     {
         return find_last_of(s, pos, traits_type::length(s));
     }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass,
+              typename std::enable_if<
+                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
     size_type find_last_of(const StringClass& s, size_type pos = npos) const noexcept
     {
         return find_last_of(s.data(), pos, s.size());
@@ -511,27 +521,27 @@ public:
     {
         return find_last_not_of(s, pos, traits_type::length(s));
     }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
+    template <typename StringClass,
+              typename std::enable_if<
+                is_compatible_string<char_type, size_type, StringClass>::value>::type* = nullptr>
     size_type find_last_not_of(const StringClass& s, size_type pos = npos) const noexcept
     {
         return find_last_not_of(s.data(), pos, s.size());
+    }
+
+    // output stream operator
+    template <typename CharTraits>
+    friend std::basic_ostream<char_type, CharTraits>& operator<<(
+      std::basic_ostream<char_type, CharTraits>& os, const this_type& str)
+    {
+        os.write(str.data(), static_cast<std::streamsize>(str.size()));
+        return os;
     }
 
 protected:
     using base_type::m_storage;
 };
 
-// output stream operator
-template <typename CharType, typename CharTraits, typename StorageType,
-          typename std::enable_if<
-            std::is_same<CharType, typename StorageType::char_type>::value>::type* = nullptr>
-inline std::basic_ostream<CharType, CharTraits>& operator<<(
-  std::basic_ostream<CharType, CharTraits>& os, const StringBase<StorageType>& str)
-{
-    os.write(str.data(), static_cast<std::streamsize>(str.size()));
-    return os;
-}
 
 } // namespace spsl
 
