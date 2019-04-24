@@ -2,7 +2,6 @@
 
 [![Travis-CI status](https://travis-ci.org/dermojo/spsl.svg?branch=develop)](https://travis-ci.org/dermojo/spsl)
 [![AppVeyor status](https://ci.appveyor.com/api/projects/status/github/dermojo/spsl?branch=develop&svg=true)](https://ci.appveyor.com/project/dermojo/spsl)
-[![Coverity Scan Build Status](https://scan.coverity.com/projects/11354/badge.svg)](https://scan.coverity.com/projects/dermojo-spsl)
 [![codecov](https://codecov.io/gh/dermojo/spsl/branch/develop/graph/badge.svg)](https://codecov.io/gh/dermojo/spsl)
 
 SPSL is a header-only library for "special" string implementations. It contains the following
