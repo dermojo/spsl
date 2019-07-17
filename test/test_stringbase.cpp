@@ -141,7 +141,7 @@ TYPED_TEST(StringBaseTest, InsertFunctions)
 }
 
 template <class StringType, class CharType>
-void runStreamTests(StringType, CharType)
+void runStreamTests(StringType&&, CharType)
 {
     const TestData<CharType> data;
 
@@ -156,7 +156,7 @@ void runStreamTests(StringType, CharType)
 
 // disable for gsl::byte
 template <class StringType>
-void runStreamTests(StringType, gsl::byte)
+void runStreamTests(StringType&&, gsl::byte)
 {
 }
 
