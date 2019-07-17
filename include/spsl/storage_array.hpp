@@ -43,7 +43,7 @@ public:
     using this_type = StorageArray<char_type, MaxSize, overflow_policy>;
     using traits_type = typename std::char_traits<char_type>;
 
-    static constexpr char_type nul = static_cast<char_type>(0);
+    static constexpr char_type nul() { return char_type(); }
 
     // size information functions
     constexpr static size_type max_size() { return MaxSize; }
@@ -58,7 +58,7 @@ public:
     inline size_type capacity_left() const { return max_size() - size(); }
 
     // default constructor
-    StorageArray() : m_length(0), m_buffer() { m_buffer[0] = nul; }
+    StorageArray() : m_length(0), m_buffer() { m_buffer[0] = nul(); }
 
     // implement copy & move
     StorageArray(const this_type& other) noexcept : StorageArray()
@@ -111,7 +111,7 @@ public:
         count = overflow_policy::checkAssign(count, ch, max_size());
         traits_type::assign(m_buffer.data(), count, ch);
         m_length = count;
-        m_buffer[m_length] = nul;
+        m_buffer[m_length] = nul();
     }
 
     template <typename InputIt, typename = checkInputIter<InputIt>>
@@ -128,7 +128,7 @@ public:
 
     void clear()
     {
-        m_buffer[0] = nul;
+        m_buffer[0] = nul();
         m_length = 0;
     }
     void push_back(char_type c)
@@ -138,14 +138,14 @@ public:
         if (n)
         {
             m_buffer[m_length++] = c;
-            m_buffer[m_length] = nul;
+            m_buffer[m_length] = nul();
         }
     }
     void pop_back()
     {
         // the standard leaves it as "undefined" if m_length == 0, but we'll just keep it sane
         if (m_length != 0)
-            m_buffer[--m_length] = nul;
+            m_buffer[--m_length] = nul();
     }
 
     void insert(size_type index, size_type count, char_type ch)
@@ -207,7 +207,7 @@ public:
 
         traits_type::assign(m_buffer.data() + m_length, count, ch);
         m_length += count;
-        m_buffer[m_length] = nul;
+        m_buffer[m_length] = nul();
     }
 
     void append(const char_type* s, size_type n)
@@ -217,7 +217,7 @@ public:
 
         traits_type::copy(m_buffer.data() + m_length, s, n);
         m_length += n;
-        m_buffer[m_length] = nul;
+        m_buffer[m_length] = nul();
     }
 
     template <typename InputIt, typename = checkInputIter<InputIt>>
@@ -233,7 +233,7 @@ public:
         if (count < size())
         {
             m_length = count;
-            m_buffer[m_length] = nul;
+            m_buffer[m_length] = nul();
         }
         else if (count > size())
         {
@@ -318,7 +318,7 @@ protected:
     {
         traits_type::copy(m_buffer.data(), s, len);
         m_length = len;
-        m_buffer[m_length] = nul;
+        m_buffer[m_length] = nul();
     }
 
 protected:

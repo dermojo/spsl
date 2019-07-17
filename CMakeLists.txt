@@ -19,6 +19,9 @@ endif()
 add_subdirectory(extern/googletest)
 enable_testing()
 
+# include GSL-Lite for unit testing
+add_subdirectory(extern/gsl-lite)
+
 #
 # Build targets
 #
@@ -27,8 +30,14 @@ enable_testing()
 add_executable(testlib
     test/test_storagearray.cpp
     test/test_storagepassword.cpp
-    test/test_stringcore.cpp
     test/test_stringbase.cpp
+    test/test_stringbase_erase.cpp
+    test/test_stringbase_find.cpp
+    test/test_stringbase_replace.cpp
+    test/test_stringcore.cpp
+    test/test_stringcore_access.cpp
+    test/test_stringcore_assign.cpp
+    test/test_stringcore_construct.cpp
     test/test_traits.cpp
     test/test_pagealloc.cpp
     )
@@ -50,10 +59,11 @@ add_dependencies(runtest testlib)
 # compiling the library, and will be added to consumers' build
 # paths.
 target_include_directories(testlib PUBLIC include)
+target_include_directories(testlib SYSTEM PUBLIC extern/gsl-lite/include)
 target_include_directories(example PUBLIC include)
 
 # Link test executable against gtest & gtest_main
-target_link_libraries(testlib gtest_main )
+target_link_libraries(testlib gtest_main gtest)
 
 set_property(TARGET testlib PROPERTY CXX_STANDARD 11)
 set_property(TARGET testlib PROPERTY CXX_STANDARD_REQUIRED ON)
@@ -66,14 +76,19 @@ if(MSVC)
     # Prevent deprecation errors for std::tr1 in googletest
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING")
 else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe")
     target_compile_options(testlib PUBLIC -Wall -Werror -Wextra -pedantic
                                           -Wunused -Wredundant-decls -Wunreachable-code
                                           -Wold-style-cast -Wshadow
                                           -Wconversion -Wsign-conversion -Wno-conversion-null
                                           -Wcast-align)
     # These are enabled on Clang and don't help...
-    target_compile_options(testlib PUBLIC -Wno-missing-braces
-                                          -Wno-gnu-zero-variadic-macro-arguments)
+    if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        target_compile_options(testlib PUBLIC -Wno-missing-braces
+                                              -Wno-gnu-zero-variadic-macro-arguments)
+    endif()
+    # raised for gsl::byte
+    target_compile_options(testlib PUBLIC -Wno-missing-field-initializers)
     target_link_libraries(testlib pthread)
 endif()
 

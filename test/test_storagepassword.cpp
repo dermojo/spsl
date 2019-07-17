@@ -29,9 +29,10 @@ struct WipeCheckAllocator
 
     void deallocate(pointer ptr, size_type size)
     {
+        constexpr T nul{};
         for (size_t i = 0; i < size; ++i)
         {
-            ASSERT_EQ(ptr[i], static_cast<T>(0));
+            ASSERT_EQ(ptr[i], nul);
         }
         free(ptr);
     }
@@ -45,17 +46,31 @@ class StoragePasswordTest : public ::testing::Test
 };
 
 // all character types we want to test
-using CharTypes = testing::Types<char, wchar_t>;
+using CharTypes = testing::Types<char, wchar_t, gsl::byte>;
 
 
 TYPED_TEST_SUITE(StoragePasswordTest, CharTypes);
+
+// helper functions that convert bytes into characters...
+inline const char* asString(const char* s)
+{
+    return s;
+}
+inline const wchar_t* asString(const wchar_t* s)
+{
+    return s;
+}
+inline const char* asString(const gsl::byte* s)
+{
+    return reinterpret_cast<const char*>(s);
+}
 
 /* constructor tests */
 TYPED_TEST(StoragePasswordTest, ConstructorTests)
 {
     using CharType = TypeParam; // gtest specific
     using StorageType = spsl::StoragePassword<CharType>;
-    const CharType nul = StorageType::nul;
+    const CharType nul = StorageType::nul();
 
     const StorageType s1;
     ASSERT_EQ(s1.capacity(), 0u);
@@ -79,7 +94,7 @@ TYPED_TEST(StoragePasswordTest, AssignmentTests)
 {
     using CharType = TypeParam; // gtest specific
     using StorageType = spsl::StoragePassword<CharType>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     using Traits = typename StorageType::traits_type;
 
     StorageType s;
@@ -118,7 +133,7 @@ TYPED_TEST(StoragePasswordTest, PushPopTests)
     using CharType = TypeParam; // gtest specific
     // use an allocation block size of '4' to force reallocations
     using StorageType = spsl::StoragePassword<CharType, 4>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     using Traits = typename StorageType::traits_type;
 
     StorageType s;
@@ -148,7 +163,7 @@ TYPED_TEST(StoragePasswordTest, InsertTests)
 {
     using CharType = TypeParam; // gtest specific
     using StorageType = spsl::StoragePassword<CharType>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     using Traits = typename StorageType::traits_type;
 
     // prototype: void insert(size_type index, size_type count, char_type ch)
@@ -213,7 +228,7 @@ TYPED_TEST(StoragePasswordTest, InsertRangeErrorTests)
 {
     using CharType = TypeParam; // gtest specific
     using StorageType = spsl::StoragePassword<CharType>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     StorageType s;
     const CharType ch = data.hello_world[0];
@@ -247,7 +262,7 @@ TYPED_TEST(StoragePasswordTest, AppendTests)
 {
     using CharType = TypeParam; // gtest specific
     using StorageType = spsl::StoragePassword<CharType>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     // apply all functions to the array and std::basic_string at the same time and make sure they
     // stay identical
@@ -289,7 +304,7 @@ TYPED_TEST(StoragePasswordTest, SwapTests)
 {
     using CharType = TypeParam; // gtest specific
     using StorageType = spsl::StoragePassword<CharType>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     using Traits = typename StorageType::traits_type;
 
     StorageType str1, str2;
@@ -336,9 +351,9 @@ TYPED_TEST(StoragePasswordTest, ResizeTests)
     using CharType = TypeParam; // gtest specific
     // block size 32
     using StorageType = spsl::StoragePassword<CharType, 32>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     using size_type = typename StorageType::size_type;
-    const CharType nul = StorageType::nul;
+    const CharType nul = StorageType::nul();
 
     StorageType s;
     // empty
@@ -386,8 +401,8 @@ TYPED_TEST(StoragePasswordTest, ReallocTests)
     using StorageType = spsl::StoragePassword<CharType, 32>;
     using size_type = typename StorageType::size_type;
     const size_type block_size = StorageType::block_size();
-    const TestData<CharType> data{};
-    const CharType nul = StorageType::nul;
+    const TestData<CharType> data;
+    const CharType nul = StorageType::nul();
     const CharType ch(data.hello_world[2]);
 
     StorageType s;
@@ -436,9 +451,9 @@ TYPED_TEST(StoragePasswordTest, WipeTests)
     using CharType = TypeParam; // gtest specific
     using StorageType = spsl::StoragePassword<CharType, 32, WipeCheckAllocator<CharType>>;
     using size_type = typename StorageType::size_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     const CharType ch = data.blablabla[0];
-    const CharType nul = StorageType::nul;
+    const CharType nul = StorageType::nul();
 
     StorageType s;
     s.assign(data.hello_world, data.hello_world_len);
@@ -476,7 +491,7 @@ TYPED_TEST(StoragePasswordTest, ReplaceTests)
     using CharType = TypeParam; // gtest specific
     using StorageType = spsl::StoragePassword<CharType, 32>;
     using Traits = typename StorageType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     using RefType = std::basic_string<CharType>;
 
     // replace(size_type pos, size_type count, const char_type* cstr, size_type count2)
@@ -604,7 +619,7 @@ TYPED_TEST(StoragePasswordTest, CopyAndMoveTests)
 {
     using CharType = TypeParam; // gtest specific
     using StorageType = spsl::StoragePassword<CharType>;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
 
     // create 2 distinct page allocator instances
     spsl::SensitivePageAllocator alloc1, alloc2;
@@ -615,24 +630,24 @@ TYPED_TEST(StoragePasswordTest, CopyAndMoveTests)
     string2.assign(data.hello_world, data.hello_world_len);
 
     // same content, different allocators
-    ASSERT_STREQ(string1.data(), string2.data());
+    ASSERT_STREQ(asString(string1.data()), asString(string2.data()));
     ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc1);
     ASSERT_EQ(string2.getAllocator().pageAllocator(), &alloc2);
 
     // swap: allocators are swapped, too
     std::swap(string1, string2);
-    ASSERT_STREQ(string1.data(), string2.data());
+    ASSERT_STREQ(asString(string1.data()), asString(string2.data()));
     ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc2);
     ASSERT_EQ(string2.getAllocator().pageAllocator(), &alloc1);
 
     // change the content and swap back
     string1.assign(data.blablabla, data.blablabla_len);
-    ASSERT_STREQ(string1.data(), data.blablabla);
-    ASSERT_STREQ(string2.data(), data.hello_world);
-    ASSERT_STRNE(string1.data(), string2.data());
+    ASSERT_STREQ(asString(string1.data()), asString(data.blablabla));
+    ASSERT_STREQ(asString(string2.data()), asString(data.hello_world));
+    ASSERT_STRNE(asString(string1.data()), asString(string2.data()));
     std::swap(string1, string2);
-    ASSERT_STREQ(string1.data(), data.hello_world);
-    ASSERT_STREQ(string2.data(), data.blablabla);
+    ASSERT_STREQ(asString(string1.data()), asString(data.hello_world));
+    ASSERT_STREQ(asString(string2.data()), asString(data.blablabla));
     ASSERT_EQ(string1.getAllocator().pageAllocator(), &alloc1);
     ASSERT_EQ(string2.getAllocator().pageAllocator(), &alloc2);
 
@@ -664,7 +679,7 @@ TYPED_TEST(StoragePasswordTest, EraseTests)
     using CharType = TypeParam; // gtest specific
     using StorageType = spsl::StoragePassword<CharType>;
     using Traits = typename StorageType::traits_type;
-    const TestData<CharType> data{};
+    const TestData<CharType> data;
     using RefType = std::basic_string<CharType>;
 
     // void erase(size_type index, size_type count)

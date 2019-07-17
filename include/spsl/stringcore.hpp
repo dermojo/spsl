@@ -48,7 +48,7 @@ public:
     using allocator_type = storage_type;
 
     static constexpr size_type npos = static_cast<size_type>(-1);
-    static constexpr char_type nul = static_cast<char_type>(0);
+    static constexpr char_type nul() { return char_type(); }
 
 
     // TODO For now, we use plain pointers. If this isn't sufficient, we need to roll our own...
@@ -258,7 +258,7 @@ public:
         return count;
     }
 
-    void resize(size_type count) { resize(count, nul); }
+    void resize(size_type count) { resize(count, nul()); }
     void resize(size_type count, char_type ch) { m_storage.resize(count, ch); }
     void swap(this_type& other) noexcept { m_storage.swap(other.m_storage); }
 
@@ -619,17 +619,18 @@ bool operator>=(const StringClass& lhs, const StringCore<StorageType>& rhs)
 {
     return rhs.compare(lhs) <= 0;
 }
-} // namespace spsl
 
-namespace std
-{
-
-// partial specialization of std::swap
+// swap implementation
 template <typename StorageType>
 inline void swap(spsl::StringCore<StorageType>& lhs, spsl::StringCore<StorageType>& rhs)
 {
     lhs.swap(rhs);
 }
+
+} // namespace spsl
+
+namespace std
+{
 
 // partial specialization of std::hash
 template <typename StorageType>

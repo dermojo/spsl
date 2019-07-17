@@ -518,32 +518,30 @@ public:
         return find_last_not_of(s.data(), pos, s.size());
     }
 
+    // output stream operator
+    template <typename CharTraits>
+    friend std::basic_ostream<char_type, CharTraits>& operator<<(
+      std::basic_ostream<char_type, CharTraits>& os, const this_type& str)
+    {
+        os.write(str.data(), static_cast<std::streamsize>(str.size()));
+        return os;
+    }
+
 protected:
     using base_type::m_storage;
 };
 
-// output stream operator
-template <typename CharType, typename CharTraits, typename StorageType,
-          typename std::enable_if<
-            std::is_same<CharType, typename StorageType::char_type>::value>::type* = nullptr>
-inline std::basic_ostream<CharType, CharTraits>& operator<<(
-  std::basic_ostream<CharType, CharTraits>& os, const StringBase<StorageType>& str)
+// swap implementation
+template <typename StorageType>
+inline void swap(spsl::StringBase<StorageType>& lhs, spsl::StringBase<StorageType>& rhs)
 {
-    os.write(str.data(), static_cast<std::streamsize>(str.size()));
-    return os;
+    lhs.swap(rhs);
 }
 
 } // namespace spsl
 
 namespace std
 {
-
-// partial specialization of std::swap
-template <typename StorageType>
-inline void swap(spsl::StringBase<StorageType>& lhs, spsl::StringBase<StorageType>& rhs)
-{
-    lhs.swap(rhs);
-}
 
 // partial specialization of std::hash
 template <typename StorageType>

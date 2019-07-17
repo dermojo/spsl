@@ -69,8 +69,8 @@ TEST(TypeTraitsTest, HasSize)
     ASSERT_HAS_SIZE(size_t, spsl::PasswordStringW);
 
 #ifdef TEST_STRING_VIEW
-    ASSERT_HAS_SIZE(size_t, std::experimental::string_view);
-    ASSERT_HAS_SIZE(size_t, std::experimental::wstring_view);
+    ASSERT_HAS_SIZE(size_t, std::string_view);
+    ASSERT_HAS_SIZE(size_t, std::wstring_view);
 #endif
 
     ASSERT_HAS_NO_SIZE(size_t, const char*);
@@ -100,8 +100,8 @@ TEST(TypeTraitsTest, HasData)
     ASSERT_HAS_NO_DATA(char, spsl::PasswordStringW);
 
 #ifdef TEST_STRING_VIEW
-    ASSERT_HAS_DATA(char, std::experimental::string_view);
-    ASSERT_HAS_DATA(wchar_t, std::experimental::wstring_view);
+    ASSERT_HAS_DATA(char, std::string_view);
+    ASSERT_HAS_DATA(wchar_t, std::wstring_view);
 #endif
 
     ASSERT_HAS_NO_DATA(char, const char*);
@@ -131,8 +131,8 @@ TEST(TypeTraitsTest, IsCompatible)
     ASSERT_IS_NOT_COMPAT(char, size_t, spsl::PasswordStringW);
 
 #ifdef TEST_STRING_VIEW
-    ASSERT_IS_COMPAT(char, size_t, std::experimental::string_view);
-    ASSERT_IS_COMPAT(wchar_t, size_t, std::experimental::wstring_view);
+    ASSERT_IS_COMPAT(char, size_t, std::string_view);
+    ASSERT_IS_COMPAT(wchar_t, size_t, std::wstring_view);
 #endif
 
     ASSERT_IS_NOT_COMPAT(char, size_t, const char*);
