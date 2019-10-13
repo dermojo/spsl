@@ -6,80 +6,77 @@
  */
 
 #include <array>
-#include <gtest/gtest.h>
+
+#include "catch.hpp"
 
 #include "spsl/pagealloc.hpp"
 #include "testdata.hpp"
 
-class PageAllocTest : public ::testing::Test
-{
-};
 
 // test the constructor
-TEST(PageAllocTest, ConstructorTest)
+TEST_CASE("SensitivePageAllocator can be constructed", "[allocator]")
 {
     spsl::SensitivePageAllocator alloc;
-    ASSERT_GT(alloc.getPageSize(), 0u);
-    ASSERT_TRUE(alloc.getPageSize() % spsl::SensitivePageAllocator::chunk_size == 0);
-    ASSERT_TRUE(alloc.getPageSize() % spsl::SensitivePageAllocator::segment_size == 0);
-    ASSERT_TRUE(alloc.getChunksPerPage() >= 1);
+    REQUIRE(alloc.getPageSize() % spsl::SensitivePageAllocator::chunk_size == 0);
+    REQUIRE(alloc.getPageSize() % spsl::SensitivePageAllocator::segment_size == 0);
+    REQUIRE(alloc.getChunksPerPage() >= 1);
     // for now, I only know of Solaris with 8K pages...
-    ASSERT_TRUE(alloc.getChunksPerPage() <= 2);
+    REQUIRE(alloc.getChunksPerPage() <= 2);
 
     // note: this may fail on some exotic systems...
-    ASSERT_EQ(alloc.getPageSize(), 4096u);
-    ASSERT_EQ(alloc.getChunksPerPage(), 1u);
+    REQUIRE(alloc.getPageSize() == 4096u);
+    REQUIRE(alloc.getChunksPerPage() == 1u);
 }
 
 // test the bitmask calculation
-TEST(PageAllocTest, BitmaskTest)
+TEST_CASE("BitMask tests", "[allocator]")
 {
     // binary literals are actually a C++14 feature...
     auto all64 = spsl::SensitivePageAllocator::all64;
-    //    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(0), 0b0);
-    //    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(1), 0b1);
-    //    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(2), 0b11);
-    //    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(3), 0b111);
-    //    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(4), 0b1111);
-    //    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(5), 0b11111);
-    //    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(6), 0b111111);
-    //    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(20), 0b11111111111111111111);
-    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(0), 0x0);
-    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(1), 0x1);
-    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(2), 0x3);
-    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(3), 0x7);
-    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(4), 0xf);
-    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(5), 0x1f);
-    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(6), 0x3f);
-    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(20), 0xfffff);
-    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(32), 0xffffffff);
-    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(63), all64 >> 1);
-    ASSERT_EQ(spsl::SensitivePageAllocator::getBitmask(64), all64);
+    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(0) == 0b0);
+    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(1) == 0b1);
+    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(2) == 0b11);
+    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(3) == 0b111);
+    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(4) == 0b1111);
+    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(5) == 0b11111);
+    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(6) == 0b111111);
+    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(20) == 0b11111111111111111111);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(0) == 0x0);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(1) == 0x1);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(2) == 0x3);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(3) == 0x7);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(4) == 0xf);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(5) == 0x1f);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(6) == 0x3f);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(20) == 0xfffff);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(32) == 0xffffffff);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(63) == all64 >> 1);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(64) == all64);
 }
 
 // allocate a segment
-TEST(PageAllocTest, ManagedAllocationTest1)
+TEST_CASE("ManagedAllocationTest1", "[allocator]")
 {
     spsl::SensitivePageAllocator alloc;
 
     // nothing allocated yet
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+    REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
+    REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
 
     // ask for a few bytes
     constexpr std::size_t size1 = 16;
     static_assert(size1 <= spsl::SensitivePageAllocator::segment_size, "oops");
     void* mem = alloc.allocate(size1);
-    ASSERT_NE(mem, nullptr);
+    REQUIRE(mem != nullptr);
 
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 1 * alloc.getChunksPerPage());
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+    REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 1 * alloc.getChunksPerPage());
+    REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
 
     alloc.deallocate(mem, size1);
 
     // in the end, no allocation is left
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+    REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
+    REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
 }
 
 using AllocationList = std::vector<spsl::SensitivePageAllocator::AllocationInfo>;
@@ -104,12 +101,12 @@ static void performAllocations(spsl::SensitivePageAllocator& alloc, AllocationLi
         // ask for a few bytes
         std::size_t size = sizes[i % sizes.size()];
         void* mem = alloc.allocate(size);
-        ASSERT_NE(mem, nullptr);
+        REQUIRE(mem != nullptr);
 
         allocations.emplace_back(mem, size);
 
-        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 1 * alloc.getChunksPerPage());
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 1 * alloc.getChunksPerPage());
+        REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
     }
 
     // and now the second one
@@ -118,23 +115,23 @@ static void performAllocations(spsl::SensitivePageAllocator& alloc, AllocationLi
         // ask for a few bytes
         std::size_t size = sizes[i % sizes.size()];
         void* mem = alloc.allocate(size);
-        ASSERT_NE(mem, nullptr);
+        REQUIRE(mem != nullptr);
 
         allocations.emplace_back(mem, size);
 
-        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 2 * alloc.getChunksPerPage());
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 2 * alloc.getChunksPerPage());
+        REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
     }
 }
 
 // allocate and deallocate multiple segments
-TEST(PageAllocTest, ManagedAllocationTest2)
+TEST_CASE("ManagedAllocationTest2", "[allocator]")
 {
     spsl::SensitivePageAllocator alloc;
 
     // nothing allocated yet
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+    REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
+    REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
 
     AllocationList allocations;
     performAllocations(alloc, allocations);
@@ -143,18 +140,18 @@ TEST(PageAllocTest, ManagedAllocationTest2)
         alloc.deallocate(entry.addr, entry.size);
 
     // in the end, no allocation is left
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+    REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
+    REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
 }
 
 // allocate multiple segments and release them in reverse order
-TEST(PageAllocTest, ManagedAllocationTest3)
+TEST_CASE("ManagedAllocationTest3", "[allocator]")
 {
     spsl::SensitivePageAllocator alloc;
 
     // nothing allocated yet
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+    REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
+    REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
 
     AllocationList allocations;
     performAllocations(alloc, allocations);
@@ -164,49 +161,49 @@ TEST(PageAllocTest, ManagedAllocationTest3)
         alloc.deallocate(entry.addr, entry.size);
 
     // in the end, no allocation is left
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+    REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
+    REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
 }
 
 // allocate areas large than a page
-TEST(PageAllocTest, UnmanagedAllocationTest)
+TEST_CASE("UnmanagedAllocationTest", "[allocator]")
 {
     spsl::SensitivePageAllocator alloc;
     auto pageSize = alloc.getPageSize();
 
     // nothing allocated yet
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+    REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
+    REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
 
     // allocating a page is managed
     {
         void* mem = alloc.allocate(pageSize);
-        ASSERT_NE(mem, nullptr);
-        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 1u);
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+        REQUIRE(mem != nullptr);
+        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 1u);
+        REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
         alloc.deallocate(mem, pageSize);
-        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
+        REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
     }
     // allocating more is "unmanaged"
     {
         void* mem = alloc.allocate(pageSize + 1);
-        ASSERT_NE(mem, nullptr);
-        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 1u);
+        REQUIRE(mem != nullptr);
+        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
+        REQUIRE(alloc.getNumberOfUnmanagedAreas() == 1u);
         alloc.deallocate(mem, pageSize + 1);
-        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
+        REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
     }
 
     // in the end, no allocation is left
-    ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 0u);
-    ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+    REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
+    REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
 }
 
 
 // test the leak check in the destructor
-TEST(PageAllocTest, LeakCheckTest1)
+TEST_CASE("LeakCheckTest1", "[allocator]")
 {
     AllocationList myLeaks;
     const spsl::SensitivePageAllocator* myInstance = nullptr;
@@ -232,23 +229,23 @@ TEST(PageAllocTest, LeakCheckTest1)
             alloc.deallocate(entry.addr, entry.size);
 
         // there is one page left
-        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 1u);
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 1u);
+        REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
     }
 
     // now check the leaks
-    ASSERT_EQ(myLeaks.size(), cbLeaks.size());
-    ASSERT_EQ(cbLeaks.size(), 1u);
-    ASSERT_EQ(myInstance, cbInstance);
-    ASSERT_EQ(cbLeaks[0].addr, myLeaks[0].addr);
+    REQUIRE(myLeaks.size() == cbLeaks.size());
+    REQUIRE(cbLeaks.size() == 1u);
+    REQUIRE(myInstance == cbInstance);
+    REQUIRE(cbLeaks[0].addr == myLeaks[0].addr);
     // these aren't identical because the allocator reserves more space than required
-    // ASSERT_EQ(cbLeaks[0].size, myLeaks[0].size);
-    ASSERT_EQ(cbLeaks[0].size, 64u);
+    // REQUIRE(cbLeaks[0].size == myLeaks[0].size);
+    REQUIRE(cbLeaks[0].size == 64u);
 }
 
 
 // test the leak check in the destructor even more
-TEST(PageAllocTest, LeakCheckTest2)
+TEST_CASE("LeakCheckTest2", "[allocator]")
 {
     AllocationList myLeaks;
     const spsl::SensitivePageAllocator* myInstance = nullptr;
@@ -269,7 +266,7 @@ TEST(PageAllocTest, LeakCheckTest2)
         performAllocations(alloc, allocations);
 
         // 128 allocations: insert some "scattered" leaks and one contiguous
-        ASSERT_EQ(allocations.size(), 128u);
+        REQUIRE(allocations.size() == 128u);
         std::array<std::size_t, 8> indexes{ 127, 123, 122, 121, 65, 17, 15, 0 };
         for (auto index : indexes)
         {
@@ -283,25 +280,25 @@ TEST(PageAllocTest, LeakCheckTest2)
             alloc.deallocate(entry.addr, entry.size);
 
         // there is one page left
-        ASSERT_EQ(alloc.getNumberOfManagedAllocatedPages(), 2u);
-        ASSERT_EQ(alloc.getNumberOfUnmanagedAreas(), 0u);
+        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 2u);
+        REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
     }
 
     // now check the leaks
-    ASSERT_GT(myLeaks.size(), cbLeaks.size());
-    ASSERT_EQ(cbLeaks.size(), 6u);
-    ASSERT_EQ(myInstance, cbInstance);
+    REQUIRE(myLeaks.size() > cbLeaks.size());
+    REQUIRE(cbLeaks.size() == 6u);
+    REQUIRE(myInstance == cbInstance);
     // 0 - 15 - 17 - 65 - 121-123 - 127
     for (std::size_t i = 0; i < 4; ++i)
     {
-        ASSERT_EQ(cbLeaks[i].addr, myLeaks[i].addr);
-        ASSERT_EQ(cbLeaks[i].size, 64u);
+        REQUIRE(cbLeaks[i].addr == myLeaks[i].addr);
+        REQUIRE(cbLeaks[i].size == 64u);
     }
     // 121-123 get "merged"
-    ASSERT_EQ(cbLeaks[4].addr, myLeaks[4].addr);
-    ASSERT_EQ(cbLeaks[4].size, 3 * 64u);
-    ASSERT_EQ(cbLeaks[5].addr, myLeaks[7].addr);
-    ASSERT_EQ(cbLeaks[5].size, 64u);
+    REQUIRE(cbLeaks[4].addr == myLeaks[4].addr);
+    REQUIRE(cbLeaks[4].size == 3 * 64u);
+    REQUIRE(cbLeaks[5].addr == myLeaks[7].addr);
+    REQUIRE(cbLeaks[5].size == 64u);
 }
 
 // TODO: test other page sizes

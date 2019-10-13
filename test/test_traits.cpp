@@ -5,57 +5,53 @@
  * @license MIT
  */
 
-#include <gtest/gtest.h>
 #include <vector>
 
+#include "catch.hpp"
 #include "spsl.hpp"
 #include "testdata.hpp"
 
-template <typename CharType>
-class TypeTraitsTest : public ::testing::Test
-{
-};
 
 // Note: wrapper macros to ensure that GTest gets actual variables (required in order to print them)
 
 #define ASSERT_HAS_SIZE(S, T)                                                                      \
     {                                                                                              \
         const bool hasSize = spsl::has_size<S, T>::value;                                          \
-        ASSERT_TRUE(hasSize);                                                                      \
+        REQUIRE(hasSize == true);                                                                  \
     }
 
 #define ASSERT_HAS_NO_SIZE(S, T)                                                                   \
     {                                                                                              \
         const bool hasSize = spsl::has_size<S, T>::value;                                          \
-        ASSERT_FALSE(hasSize);                                                                     \
+        REQUIRE(hasSize == false);                                                                 \
     }
 
 #define ASSERT_HAS_DATA(S, T)                                                                      \
     {                                                                                              \
         const bool hasData = spsl::has_data<S, T>::value;                                          \
-        ASSERT_TRUE(hasData);                                                                      \
+        REQUIRE(hasData == true);                                                                  \
     }
 
 #define ASSERT_HAS_NO_DATA(S, T)                                                                   \
     {                                                                                              \
         const bool hasData = spsl::has_data<S, T>::value;                                          \
-        ASSERT_FALSE(hasData);                                                                     \
+        REQUIRE(hasData == false);                                                                 \
     }
 
 #define ASSERT_IS_COMPAT(C, S, T)                                                                  \
     {                                                                                              \
         const bool isCompat = spsl::is_compatible_string<C, S, T>::value;                          \
-        ASSERT_TRUE(isCompat);                                                                     \
+        REQUIRE(isCompat == true);                                                                 \
     }
 
 #define ASSERT_IS_NOT_COMPAT(C, S, T)                                                              \
     {                                                                                              \
         const bool isCompat = spsl::is_compatible_string<C, S, T>::value;                          \
-        ASSERT_FALSE(isCompat);                                                                    \
+        REQUIRE(isCompat == false);                                                                \
     }
 
 // test the has_size traits template
-TEST(TypeTraitsTest, HasSize)
+TEST_CASE("has_size", "[traits]")
 {
     ASSERT_HAS_SIZE(size_t, std::string);
     ASSERT_HAS_SIZE(size_t, std::wstring);
@@ -78,7 +74,7 @@ TEST(TypeTraitsTest, HasSize)
 }
 
 // test the has_data traits template
-TEST(TypeTraitsTest, HasData)
+TEST_CASE("has_data", "[traits]")
 {
     ASSERT_HAS_DATA(char, std::string);
     ASSERT_HAS_DATA(wchar_t, std::wstring);
@@ -109,7 +105,7 @@ TEST(TypeTraitsTest, HasData)
 }
 
 // test the is_compatible_string traits template
-TEST(TypeTraitsTest, IsCompatible)
+TEST_CASE("is_compatible", "[traits]")
 {
     ASSERT_IS_COMPAT(char, size_t, std::string);
     ASSERT_IS_COMPAT(wchar_t, size_t, std::wstring);

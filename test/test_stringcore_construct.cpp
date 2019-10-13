@@ -5,16 +5,16 @@
  * @license MIT
  */
 
-#include <gtest/gtest.h>
+#include "catch.hpp"
 
 #include "spsl.hpp"
 #include "testdata.hpp"
 #include "tests.hpp"
 
 /* check constructor availability */
-TYPED_TEST(StringCoreTest, Constructors)
+TEMPLATE_LIST_TEST_CASE("StringCore constructors", "[string_core]", StringCoreTestTypes)
 {
-    using StringType = TypeParam; // gtest specific
+    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
@@ -23,38 +23,38 @@ TYPED_TEST(StringCoreTest, Constructors)
     // default constructor
     {
         const StringType s;
-        ASSERT_EQ(s.length(), 0u);
-        ASSERT_EQ(s.size(), 0u);
-        ASSERT_TRUE(s.empty());
+        REQUIRE(s.length() == 0u);
+        REQUIRE(s.size() == 0u);
+        REQUIRE(s.empty());
         // same pointer
-        ASSERT_EQ(s.c_str(), s.data());
-        ASSERT_TRUE(s == data.empty);
-        ASSERT_TRUE(s != data.hello_world);
+        REQUIRE(s.c_str() == s.data());
+        REQUIRE(s == data.empty);
+        REQUIRE(s != data.hello_world);
     }
 
     // construct from string (without length)
     {
         const StringType s(data.hello_world);
-        ASSERT_EQ(s.length(), data.hello_world_len);
-        ASSERT_EQ(s.size(), data.hello_world_len);
-        ASSERT_FALSE(s.empty());
-        ASSERT_EQ(s.c_str(), s.data());
-        ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
-        ASSERT_TRUE(s == data.hello_world);
-        ASSERT_TRUE(s != data.empty);
+        REQUIRE(s.length() == data.hello_world_len);
+        REQUIRE(s.size() == data.hello_world_len);
+        REQUIRE_FALSE(s.empty());
+        REQUIRE(s.c_str() == s.data());
+        REQUIRE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
+        REQUIRE(s == data.hello_world);
+        REQUIRE(s != data.empty);
     }
 
     // construct from string (with length)
     {
         const size_t length = data.hello_world_len - 2u;
         const StringType s(data.hello_world, length);
-        ASSERT_EQ(s.length(), length);
-        ASSERT_EQ(s.size(), length);
-        ASSERT_FALSE(s.empty());
-        ASSERT_EQ(s.c_str(), s.data());
-        ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, length) == 0);
-        ASSERT_FALSE(s == data.hello_world);
-        ASSERT_TRUE(s != data.empty);
+        REQUIRE(s.length() == length);
+        REQUIRE(s.size() == length);
+        REQUIRE_FALSE(s.empty());
+        REQUIRE(s.c_str() == s.data());
+        REQUIRE(Traits::compare(s.c_str(), data.hello_world, length) == 0);
+        REQUIRE_FALSE(s == data.hello_world);
+        REQUIRE(s != data.empty);
     }
 
     // construct from a repeating character
@@ -62,41 +62,41 @@ TYPED_TEST(StringCoreTest, Constructors)
         const size_t length = 64;
         const CharType ch = data.blablabla[0];
         const StringType s(length, ch);
-        ASSERT_EQ(s.length(), length);
-        ASSERT_EQ(s.size(), length);
-        ASSERT_FALSE(s.empty());
-        ASSERT_EQ(s.c_str(), s.data());
+        REQUIRE(s.length() == length);
+        REQUIRE(s.size() == length);
+        REQUIRE_FALSE(s.empty());
+        REQUIRE(s.c_str() == s.data());
         for (size_t i = 0; i < s.length(); ++i)
-            ASSERT_TRUE(s[i] == ch);
-        ASSERT_TRUE(s != data.blablabla);
-        ASSERT_TRUE(s != data.hello_world);
-        ASSERT_TRUE(s != data.empty);
+            REQUIRE(s[i] == ch);
+        REQUIRE(s != data.blablabla);
+        REQUIRE(s != data.hello_world);
+        REQUIRE(s != data.empty);
     }
 
     // construct from initializer list
     {
         const CharType ch = data.blablabla[0];
         const StringType s{ ch, ch, ch, ch, ch };
-        ASSERT_EQ(s.length(), 5u);
-        ASSERT_EQ(s.size(), 5u);
-        ASSERT_FALSE(s.empty());
-        ASSERT_EQ(s.c_str(), s.data());
+        REQUIRE(s.length() == 5u);
+        REQUIRE(s.size() == 5u);
+        REQUIRE_FALSE(s.empty());
+        REQUIRE(s.c_str() == s.data());
         for (size_t i = 0; i < s.length(); ++i)
-            ASSERT_TRUE(s[i] == ch);
+            REQUIRE(s[i] == ch);
     }
 
     // copy constructor
     {
         const StringType s1(data.hello_world);
         const StringType s2(s1);
-        ASSERT_EQ(s1.length(), data.hello_world_len);
-        ASSERT_EQ(s1.size(), data.hello_world_len);
-        ASSERT_EQ(s2.length(), data.hello_world_len);
-        ASSERT_EQ(s2.size(), data.hello_world_len);
-        ASSERT_EQ(s1, s2);
+        REQUIRE(s1.length() == data.hello_world_len);
+        REQUIRE(s1.size() == data.hello_world_len);
+        REQUIRE(s2.length() == data.hello_world_len);
+        REQUIRE(s2.size() == data.hello_world_len);
+        REQUIRE(s1 == s2);
         // compare including NUL
         for (size_t i = 0; i <= s1.length(); ++i)
-            ASSERT_TRUE(s1[i] == s2[i]);
+            REQUIRE(s1[i] == s2[i]);
     }
 
     // move constructor
@@ -104,12 +104,12 @@ TYPED_TEST(StringCoreTest, Constructors)
         StringType s1(data.hello_world);
         const StringType s2(std::move(s1));
         // assume that the moved-from string is either unchanged or empty
-        ASSERT_TRUE(s1.empty() || s1.length() == data.hello_world_len);
-        ASSERT_TRUE(s1.empty() || s1 == data.hello_world);
-        ASSERT_EQ(s2.length(), data.hello_world_len);
-        ASSERT_EQ(s2.size(), data.hello_world_len);
-        ASSERT_TRUE(Traits::compare(s2.c_str(), data.hello_world, data.hello_world_len) == 0);
-        ASSERT_TRUE(s2 == data.hello_world);
+        REQUIRE((s1.empty() || s1.length() == data.hello_world_len));
+        REQUIRE((s1.empty() || s1 == data.hello_world));
+        REQUIRE(s2.length() == data.hello_world_len);
+        REQUIRE(s2.size() == data.hello_world_len);
+        REQUIRE(Traits::compare(s2.c_str(), data.hello_world, data.hello_world_len) == 0);
+        REQUIRE(s2 == data.hello_world);
     }
 
     // construct from a storage instance
@@ -117,10 +117,10 @@ TYPED_TEST(StringCoreTest, Constructors)
         StorageType st;
         st.assign(data.hello_world, data.hello_world_len);
         StringType s(st);
-        ASSERT_EQ(s.length(), data.hello_world_len);
-        ASSERT_EQ(s.size(), data.hello_world_len);
-        ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
-        ASSERT_TRUE(s == data.hello_world);
+        REQUIRE(s.length() == data.hello_world_len);
+        REQUIRE(s.size() == data.hello_world_len);
+        REQUIRE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
+        REQUIRE(s == data.hello_world);
     }
 
     // construct from another string-like container
@@ -130,10 +130,10 @@ TYPED_TEST(StringCoreTest, Constructors)
             std::basic_string<CharType> ref;
             ref = data.hello_world;
             StringType s(ref);
-            ASSERT_EQ(s.length(), data.hello_world_len);
-            ASSERT_EQ(s.size(), data.hello_world_len);
-            ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
-            ASSERT_TRUE(s == data.hello_world);
+            REQUIRE(s.length() == data.hello_world_len);
+            REQUIRE(s.size() == data.hello_world_len);
+            REQUIRE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
+            REQUIRE(s == data.hello_world);
         }
 
         // 2: from a std::vector
@@ -142,10 +142,10 @@ TYPED_TEST(StringCoreTest, Constructors)
             ref.resize(data.hello_world_len);
             memcpy(ref.data(), data.hello_world, data.hello_world_len * sizeof(CharType));
             StringType s(ref);
-            ASSERT_EQ(s.length(), data.hello_world_len);
-            ASSERT_EQ(s.size(), data.hello_world_len);
-            ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
-            ASSERT_TRUE(s == data.hello_world);
+            REQUIRE(s.length() == data.hello_world_len);
+            REQUIRE(s.size() == data.hello_world_len);
+            REQUIRE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
+            REQUIRE(s == data.hello_world);
         }
 
         // 3: from another version of StringCore
@@ -154,18 +154,18 @@ TYPED_TEST(StringCoreTest, Constructors)
               spsl::StorageArray<CharType, 123, spsl::policy::overflow::Truncate>>
               other(data.hello_world);
             StringType s(other);
-            ASSERT_EQ(s.length(), data.hello_world_len);
-            ASSERT_EQ(s.size(), data.hello_world_len);
-            ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
-            ASSERT_TRUE(s == data.hello_world);
+            REQUIRE(s.length() == data.hello_world_len);
+            REQUIRE(s.size() == data.hello_world_len);
+            REQUIRE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
+            REQUIRE(s == data.hello_world);
         }
     }
 }
 
 /* check constructor availability */
-TYPED_TEST(StringCoreTest, ConstructorIterator)
+TEMPLATE_LIST_TEST_CASE("StringCore constructor iterator", "[string_core]", StringCoreTestTypes)
 {
-    using StringType = TypeParam; // gtest specific
+    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
@@ -178,15 +178,10 @@ TYPED_TEST(StringCoreTest, ConstructorIterator)
             std::basic_string<CharType> ref;
             ref = data.hello_world;
             StringType s(ref.begin(), ref.end());
-            ASSERT_EQ(s.length(), data.hello_world_len);
-            ASSERT_EQ(s.size(), data.hello_world_len);
-            ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0)
-#ifdef ENABLE_HEXDUMP
-              << hexdump(s.c_str(), s.size()) << "\n"
-              << hexdump(data.hello_world, data.hello_world_len)
-#endif
-              ;
-            ASSERT_TRUE(s == data.hello_world);
+            REQUIRE(s.length() == data.hello_world_len);
+            REQUIRE(s.size() == data.hello_world_len);
+            REQUIRE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
+            REQUIRE(s == data.hello_world);
         }
 
         // 2: from a std::vector
@@ -195,10 +190,10 @@ TYPED_TEST(StringCoreTest, ConstructorIterator)
             ref.resize(data.hello_world_len);
             memcpy(ref.data(), data.hello_world, data.hello_world_len * sizeof(CharType));
             StringType s(ref.begin(), ref.end());
-            ASSERT_EQ(s.length(), data.hello_world_len);
-            ASSERT_EQ(s.size(), data.hello_world_len);
-            ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
-            ASSERT_TRUE(s == data.hello_world);
+            REQUIRE(s.length() == data.hello_world_len);
+            REQUIRE(s.size() == data.hello_world_len);
+            REQUIRE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
+            REQUIRE(s == data.hello_world);
         }
 
         // 3: from another version of StringCore
@@ -207,14 +202,10 @@ TYPED_TEST(StringCoreTest, ConstructorIterator)
               spsl::StorageArray<CharType, 123, spsl::policy::overflow::Truncate>>
               other(data.hello_world);
             StringType s(other.begin(), other.end());
-            ASSERT_EQ(s.length(), data.hello_world_len);
-            ASSERT_EQ(s.size(), data.hello_world_len);
-            ASSERT_TRUE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0)
-#ifdef ENABLE_HEXDUMP
-              << hexdump(s.data(), s.size() * sizeof(CharType))
-#endif
-              ;
-            ASSERT_TRUE(s == data.hello_world);
+            REQUIRE(s.length() == data.hello_world_len);
+            REQUIRE(s.size() == data.hello_world_len);
+            REQUIRE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
+            REQUIRE(s == data.hello_world);
         }
     }
 }

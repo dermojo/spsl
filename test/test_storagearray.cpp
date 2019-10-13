@@ -5,30 +5,26 @@
  * @license MIT
  */
 
-#include <gtest/gtest.h>
+#include <tuple>
+
+#include "catch.hpp"
 
 #include "spsl/storage_array.hpp"
 #include "testdata.hpp"
 
-template <typename CharType>
-class StorageArrayTest : public ::testing::Test
-{
-};
 
 // all character types we want to test
-using CharTypes = testing::Types<char, wchar_t, gsl::byte>;
+using CharTypes = std::tuple<char, wchar_t, gsl::byte>;
 
-
-TYPED_TEST_SUITE(StorageArrayTest, CharTypes);
 
 /* check if size is checkable on type at run/compile time */
-TYPED_TEST(StorageArrayTest, StaticSize)
+TEMPLATE_LIST_TEST_CASE("StorageArray static size", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     using size_type = typename ArrayType::size_type;
 
-    ASSERT_EQ(ArrayType::max_size(), 64u);
+    REQUIRE(ArrayType::max_size() == 64u);
     static_assert(ArrayType::max_size() == 64,
                   "Size of StorageArray has to be available at compile time");
 
@@ -40,30 +36,30 @@ TYPED_TEST(StorageArrayTest, StaticSize)
 #else
     constexpr size_t maxSize = minSize + sizeof(long);
 #endif
-    ASSERT_LE(minSize, sizeof(ArrayType));
-    ASSERT_GE(maxSize, sizeof(ArrayType));
+    REQUIRE(minSize <= sizeof(ArrayType));
+    REQUIRE(maxSize >= sizeof(ArrayType));
     //   static_assert(minSize <= sizeof(ArrayType) && sizeof(ArrayType) <= maxSize,
     //                 "Unexpected object size?");
 }
 
 /* constructor tests */
-TYPED_TEST(StorageArrayTest, ConstructorTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray constructors", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const CharType nul = ArrayType::nul();
 
     const ArrayType s1;
-    ASSERT_EQ(s1.capacity(), 64u);
-    ASSERT_EQ(s1.max_size(), 64u);
+    REQUIRE(s1.capacity() == 64u);
+    REQUIRE(s1.max_size() == 64u);
 
-    ASSERT_TRUE(s1.empty());
-    ASSERT_EQ(s1.length(), 0u);
-    ASSERT_EQ(s1.length(), s1.size());
-    ASSERT_EQ(s1.capacity_left(), s1.max_size());
+    REQUIRE(s1.empty());
+    REQUIRE(s1.length() == 0u);
+    REQUIRE(s1.length() == s1.size());
+    REQUIRE(s1.capacity_left() == s1.max_size());
     // valid content?
-    ASSERT_NE(s1.data(), nullptr);
-    ASSERT_EQ(s1.data()[0], nul);
+    REQUIRE(s1.data() != nullptr);
+    REQUIRE(s1.data()[0] == nul);
 
     // copy & move constructor are available
     ArrayType s2(s1);
@@ -71,9 +67,9 @@ TYPED_TEST(StorageArrayTest, ConstructorTests)
 }
 
 /* assignment functions */
-TYPED_TEST(StorageArrayTest, AssignmentTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray assignment", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const TestData<CharType> data;
     using Traits = typename ArrayType::traits_type;
@@ -81,37 +77,37 @@ TYPED_TEST(StorageArrayTest, AssignmentTests)
     ArrayType arr;
     // assign a string
     arr.assign(data.hello_world, data.hello_world_len);
-    ASSERT_EQ(arr.length(), Traits::length(arr.data()));
-    ASSERT_EQ(arr.length(), data.hello_world_len);
-    ASSERT_TRUE(Traits::compare(arr.data(), data.hello_world, data.hello_world_len) == 0);
+    REQUIRE(arr.length() == Traits::length(arr.data()));
+    REQUIRE(arr.length() == data.hello_world_len);
+    REQUIRE(Traits::compare(arr.data(), data.hello_world, data.hello_world_len) == 0);
 
     // assign something else
     arr.assign(data.blablabla, data.blablabla_len);
-    ASSERT_EQ(arr.length(), Traits::length(arr.data()));
-    ASSERT_EQ(arr.length(), data.blablabla_len);
-    ASSERT_TRUE(Traits::compare(arr.data(), data.blablabla, data.blablabla_len) == 0);
+    REQUIRE(arr.length() == Traits::length(arr.data()));
+    REQUIRE(arr.length() == data.blablabla_len);
+    REQUIRE(Traits::compare(arr.data(), data.blablabla, data.blablabla_len) == 0);
 
     // assign a repeated character
     const CharType ch = data.hello_world[0];
     arr.assign(33, ch);
-    ASSERT_EQ(arr.length(), 33u);
+    REQUIRE(arr.length() == 33u);
     for (size_t i = 0; i < 33; ++i)
     {
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
     }
 
     // assign an iterator range - we use std::basic_string here
     const std::basic_string<CharType> bs(data.hello_world);
     arr.assign(bs.begin(), bs.end());
-    ASSERT_EQ(arr.length(), bs.length());
-    ASSERT_TRUE(Traits::compare(arr.data(), data.hello_world, data.hello_world_len) == 0);
-    ASSERT_TRUE(bs == arr.data());
+    REQUIRE(arr.length() == bs.length());
+    REQUIRE(Traits::compare(arr.data(), data.hello_world, data.hello_world_len) == 0);
+    REQUIRE(bs == arr.data());
 }
 
 /* push_back/pop_back functions */
-TYPED_TEST(StorageArrayTest, PushPopTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray push and pop", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const TestData<CharType> data;
     using Traits = typename ArrayType::traits_type;
@@ -120,28 +116,28 @@ TYPED_TEST(StorageArrayTest, PushPopTests)
     // append a string byte for byte
     for (size_t i = 0; i < data.hello_world_len; ++i)
     {
-        ASSERT_EQ(arr.length(), i);
+        REQUIRE(arr.length() == i);
         arr.push_back(data.hello_world[i]);
-        ASSERT_EQ(arr.length(), i + 1);
+        REQUIRE(arr.length() == i + 1);
     }
-    ASSERT_EQ(arr.length(), data.hello_world_len);
-    ASSERT_TRUE(Traits::compare(arr.data(), data.hello_world, data.hello_world_len) == 0);
+    REQUIRE(arr.length() == data.hello_world_len);
+    REQUIRE(Traits::compare(arr.data(), data.hello_world, data.hello_world_len) == 0);
 
     // remove the last byte
     for (size_t i = 0; i < data.hello_world_len; ++i)
     {
-        ASSERT_EQ(arr.length(), data.hello_world_len - i);
+        REQUIRE(arr.length() == data.hello_world_len - i);
         arr.pop_back();
-        ASSERT_EQ(arr.length(), data.hello_world_len - i - 1);
+        REQUIRE(arr.length() == data.hello_world_len - i - 1);
     }
-    ASSERT_EQ(arr.length(), 0u);
-    ASSERT_TRUE(arr.empty());
+    REQUIRE(arr.length() == 0u);
+    REQUIRE(arr.empty());
 }
 
 /* insert functions */
-TYPED_TEST(StorageArrayTest, InsertTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray insert", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const TestData<CharType> data;
     using Traits = typename ArrayType::traits_type;
@@ -150,63 +146,63 @@ TYPED_TEST(StorageArrayTest, InsertTests)
     ArrayType arr;
     const CharType ch = data.hello_world[0];
     arr.insert(0, 5, ch);
-    ASSERT_EQ(arr.length(), 5u);
+    REQUIRE(arr.length() == 5u);
     for (size_t i = 0; i < 5; ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // insert again at the beginning
     const CharType ch2 = data.hello_world[1];
     arr.insert(0, 5, ch2);
-    ASSERT_EQ(arr.length(), 10u);
+    REQUIRE(arr.length() == 10u);
     for (size_t i = 0; i < 5; ++i)
-        ASSERT_EQ(arr[i], ch2);
+        REQUIRE(arr[i] == ch2);
     for (size_t i = 5; i < 10; ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // insert in the middle
     const CharType ch3 = data.hello_world[2];
     arr.insert(5, 10, ch3);
-    ASSERT_EQ(arr.length(), 20u);
+    REQUIRE(arr.length() == 20u);
     for (size_t i = 0; i < 5; ++i)
-        ASSERT_EQ(arr[i], ch2);
+        REQUIRE(arr[i] == ch2);
     for (size_t i = 5; i < 15; ++i)
-        ASSERT_EQ(arr[i], ch3);
+        REQUIRE(arr[i] == ch3);
     for (size_t i = 15; i < 20; ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     const std::basic_string<CharType> bs(data.blablabla);
 
     // insert a string
     ArrayType arr2(arr);
     arr.insert(15, bs.data(), bs.size());
-    ASSERT_EQ(arr.length(), 20 + bs.length());
+    REQUIRE(arr.length() == 20 + bs.length());
 
     for (size_t i = 0; i < 5; ++i)
-        ASSERT_EQ(arr[i], ch2);
+        REQUIRE(arr[i] == ch2);
     for (size_t i = 5; i < 15; ++i)
-        ASSERT_EQ(arr[i], ch3);
-    ASSERT_TRUE(Traits::compare(arr.data() + 15, data.blablabla, data.blablabla_len) == 0);
+        REQUIRE(arr[i] == ch3);
+    REQUIRE(Traits::compare(arr.data() + 15, data.blablabla, data.blablabla_len) == 0);
     for (size_t i = 15 + data.blablabla_len; i < 20 + data.blablabla_len; ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // again using an iterator range
     arr = arr2;
     arr.insert(15, bs.begin(), bs.end());
-    ASSERT_EQ(arr.length(), 20 + bs.length());
+    REQUIRE(arr.length() == 20 + bs.length());
 
     for (size_t i = 0; i < 5; ++i)
-        ASSERT_EQ(arr[i], ch2);
+        REQUIRE(arr[i] == ch2);
     for (size_t i = 5; i < 15; ++i)
-        ASSERT_EQ(arr[i], ch3);
-    ASSERT_TRUE(Traits::compare(arr.data() + 15, data.blablabla, data.blablabla_len) == 0);
+        REQUIRE(arr[i] == ch3);
+    REQUIRE(Traits::compare(arr.data() + 15, data.blablabla, data.blablabla_len) == 0);
     for (size_t i = 15 + data.blablabla_len; i < 20 + data.blablabla_len; ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 }
 
 /* append functions */
-TYPED_TEST(StorageArrayTest, AppendTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray append", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const TestData<CharType> data;
 
@@ -218,83 +214,83 @@ TYPED_TEST(StorageArrayTest, AppendTests)
     // void append(const char_type* s, size_type n)
     arr.append(data.hello_world, data.hello_world_len);
     ref.append(data.hello_world, data.hello_world_len);
-    ASSERT_EQ(ref, arr.data());
-    ASSERT_EQ(ref.length(), arr.length());
-    ASSERT_EQ(ref.size(), arr.size());
+    REQUIRE(ref == arr.data());
+    REQUIRE(ref.length() == arr.length());
+    REQUIRE(ref.size() == arr.size());
 
     arr.append(data.blablabla, data.blablabla_len);
     ref.append(data.blablabla, data.blablabla_len);
-    ASSERT_EQ(ref, arr.data());
-    ASSERT_EQ(ref.length(), arr.length());
-    ASSERT_EQ(ref.size(), arr.size());
+    REQUIRE(ref == arr.data());
+    REQUIRE(ref.length() == arr.length());
+    REQUIRE(ref.size() == arr.size());
 
     // void append(size_type count, char_type ch)
     const CharType ch = data.hello_world[0];
     arr.append(20, ch);
     ref.append(20, ch);
-    ASSERT_EQ(ref, arr.data());
-    ASSERT_EQ(ref.length(), arr.length());
-    ASSERT_EQ(ref.size(), arr.size());
+    REQUIRE(ref == arr.data());
+    REQUIRE(ref.length() == arr.length());
+    REQUIRE(ref.size() == arr.size());
 
     // void append(InputIt first, InputIt last)
     const std::basic_string<CharType> bs(data.blablabla);
     arr.append(bs.begin(), bs.end());
     ref.append(bs.begin(), bs.end());
-    ASSERT_EQ(ref, arr.data());
-    ASSERT_EQ(ref.length(), arr.length());
-    ASSERT_EQ(ref.size(), arr.size());
+    REQUIRE(ref == arr.data());
+    REQUIRE(ref.length() == arr.length());
+    REQUIRE(ref.size() == arr.size());
 }
 
 /* swap function */
-TYPED_TEST(StorageArrayTest, SwapTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray swap", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const TestData<CharType> data;
     using Traits = typename ArrayType::traits_type;
 
     ArrayType arr1, arr2;
     // let's start with swapping empty strings...
-    ASSERT_TRUE(arr1.empty());
-    ASSERT_TRUE(arr2.empty());
+    REQUIRE(arr1.empty());
+    REQUIRE(arr2.empty());
     arr1.swap(arr2);
-    ASSERT_TRUE(arr1.empty());
-    ASSERT_TRUE(arr2.empty());
+    REQUIRE(arr1.empty());
+    REQUIRE(arr2.empty());
 
     // assign + swap
     arr1.assign(data.hello_world, data.hello_world_len);
-    ASSERT_EQ(arr1.length(), data.hello_world_len);
-    ASSERT_TRUE(Traits::compare(arr1.data(), data.hello_world, data.hello_world_len) == 0);
-    ASSERT_EQ(arr2.length(), 0u);
+    REQUIRE(arr1.length() == data.hello_world_len);
+    REQUIRE(Traits::compare(arr1.data(), data.hello_world, data.hello_world_len) == 0);
+    REQUIRE(arr2.length() == 0u);
     arr1.swap(arr2);
-    ASSERT_EQ(arr2.length(), data.hello_world_len);
-    ASSERT_TRUE(Traits::compare(arr2.data(), data.hello_world, data.hello_world_len) == 0);
-    ASSERT_EQ(arr1.length(), 0u);
+    REQUIRE(arr2.length() == data.hello_world_len);
+    REQUIRE(Traits::compare(arr2.data(), data.hello_world, data.hello_world_len) == 0);
+    REQUIRE(arr1.length() == 0u);
 
     // swap back
     arr1.swap(arr2);
-    ASSERT_EQ(arr1.length(), data.hello_world_len);
-    ASSERT_TRUE(Traits::compare(arr1.data(), data.hello_world, data.hello_world_len) == 0);
-    ASSERT_EQ(arr2.length(), 0u);
+    REQUIRE(arr1.length() == data.hello_world_len);
+    REQUIRE(Traits::compare(arr1.data(), data.hello_world, data.hello_world_len) == 0);
+    REQUIRE(arr2.length() == 0u);
 
     // now swap 2 non-empty strings
     arr1.assign(data.hello_world, data.hello_world_len);
-    ASSERT_EQ(arr1.length(), data.hello_world_len);
-    ASSERT_TRUE(Traits::compare(arr1.data(), data.hello_world, data.hello_world_len) == 0);
+    REQUIRE(arr1.length() == data.hello_world_len);
+    REQUIRE(Traits::compare(arr1.data(), data.hello_world, data.hello_world_len) == 0);
     arr2.assign(data.blablabla, data.blablabla_len);
-    ASSERT_EQ(arr2.length(), data.blablabla_len);
-    ASSERT_TRUE(Traits::compare(arr2.data(), data.blablabla, data.blablabla_len) == 0);
+    REQUIRE(arr2.length() == data.blablabla_len);
+    REQUIRE(Traits::compare(arr2.data(), data.blablabla, data.blablabla_len) == 0);
     arr2.swap(arr1);
-    ASSERT_EQ(arr2.length(), data.hello_world_len);
-    ASSERT_TRUE(Traits::compare(arr2.data(), data.hello_world, data.hello_world_len) == 0);
-    ASSERT_EQ(arr1.length(), data.blablabla_len);
-    ASSERT_TRUE(Traits::compare(arr1.data(), data.blablabla, data.blablabla_len) == 0);
+    REQUIRE(arr2.length() == data.hello_world_len);
+    REQUIRE(Traits::compare(arr2.data(), data.hello_world, data.hello_world_len) == 0);
+    REQUIRE(arr1.length() == data.blablabla_len);
+    REQUIRE(Traits::compare(arr1.data(), data.blablabla, data.blablabla_len) == 0);
 }
 
 /* resize function */
-TYPED_TEST(StorageArrayTest, ResizeTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray resize", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const TestData<CharType> data;
     const CharType nul = ArrayType::nul();
@@ -302,50 +298,50 @@ TYPED_TEST(StorageArrayTest, ResizeTests)
     // we'll stay within max_size() here
     ArrayType arr;
     // empty
-    ASSERT_EQ(arr.size(), 0u);
-    ASSERT_EQ(arr.length(), 0u);
-    ASSERT_EQ(arr.max_size(), 64u);
-    ASSERT_EQ(arr.capacity_left(), 64u);
+    REQUIRE(arr.size() == 0u);
+    REQUIRE(arr.length() == 0u);
+    REQUIRE(arr.max_size() == 64u);
+    REQUIRE(arr.capacity_left() == 64u);
     const CharType ch = data.hello_world[0];
 
     // resize + 10 characters
     arr.resize(10, ch);
-    ASSERT_EQ(arr.size(), 10u);
-    ASSERT_EQ(arr.length(), 10u);
-    ASSERT_EQ(arr.max_size(), 64u);
-    ASSERT_EQ(arr.capacity_left(), 54u);
+    REQUIRE(arr.size() == 10u);
+    REQUIRE(arr.length() == 10u);
+    REQUIRE(arr.max_size() == 64u);
+    REQUIRE(arr.capacity_left() == 54u);
     for (size_t i = 0; i < 10; ++i)
-        ASSERT_EQ(arr[i], ch);
-    ASSERT_EQ(arr[10], nul);
+        REQUIRE(arr[i] == ch);
+    REQUIRE(arr[10] == nul);
 
     // again + 10 characters
     arr.resize(20, ch);
-    ASSERT_EQ(arr.size(), 20u);
-    ASSERT_EQ(arr.length(), 20u);
-    ASSERT_EQ(arr.max_size(), 64u);
-    ASSERT_EQ(arr.capacity_left(), 44u);
+    REQUIRE(arr.size() == 20u);
+    REQUIRE(arr.length() == 20u);
+    REQUIRE(arr.max_size() == 64u);
+    REQUIRE(arr.capacity_left() == 44u);
     for (size_t i = 0; i < 20; ++i)
-        ASSERT_EQ(arr[i], ch);
-    ASSERT_EQ(arr[20], nul);
+        REQUIRE(arr[i] == ch);
+    REQUIRE(arr[20] == nul);
 
     // shrink 3 characters
     arr.resize(17, ch);
-    ASSERT_EQ(arr.size(), 17u);
-    ASSERT_EQ(arr.length(), 17u);
-    ASSERT_EQ(arr.max_size(), 64u);
-    ASSERT_EQ(arr.capacity_left(), 47u);
+    REQUIRE(arr.size() == 17u);
+    REQUIRE(arr.length() == 17u);
+    REQUIRE(arr.max_size() == 64u);
+    REQUIRE(arr.capacity_left() == 47u);
     for (size_t i = 0; i < 17; ++i)
-        ASSERT_EQ(arr[i], ch);
-    ASSERT_EQ(arr[17], nul);
+        REQUIRE(arr[i] == ch);
+    REQUIRE(arr[17] == nul);
 
     // quick check: this no-op doesn't kill any kittens...
     arr.shrink_to_fit();
 }
 
 /* truncating when exceeding max_size() during assign() */
-TYPED_TEST(StorageArrayTest, AssignTruncationTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray assignment truncation", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     // this variant definitely won't throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
     const TestData<CharType> data;
@@ -353,60 +349,60 @@ TYPED_TEST(StorageArrayTest, AssignTruncationTests)
     // I can reserve as much as I want - it'll be ignored
     const size_t too_large = 1000;
     ArrayType arr;
-    ASSERT_GT(too_large, arr.max_size());
-    ASSERT_NO_THROW(arr.reserve(1000));
+    REQUIRE(too_large > arr.max_size());
+    REQUIRE_NOTHROW(arr.reserve(1000));
 
     // I can assign as much as I want - it'll be truncated
     const CharType ch = data.hello_world[0];
-    ASSERT_NO_THROW(arr.assign(too_large, ch));
-    ASSERT_EQ(arr.length(), arr.max_size());
-    ASSERT_EQ(arr.size(), arr.max_size());
-    ASSERT_EQ(arr.capacity_left(), 0u);
+    REQUIRE_NOTHROW(arr.assign(too_large, ch));
+    REQUIRE(arr.length() == arr.max_size());
+    REQUIRE(arr.size() == arr.max_size());
+    REQUIRE(arr.capacity_left() == 0u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // same test, but assign from a character array
     std::basic_string<CharType> ref;
     while (ref.size() < too_large)
         ref += data.hello_world;
     arr.clear();
-    ASSERT_GE(ref.size(), too_large);
-    ASSERT_GT(ref.size(), arr.max_size());
-    ASSERT_NO_THROW(arr.assign(ref.data(), ref.size()));
-    ASSERT_EQ(arr.length(), arr.max_size());
-    ASSERT_EQ(arr.size(), arr.max_size());
-    ASSERT_EQ(arr.capacity_left(), 0u);
+    REQUIRE(ref.size() >= too_large);
+    REQUIRE(ref.size() > arr.max_size());
+    REQUIRE_NOTHROW(arr.assign(ref.data(), ref.size()));
+    REQUIRE(arr.length() == arr.max_size());
+    REQUIRE(arr.size() == arr.max_size());
+    REQUIRE(arr.capacity_left() == 0u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ref[i]);
+        REQUIRE(arr[i] == ref[i]);
 
     // and again using an iterator
     arr.clear();
-    ASSERT_GE(ref.size(), too_large);
-    ASSERT_GT(ref.size(), arr.max_size());
-    ASSERT_NO_THROW(arr.assign(ref.begin(), ref.end()));
-    ASSERT_EQ(arr.length(), arr.max_size());
-    ASSERT_EQ(arr.size(), arr.max_size());
-    ASSERT_EQ(arr.capacity_left(), 0u);
+    REQUIRE(ref.size() >= too_large);
+    REQUIRE(ref.size() > arr.max_size());
+    REQUIRE_NOTHROW(arr.assign(ref.begin(), ref.end()));
+    REQUIRE(arr.length() == arr.max_size());
+    REQUIRE(arr.size() == arr.max_size());
+    REQUIRE(arr.capacity_left() == 0u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ref[i]);
+        REQUIRE(arr[i] == ref[i]);
 
     // using push_back()
     arr.clear();
     for (auto c : ref)
     {
-        ASSERT_NO_THROW(arr.push_back(c));
+        REQUIRE_NOTHROW(arr.push_back(c));
     }
-    ASSERT_EQ(arr.length(), arr.max_size());
-    ASSERT_EQ(arr.size(), arr.max_size());
-    ASSERT_EQ(arr.capacity_left(), 0u);
+    REQUIRE(arr.length() == arr.max_size());
+    REQUIRE(arr.size() == arr.max_size());
+    REQUIRE(arr.capacity_left() == 0u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ref[i]);
+        REQUIRE(arr[i] == ref[i]);
 }
 
 /* std::length_error when exceeding max_size() during assign() */
-TYPED_TEST(StorageArrayTest, AssignLengthErrorTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray assignment length errors", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     // this variant definitely will throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Throw>;
     const TestData<CharType> data;
@@ -417,52 +413,52 @@ TYPED_TEST(StorageArrayTest, AssignLengthErrorTests)
 
     // I can't reserve as much as I want
     const size_t too_large = 1000;
-    ASSERT_GT(too_large, arr.max_size());
-    ASSERT_THROW(arr.reserve(1000), std::length_error);
+    REQUIRE(too_large > arr.max_size());
+    REQUIRE_THROWS_AS(arr.reserve(1000), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3u);
+    REQUIRE(arr.length() == 3u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // I can't assign as much as I want
-    ASSERT_THROW(arr.assign(too_large, ch), std::length_error);
+    REQUIRE_THROWS_AS(arr.assign(too_large, ch), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3u);
+    REQUIRE(arr.length() == 3u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // same test, but assign from a character array
     std::basic_string<CharType> ref;
     while (ref.size() < too_large)
         ref += data.hello_world;
-    ASSERT_THROW(arr.assign(ref.data(), ref.size()), std::length_error);
+    REQUIRE_THROWS_AS(arr.assign(ref.data(), ref.size()), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3u);
+    REQUIRE(arr.length() == 3u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // and again using an iterator
-    ASSERT_THROW(arr.assign(ref.begin(), ref.end()), std::length_error);
+    REQUIRE_THROWS_AS(arr.assign(ref.begin(), ref.end()), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3u);
+    REQUIRE(arr.length() == 3u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // using push_back()
     arr.clear();
     for (size_t i = 0; i < arr.max_size(); ++i)
-        ASSERT_NO_THROW(arr.push_back(ch));
-    ASSERT_THROW(arr.push_back(ch), std::length_error);
+        REQUIRE_NOTHROW(arr.push_back(ch));
+    REQUIRE_THROWS_AS(arr.push_back(ch), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), arr.max_size());
+    REQUIRE(arr.length() == arr.max_size());
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 }
 
 /* truncating when exceeding max_size() during insert() */
-TYPED_TEST(StorageArrayTest, InsertTruncationTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray insert truncation", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     // this variant definitely won't throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
     const TestData<CharType> data;
@@ -473,44 +469,44 @@ TYPED_TEST(StorageArrayTest, InsertTruncationTests)
     // insert too many characters
     arr.clear();
     arr.assign(arr.max_size() - 1, ch);
-    ASSERT_NO_THROW(arr.insert(0, 100, ch));
-    ASSERT_EQ(arr.length(), arr.max_size());
-    ASSERT_EQ(arr.size(), arr.max_size());
-    ASSERT_EQ(arr.capacity_left(), 0u);
+    REQUIRE_NOTHROW(arr.insert(0, 100, ch));
+    REQUIRE(arr.length() == arr.max_size());
+    REQUIRE(arr.size() == arr.max_size());
+    REQUIRE(arr.capacity_left() == 0u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // insert a string that's too long
     arr.clear();
     const size_t n = 5;
     arr.assign(arr.max_size() - n, ch);
-    ASSERT_NO_THROW(arr.insert(arr.length(), data.hello_world, data.hello_world_len));
-    ASSERT_EQ(arr.length(), arr.max_size());
-    ASSERT_EQ(arr.size(), arr.max_size());
-    ASSERT_EQ(arr.capacity_left(), 0u);
+    REQUIRE_NOTHROW(arr.insert(arr.length(), data.hello_world, data.hello_world_len));
+    REQUIRE(arr.length() == arr.max_size());
+    REQUIRE(arr.size() == arr.max_size());
+    REQUIRE(arr.capacity_left() == 0u);
     for (size_t i = 0; i < arr.length() - n; ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
     for (size_t i = 0; i < n; ++i)
-        ASSERT_EQ(arr[arr.length() - n + i], data.hello_world[i]);
+        REQUIRE(arr[arr.length() - n + i] == data.hello_world[i]);
 
     // and again using an iterator
     arr.clear();
     arr.assign(arr.max_size() - n, ch);
     std::basic_string<CharType> ref(data.hello_world, data.hello_world_len);
-    ASSERT_NO_THROW(arr.insert(arr.length(), ref.begin(), ref.end()));
-    ASSERT_EQ(arr.length(), arr.max_size());
-    ASSERT_EQ(arr.size(), arr.max_size());
-    ASSERT_EQ(arr.capacity_left(), 0u);
+    REQUIRE_NOTHROW(arr.insert(arr.length(), ref.begin(), ref.end()));
+    REQUIRE(arr.length() == arr.max_size());
+    REQUIRE(arr.size() == arr.max_size());
+    REQUIRE(arr.capacity_left() == 0u);
     for (size_t i = 0; i < arr.length() - n; ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
     for (size_t i = 0; i < n; ++i)
-        ASSERT_EQ(arr[arr.length() - n + i], data.hello_world[i]);
+        REQUIRE(arr[arr.length() - n + i] == data.hello_world[i]);
 }
 
 /* std::length_error when exceeding max_size() during insert() */
-TYPED_TEST(StorageArrayTest, InsertLengthErrorTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray insert length error", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     // this variant definitely will throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Throw>;
     const TestData<CharType> data;
@@ -520,32 +516,32 @@ TYPED_TEST(StorageArrayTest, InsertLengthErrorTests)
     arr.assign(3, ch);
 
     // insert too many characters
-    ASSERT_THROW(arr.insert(0, 100, ch), std::length_error);
+    REQUIRE_THROWS_AS(arr.insert(0, 100, ch), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3u);
+    REQUIRE(arr.length() == 3u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // insert a string that's too long
     const std::basic_string<CharType> ref(arr.max_size(), ch);
-    ASSERT_THROW(arr.insert(arr.length(), ref.data(), ref.size()), std::length_error);
+    REQUIRE_THROWS_AS(arr.insert(arr.length(), ref.data(), ref.size()), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3u);
+    REQUIRE(arr.length() == 3u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // and again using an iterator
-    ASSERT_THROW(arr.insert(arr.length(), ref.begin(), ref.end()), std::length_error);
+    REQUIRE_THROWS_AS(arr.insert(arr.length(), ref.begin(), ref.end()), std::length_error);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3u);
+    REQUIRE(arr.length() == 3u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 }
 
 /* std::out_of_range when trying to insert past the end */
-TYPED_TEST(StorageArrayTest, InsertRangeErrorTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray insert range error", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
     const TestData<CharType> data;
 
@@ -554,34 +550,34 @@ TYPED_TEST(StorageArrayTest, InsertRangeErrorTests)
     arr.assign(3, ch);
 
     // void insert(size_type index, size_type count, char_type ch)
-    ASSERT_THROW(arr.insert(arr.size() + 1, 100, ch), std::out_of_range);
+    REQUIRE_THROWS_AS(arr.insert(arr.size() + 1, 100, ch), std::out_of_range);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3u);
+    REQUIRE(arr.length() == 3u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // void insert(size_type index, const char_type* s, size_type n)
-    ASSERT_THROW(arr.insert(arr.size() + 1, data.hello_world, data.hello_world_len),
-                 std::out_of_range);
+    REQUIRE_THROWS_AS(arr.insert(arr.size() + 1, data.hello_world, data.hello_world_len),
+                      std::out_of_range);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3u);
+    REQUIRE(arr.length() == 3u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // void insert(size_type index, InputIt first, InputIt last)
     const std::basic_string<CharType> ref(data.hello_world);
-    ASSERT_THROW(arr.insert(arr.size() + 1, ref.begin(), ref.end()), std::out_of_range);
+    REQUIRE_THROWS_AS(arr.insert(arr.size() + 1, ref.begin(), ref.end()), std::out_of_range);
     // the content is unchanged
-    ASSERT_EQ(arr.length(), 3u);
+    REQUIRE(arr.length() == 3u);
     for (size_t i = 0; i < arr.length(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 }
 
 
 /* replace function */
-TYPED_TEST(StorageArrayTest, ReplaceTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray replace", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     using Traits = typename ArrayType::traits_type;
     const TestData<CharType> data;
@@ -597,15 +593,15 @@ TYPED_TEST(StorageArrayTest, ReplaceTests)
         arr.replace(0, 3, data.blablabla, data.blablabla_len);
         ref = data.blablabla;
         ref += data.hello_world + 3;
-        ASSERT_EQ(arr.size(), ref.size());
-        ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+        REQUIRE(arr.size() == ref.size());
+        REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
         // with count = 0
         arr.assign(data.hello_world, data.hello_world_len);
         arr.replace(0, 0, data.blablabla, data.blablabla_len);
         ref = data.blablabla;
         ref += data.hello_world;
-        ASSERT_EQ(arr.size(), ref.size());
-        ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+        REQUIRE(arr.size() == ref.size());
+        REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
 
         // replace in the middle
         arr.assign(data.hello_world, data.hello_world_len);
@@ -613,16 +609,16 @@ TYPED_TEST(StorageArrayTest, ReplaceTests)
         ref.assign(data.hello_world, 3);
         ref += data.blablabla;
         ref += data.hello_world + 9;
-        ASSERT_EQ(arr.size(), ref.size());
-        ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+        REQUIRE(arr.size() == ref.size());
+        REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
 
         // replace at the end
         arr.assign(data.hello_world, data.hello_world_len);
         arr.replace(6, 6, data.blablabla, data.blablabla_len);
         ref.assign(data.hello_world, 6);
         ref += data.blablabla;
-        ASSERT_EQ(arr.size(), ref.size());
-        ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+        REQUIRE(arr.size() == ref.size());
+        REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
     }
 
     // replace(size_type pos, size_type count, size_type count2, char_type ch)
@@ -636,15 +632,15 @@ TYPED_TEST(StorageArrayTest, ReplaceTests)
         arr.replace(0, 3, 10, b);
         ref.assign(10, b);
         ref += data.hello_world + 3;
-        ASSERT_EQ(arr.size(), ref.size());
-        ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+        REQUIRE(arr.size() == ref.size());
+        REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
         // with count = 0
         arr.assign(data.hello_world, data.hello_world_len);
         arr.replace(0, 0, 10, b);
         ref.assign(10, b);
         ref += data.hello_world;
-        ASSERT_EQ(arr.size(), ref.size());
-        ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+        REQUIRE(arr.size() == ref.size());
+        REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
 
         // replace in the middle
         arr.assign(data.hello_world, data.hello_world_len);
@@ -652,16 +648,16 @@ TYPED_TEST(StorageArrayTest, ReplaceTests)
         ref.assign(data.hello_world, 3);
         ref.append(20, b);
         ref += data.hello_world + 9;
-        ASSERT_EQ(arr.size(), ref.size());
-        ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+        REQUIRE(arr.size() == ref.size());
+        REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
 
         // replace at the end
         arr.assign(data.hello_world, data.hello_world_len);
         arr.replace(6, 6, 13, b);
         ref.assign(data.hello_world, 6);
         ref.append(13, b);
-        ASSERT_EQ(arr.size(), ref.size());
-        ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+        REQUIRE(arr.size() == ref.size());
+        REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
     }
 
     // replace(size_type pos, size_type count, InputIt first, InputIt last)
@@ -678,15 +674,15 @@ TYPED_TEST(StorageArrayTest, ReplaceTests)
         arr.replace(0, 3, vec.begin(), vec.end());
         ref.assign(12, l);
         ref += data.hello_world + 3;
-        ASSERT_EQ(arr.size(), ref.size());
-        ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+        REQUIRE(arr.size() == ref.size());
+        REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
         // with count = 0
         arr.assign(data.hello_world, data.hello_world_len);
         arr.replace(0, 0, vec.cbegin(), vec.cend());
         ref.assign(12, l);
         ref += data.hello_world;
-        ASSERT_EQ(arr.size(), ref.size());
-        ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+        REQUIRE(arr.size() == ref.size());
+        REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
 
         // replace in the middle
         arr.assign(data.hello_world, data.hello_world_len);
@@ -694,23 +690,23 @@ TYPED_TEST(StorageArrayTest, ReplaceTests)
         ref.assign(data.hello_world, 3);
         ref.append(2, l);
         ref += data.hello_world + 9;
-        ASSERT_EQ(arr.size(), ref.size());
-        ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+        REQUIRE(arr.size() == ref.size());
+        REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
 
         // replace at the end
         arr.assign(data.hello_world, data.hello_world_len);
         arr.replace(6, 6, vec.rbegin(), vec.rend());
         ref.assign(data.hello_world, 6);
         ref.append(12, l);
-        ASSERT_EQ(arr.size(), ref.size());
-        ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+        REQUIRE(arr.size() == ref.size());
+        REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
     }
 }
 
 /* truncating when exceeding max_size() during replace() */
-TYPED_TEST(StorageArrayTest, ReplaceTruncationTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray replace truncation", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     // this variant definitely won't throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
     using Traits = typename ArrayType::traits_type;
@@ -721,44 +717,44 @@ TYPED_TEST(StorageArrayTest, ReplaceTruncationTests)
     ArrayType arr;
 
     arr.assign(arr.max_size() - 3, ch);
-    ASSERT_EQ(arr.size(), arr.max_size() - 3);
+    REQUIRE(arr.size() == arr.max_size() - 3);
     // 3 more characters can fit
-    ASSERT_NO_THROW(arr.replace(0, 0, 3, ch));
-    ASSERT_EQ(arr.size(), arr.max_size());
+    REQUIRE_NOTHROW(arr.replace(0, 0, 3, ch));
+    REQUIRE(arr.size() == arr.max_size());
 
     // any character more and it will be truncated
     // (1) replace with individual characters
-    ASSERT_NO_THROW(arr.replace(0, 1, 12, ch2));
-    ASSERT_EQ(arr.size(), arr.max_size());
+    REQUIRE_NOTHROW(arr.replace(0, 1, 12, ch2));
+    REQUIRE(arr.size() == arr.max_size());
     for (size_t i = 0; i < 12; ++i)
-        ASSERT_EQ(arr[i], ch2);
+        REQUIRE(arr[i] == ch2);
     for (size_t i = 12; i < arr.size(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // (2) replace with a string
-    ASSERT_NO_THROW(arr.replace(0, 0, data.blablabla, data.blablabla_len));
-    ASSERT_TRUE(Traits::compare(arr.data(), data.blablabla, data.blablabla_len) == 0);
+    REQUIRE_NOTHROW(arr.replace(0, 0, data.blablabla, data.blablabla_len));
+    REQUIRE(Traits::compare(arr.data(), data.blablabla, data.blablabla_len) == 0);
     for (size_t i = data.blablabla_len; i < data.blablabla_len + 12; ++i)
-        ASSERT_EQ(arr[i], ch2);
+        REQUIRE(arr[i] == ch2);
     for (size_t i = data.blablabla_len + 12; i < arr.size(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 
     // (3) replace with an iterator range
     const std::basic_string<CharType> s(3, ch);
-    ASSERT_NO_THROW(arr.replace(0, 1, s.begin(), s.end()));
+    REQUIRE_NOTHROW(arr.replace(0, 1, s.begin(), s.end()));
     for (size_t i = 0; i < 3; ++i)
-        ASSERT_EQ(arr[i], ch);
-    ASSERT_TRUE(Traits::compare(arr.data() + 3, data.blablabla + 1, data.blablabla_len - 1) == 0);
+        REQUIRE(arr[i] == ch);
+    REQUIRE(Traits::compare(arr.data() + 3, data.blablabla + 1, data.blablabla_len - 1) == 0);
     for (size_t i = data.blablabla_len + 2; i < data.blablabla_len + 14; ++i)
-        ASSERT_EQ(arr[i], ch2);
+        REQUIRE(arr[i] == ch2);
     for (size_t i = data.blablabla_len + 14; i < arr.size(); ++i)
-        ASSERT_EQ(arr[i], ch);
+        REQUIRE(arr[i] == ch);
 }
 
 /* std::length_error when exceeding max_size() during replace() */
-TYPED_TEST(StorageArrayTest, ReplaceLengthErrorTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray replace length error", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     // this variant definitely will throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Throw>;
     using Traits = typename ArrayType::traits_type;
@@ -769,35 +765,35 @@ TYPED_TEST(StorageArrayTest, ReplaceLengthErrorTests)
     ArrayType arr;
 
     arr.assign(arr.max_size() - 3, ch);
-    ASSERT_EQ(arr.size(), arr.max_size() - 3);
+    REQUIRE(arr.size() == arr.max_size() - 3);
     // 3 more characters can fit
-    ASSERT_NO_THROW(arr.replace(0, 0, 3, ch));
-    ASSERT_EQ(arr.size(), arr.max_size());
+    REQUIRE_NOTHROW(arr.replace(0, 0, 3, ch));
+    REQUIRE(arr.size() == arr.max_size());
 
     // any character more and std::length_error is thrown, but the string is unchanged
     const std::basic_string<CharType> ref(arr.data(), arr.size());
     // (1) replace with individual characters
-    ASSERT_THROW(arr.replace(0, 1, 12, ch2), std::length_error);
-    ASSERT_EQ(arr.size(), ref.size());
-    ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+    REQUIRE_THROWS_AS(arr.replace(0, 1, 12, ch2), std::length_error);
+    REQUIRE(arr.size() == ref.size());
+    REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
 
     // (2) replace with a string
-    ASSERT_THROW(arr.replace(0, data.blablabla_len - 1, data.blablabla, data.blablabla_len),
-                 std::length_error);
-    ASSERT_EQ(arr.size(), ref.size());
-    ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+    REQUIRE_THROWS_AS(arr.replace(0, data.blablabla_len - 1, data.blablabla, data.blablabla_len),
+                      std::length_error);
+    REQUIRE(arr.size() == ref.size());
+    REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
 
     // (3) replace with an iterator range
     const std::basic_string<CharType> s(3, ch);
-    ASSERT_THROW(arr.replace(0, 1, s.begin(), s.end()), std::length_error);
-    ASSERT_EQ(arr.size(), ref.size());
-    ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+    REQUIRE_THROWS_AS(arr.replace(0, 1, s.begin(), s.end()), std::length_error);
+    REQUIRE(arr.size() == ref.size());
+    REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
 }
 
 /* erase function */
-TYPED_TEST(StorageArrayTest, EraseTests)
+TEMPLATE_LIST_TEST_CASE("StorageArray erase", "[storage_array]", CharTypes)
 {
-    using CharType = TypeParam; // gtest specific
+    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     using Traits = typename ArrayType::traits_type;
     const TestData<CharType> data;
@@ -808,22 +804,22 @@ TYPED_TEST(StorageArrayTest, EraseTests)
     RefType ref;
     arr.assign(data.hello_world, data.hello_world_len);
     ref = data.hello_world;
-    ASSERT_EQ(arr.size(), ref.size());
-    ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+    REQUIRE(arr.size() == ref.size());
+    REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
 
     arr.erase(0, 1);
     ref.erase(0, 1);
-    ASSERT_EQ(arr.size(), ref.size());
-    ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+    REQUIRE(arr.size() == ref.size());
+    REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
 
     arr.erase(5, 3);
     ref.erase(5, 3);
-    ASSERT_EQ(arr.size(), ref.size());
-    ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+    REQUIRE(arr.size() == ref.size());
+    REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
 
     arr.erase(0, arr.size());
     ref.erase(0, ref.size());
-    ASSERT_EQ(arr.size(), ref.size());
-    ASSERT_TRUE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
-    ASSERT_TRUE(arr.empty());
+    REQUIRE(arr.size() == ref.size());
+    REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
+    REQUIRE(arr.empty());
 }
