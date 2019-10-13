@@ -1,8 +1,8 @@
 # SPSL - Special Purpose Strings Library
 
-[![Travis-CI status](https://travis-ci.org/dermojo/spsl.svg?branch=master)](https://travis-ci.org/dermojo/spsl)
-[![AppVeyor status](https://ci.appveyor.com/api/projects/status/github/dermojo/spsl?branch=master&svg=true)](https://ci.appveyor.com/project/dermojo/spsl)
-[![codecov](https://codecov.io/gh/dermojo/spsl/branch/master/graph/badge.svg)](https://codecov.io/gh/dermojo/spsl)
+[![Travis-CI status](https://travis-ci.org/dermojo/spsl.svg?branch=catch2)](https://travis-ci.org/dermojo/spsl)
+[![AppVeyor status](https://ci.appveyor.com/api/projects/status/github/dermojo/spsl?branch=catch2&svg=true)](https://ci.appveyor.com/project/dermojo/spsl)
+[![codecov](https://codecov.io/gh/dermojo/spsl/branch/catch2/graph/badge.svg)](https://codecov.io/gh/dermojo/spsl)
 
 SPSL is a header-only library for "special" string implementations. It contains the following
 string class templates:
@@ -38,12 +38,11 @@ are for you.
 
 The SPSL itself only relies on the STL and has no dependencies. To compile the tests, you'll need:
 * [CMake](https://cmake.org/) 3.2 or higher
-* [GoogleTest](https://github.com/google/googletest) (as [git submodule](https://git-scm.com/docs/git-submodule))
 * [GSL-Lite](https://github.com/martinmoene/gsl-lite) (as [git submodule](https://git-scm.com/docs/git-submodule)):
   Used to test compatibility with `gsl::byte`.
 
 Supported compilers (we'll, the ones I've tested) include GCC 4.9+ and clang 3.8+
-on Linux and Microsoft Visual Studio 2015.
+on Linux and Microsoft Visual Studio 2015+.
 
 Make sure to clone this repository with:
 ```bash
