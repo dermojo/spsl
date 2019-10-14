@@ -54,6 +54,7 @@ add_dependencies(runtest testlib)
 # paths.
 target_include_directories(testlib PUBLIC include)
 target_include_directories(testlib SYSTEM PUBLIC extern/gsl-lite/include)
+target_include_directories(testlib SYSTEM PUBLIC extern)
 target_include_directories(example PUBLIC include)
 
 set_property(TARGET testlib PROPERTY CXX_STANDARD 11)
