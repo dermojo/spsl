@@ -352,7 +352,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore operations", "[string_core]", StringCoreTest
     REQUIRE(s1 == data.hello_world);
     REQUIRE(s1.size() == data.hello_world_len);
     // add a NUL character
-    s1.resize(s1.size() + 1);
+    s1.append(1, s1.nul());
     REQUIRE(s1.size() == data.hello_world_len + 1);
     REQUIRE(Traits::compare(s1.c_str(), data.hello_world, data.hello_world_len) == 0);
     REQUIRE(s1[s1.size()] == nul);

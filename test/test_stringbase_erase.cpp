@@ -187,7 +187,7 @@ public:
         TestData<char> sdata;
         using Traits = std::char_traits<gsl::byte>;
 
-        StringType s1(data.hello_world);
+        StringType s1(data.hello_world, data.hello_world_len);
         std::string s2(sdata.hello_world);
         const size_t initListSize = 4;
 
