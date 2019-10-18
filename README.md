@@ -41,7 +41,9 @@ The SPSL itself only relies on the STL and has no dependencies. To compile the t
 * [GSL-Lite](https://github.com/martinmoene/gsl-lite) (as [git submodule](https://git-scm.com/docs/git-submodule)):
   Used to test compatibility with `gsl::byte`.
 
-Supported compilers (we'll, the ones I've tested) include GCC 4.9+ and clang 3.8+
+(A copy of the [Catch2 test framework](https://github.com/catchorg/Catch2) is contained.)
+
+Supported compilers (we'll, the ones I've tested) include GCC 4.9+ and clang 4+
 on Linux and Microsoft Visual Studio 2015+.
 
 Make sure to clone this repository with:
