@@ -57,24 +57,6 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty
-          packages:
-            - clang-3.8
-      env: MYCC=clang-3.8 MYCXX=clang++-3.8
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-3.9
-          packages:
-            - clang-3.9
-      env: MYCC=clang-3.9 MYCXX=clang++-3.9
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
             - llvm-toolchain-xenial
           packages:
             - clang-4.0

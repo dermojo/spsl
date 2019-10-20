@@ -9,14 +9,7 @@ project(spsl VERSION 1.3 LANGUAGES CXX)
 # there may be hope for analysis...
 #set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
-# Setup testing using GTEST
-if(MINGW)
-    set(gtest_disable_pthreads ON CACHE BOOL "" FORCE)
-endif()
-if(MSVC)
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-endif()
-add_subdirectory(extern/googletest)
+# Setup testing
 enable_testing()
 
 # include GSL-Lite for unit testing
@@ -40,6 +33,7 @@ add_executable(testlib
     test/test_stringcore_construct.cpp
     test/test_traits.cpp
     test/test_pagealloc.cpp
+    test/test_main.cpp
     )
 add_executable(example
     test/example.cpp
@@ -60,10 +54,8 @@ add_dependencies(runtest testlib)
 # paths.
 target_include_directories(testlib PUBLIC include)
 target_include_directories(testlib SYSTEM PUBLIC extern/gsl-lite/include)
+target_include_directories(testlib SYSTEM PUBLIC extern)
 target_include_directories(example PUBLIC include)
-
-# Link test executable against gtest & gtest_main
-target_link_libraries(testlib gtest_main gtest)
 
 set_property(TARGET testlib PROPERTY CXX_STANDARD 11)
 set_property(TARGET testlib PROPERTY CXX_STANDARD_REQUIRED ON)

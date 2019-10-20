@@ -5,8 +5,9 @@
  * @license MIT
  */
 
-#include <gtest/gtest.h>
 #include <sstream>
+
+#include "catch.hpp"
 
 #include "spsl.hpp"
 #include "testdata.hpp"
@@ -43,26 +44,26 @@ public:
         // same length
         s1.replace(s1.cbegin(), s1.cbegin() + initListSize, { 'T', 'e', 's', 't' });
         s2.replace(s2.begin(), s2.begin() + initListSize, { 'T', 'e', 's', 't' });
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         s1.replace(s1.cbegin(), s1.cbegin() + 1, { 'T', 'e', 's', 't' });
         s2.replace(s2.begin(), s2.begin() + 1, { 'T', 'e', 's', 't' });
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         s1.replace(s1.cbegin(), s1.cbegin() + initListSize + 3, { 'T', 'e', 's', 't' });
         s2.replace(s2.begin(), s2.begin() + initListSize + 3, { 'T', 'e', 's', 't' });
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // with offset
         s1.replace(s1.begin() + 3, s1.begin() + 5, { 'T', 'e', 's', 't' });
         s2.replace(s2.begin() + 3, s2.begin() + 5, { 'T', 'e', 's', 't' });
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
     }
 };
 
@@ -82,26 +83,26 @@ public:
         // same length
         s1.replace(s1.cbegin(), s1.cbegin() + initListSize, { L'T', L'e', L's', L't' });
         s2.replace(s2.begin(), s2.begin() + initListSize, { L'T', L'e', L's', L't' });
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         s1.replace(s1.cbegin(), s1.cbegin() + 1, { L'T', L'e', L's', L't' });
         s2.replace(s2.begin(), s2.begin() + 1, { L'T', L'e', L's', L't' });
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         s1.replace(s1.cbegin(), s1.cbegin() + initListSize + 3, { L'T', L'e', L's', L't' });
         s2.replace(s2.begin(), s2.begin() + initListSize + 3, { L'T', L'e', L's', L't' });
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // with offset
         s1.replace(s1.begin() + 3, s1.begin() + 5, { L'T', L'e', L's', L't' });
         s2.replace(s2.begin() + 3, s2.begin() + 5, { L'T', L'e', L's', L't' });
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
     }
 };
 
@@ -115,45 +116,45 @@ public:
         TestData<char> sdata;
         using Traits = std::char_traits<gsl::byte>;
 
-        StringType s1(data.hello_world);
+        StringType s1(data.hello_world, data.hello_world_len);
         std::string s2(sdata.hello_world);
         const size_t initListSize = 4;
 
         // same length
         s1.replace(s1.cbegin(), s1.cbegin() + initListSize, { 'T'_b, 'e'_b, 's'_b, 't'_b });
         s2.replace(s2.begin(), s2.begin() + initListSize, { 'T', 'e', 's', 't' });
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
-                                    s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
+                                s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         s1.replace(s1.cbegin(), s1.cbegin() + 1, { 'T'_b, 'e'_b, 's'_b, 't'_b });
         s2.replace(s2.begin(), s2.begin() + 1, { 'T', 'e', 's', 't' });
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
-                                    s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
+                                s1.size()) == 0);
 
         // shorter
         s1.replace(s1.cbegin(), s1.cbegin() + initListSize + 3, { 'T'_b, 'e'_b, 's'_b, 't'_b });
         s2.replace(s2.begin(), s2.begin() + initListSize + 3, { 'T', 'e', 's', 't' });
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
-                                    s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
+                                s1.size()) == 0);
 
         // with offset
         s1.replace(s1.begin() + 3, s1.begin() + 5, { 'T'_b, 'e'_b, 's'_b, 't'_b });
         s2.replace(s2.begin() + 3, s2.begin() + 5, { 'T', 'e', 's', 't' });
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
-                                    s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
+                                s1.size()) == 0);
     }
 };
 
 
 /* replace functions */
-TYPED_TEST(StringBaseTest, ReplaceFunctions)
+TEMPLATE_LIST_TEST_CASE("StringBase replace", "[string_base]", StringBaseTestTypes)
 {
-    using StringType = TypeParam; // gtest specific
+    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StorageType::traits_type;
@@ -174,41 +175,41 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl2.assign(data.blablabla, 3);
         s1.replace(0, 3, repl1);
         s2.replace(0, 3, repl2);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         repl1.assign(32, data.blablabla[0]);
         repl2.assign(32, data.blablabla[0]);
         s1.replace(0, 3, repl1);
         s2.replace(0, 3, repl2);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         repl1.assign(1, data.blablabla[0]);
         repl2.assign(1, data.blablabla[0]);
         s1.replace(0, 3, repl1);
         s2.replace(0, 3, repl2);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // replace all
         repl1.clear();
         repl2.clear();
         s1.replace(0, s1.size(), repl1);
         s2.replace(0, s2.size(), repl2);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
-        ASSERT_TRUE(s1.empty());
-        ASSERT_TRUE(s2.empty());
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.empty());
+        REQUIRE(s2.empty());
 
         // exceptions
         // (1) invalid pos raises out_of_range
-        ASSERT_THROW(s1.replace(s1.size(), s1.size() + 3, repl1), std::out_of_range);
-        ASSERT_THROW(s1.replace(s1.size() + 1, s1.size() + 3, repl1), std::out_of_range);
+        REQUIRE_THROWS_AS(s1.replace(s1.size(), s1.size() + 3, repl1), std::out_of_range);
+        REQUIRE_THROWS_AS(s1.replace(s1.size() + 1, s1.size() + 3, repl1), std::out_of_range);
         // (2) in our class, an invalid count does the same
-        ASSERT_THROW(s1.replace(0, s1.size() + 1, repl1), std::out_of_range);
+        REQUIRE_THROWS_AS(s1.replace(0, s1.size() + 1, repl1), std::out_of_range);
     }
 
     // replace(const_iterator first, const_iterator last, const this_type& str);
@@ -223,40 +224,40 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl2.assign(data.blablabla, 3);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1);
         s2.replace(s2.begin(), s2.begin() + 3, repl2);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         repl1.assign(32, data.blablabla[0]);
         repl2.assign(32, data.blablabla[0]);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1);
         s2.replace(s2.begin(), s2.begin() + 3, repl2);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         repl1.assign(1, data.blablabla[0]);
         repl2.assign(1, data.blablabla[0]);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1);
         s2.replace(s2.begin(), s2.begin() + 3, repl2);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // replace all
         repl1.clear();
         repl2.clear();
         s1.replace(s1.cbegin(), s1.cend(), repl1);
         s2.replace(s2.begin(), s2.end(), repl2);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
-        ASSERT_TRUE(s1.empty());
-        ASSERT_TRUE(s2.empty());
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.empty());
+        REQUIRE(s2.empty());
 
         // exceptions
         // (1) invalid 'first' raises out_of_range
-        ASSERT_THROW(s1.replace(s1.end() + 1, s1.end() + 2, repl1), std::out_of_range);
+        REQUIRE_THROWS_AS(s1.replace(s1.end() + 1, s1.end() + 2, repl1), std::out_of_range);
         // (2) in our class, an invalid 'last' does the same
-        ASSERT_THROW(s1.replace(s1.begin(), s1.end() + 1, repl1), std::out_of_range);
+        REQUIRE_THROWS_AS(s1.replace(s1.begin(), s1.end() + 1, repl1), std::out_of_range);
     }
 
     // replace(size_type pos, size_type count, const this_type& str, size_type pos2, size_type
@@ -275,8 +276,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(0, 3, repl1, 0, len);
             s2.replace(0, 3, repl2, 0, len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
@@ -289,8 +290,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(0, 3, repl1, 0, len);
             s2.replace(0, 3, repl2, 0, len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // shorter
@@ -303,8 +304,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(0, 3, repl1, 0, len);
             s2.replace(0, 3, repl2, 0, len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // various lengths, but with pos2 != 0
@@ -317,8 +318,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(0, 3, repl1, 3, len);
             s2.replace(0, 3, repl2, 3, len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // replace all
@@ -331,22 +332,23 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(0, s1.size(), repl1, 0, len);
             s2.replace(0, s2.size(), repl2, 0, len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
-            ASSERT_TRUE(s1.empty());
-            ASSERT_TRUE(s2.empty());
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.empty());
+            REQUIRE(s2.empty());
         }
 
         // exceptions: verify that they are thrown and that the string doesn't change
         {
             StringType s1(data.hello_world);
             // (1) invalid pos raises out_of_range
-            ASSERT_THROW(s1.replace(s1.size(), s1.size() + 3, repl1, 0, repl1.size()),
-                         std::out_of_range);
-            ASSERT_TRUE(s1 == data.hello_world);
+            REQUIRE_THROWS_AS(s1.replace(s1.size(), s1.size() + 3, repl1, 0, repl1.size()),
+                              std::out_of_range);
+            REQUIRE(s1 == data.hello_world);
             // (2) in our class, an invalid count does the same
-            ASSERT_THROW(s1.replace(0, s1.size() + 1, repl1, 0, repl1.size()), std::out_of_range);
-            ASSERT_TRUE(s1 == data.hello_world);
+            REQUIRE_THROWS_AS(s1.replace(0, s1.size() + 1, repl1, 0, repl1.size()),
+                              std::out_of_range);
+            REQUIRE(s1 == data.hello_world);
         }
     }
 
@@ -362,59 +364,59 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl2.assign(data.blablabla, 3);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.begin(), repl1.end());
         s2.replace(s2.begin(), s2.begin() + 3, repl2.begin(), repl2.end());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         // reverse_iterator
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.crbegin(), repl1.crend());
         s2.replace(s2.begin(), s2.begin() + 3, repl2.crbegin(), repl2.crend());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         repl1.assign(32, data.blablabla[0]);
         repl2.assign(32, data.blablabla[0]);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.begin(), repl1.end());
         s2.replace(s2.begin(), s2.begin() + 3, repl2.begin(), repl2.end());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         // again, using std::vector for our string class
         std::vector<CharType> vec(32, data.blablabla[0]);
         s1 = data.hello_world;
         s2 = data.hello_world;
         s1.replace(s1.cbegin(), s1.cbegin() + 3, vec.begin(), vec.end());
         s2.replace(s2.begin(), s2.begin() + 3, repl2.begin(), repl2.end());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         repl1.assign(1, data.blablabla[0]);
         repl2.assign(1, data.blablabla[0]);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.begin(), repl1.end());
         s2.replace(s2.begin(), s2.begin() + 3, repl2.begin(), repl2.end());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // replace all
         repl1.clear();
         repl2.clear();
         s1.replace(s1.begin(), s1.end(), repl1.begin(), repl1.end());
         s2.replace(s2.begin(), s2.end(), repl2.begin(), repl2.end());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
-        ASSERT_TRUE(s1.empty());
-        ASSERT_TRUE(s2.empty());
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.empty());
+        REQUIRE(s2.empty());
 
         // exceptions: verify that they are thrown and that the string doesn't change
         {
             s1 = data.hello_world;
             // (1) invalid pos raises out_of_range
-            ASSERT_THROW(s1.replace(s1.end() + 1, s1.end(), repl1.begin(), repl1.end()),
-                         std::out_of_range);
-            ASSERT_TRUE(s1 == data.hello_world);
+            REQUIRE_THROWS_AS(s1.replace(s1.end() + 1, s1.end(), repl1.begin(), repl1.end()),
+                              std::out_of_range);
+            REQUIRE(s1 == data.hello_world);
             // (2) in our class, an invalid count does the same
-            ASSERT_THROW(s1.replace(s1.begin(), s1.end() + 1, repl1.begin(), repl1.end()),
-                         std::out_of_range);
-            ASSERT_TRUE(s1 == data.hello_world);
+            REQUIRE_THROWS_AS(s1.replace(s1.begin(), s1.end() + 1, repl1.begin(), repl1.end()),
+                              std::out_of_range);
+            REQUIRE(s1 == data.hello_world);
         }
     }
 
@@ -433,8 +435,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(0, 3, repl1.data(), len);
             s2.replace(0, 3, repl2.data(), len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
@@ -447,8 +449,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(0, 3, repl1.data(), len);
             s2.replace(0, 3, repl2.data(), len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // shorter
@@ -461,8 +463,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(0, 3, repl1.data(), len);
             s2.replace(0, 3, repl2.data(), len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // various lengths, but with offset
@@ -475,8 +477,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(1, 3, repl1.data() + 3, len);
             s2.replace(1, 3, repl2.data() + 3, len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // replace all
@@ -489,23 +491,23 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(0, s1.size(), repl1.data(), len);
             s2.replace(0, s2.size(), repl2.data(), len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
-            ASSERT_TRUE(s1.empty());
-            ASSERT_TRUE(s2.empty());
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.empty());
+            REQUIRE(s2.empty());
         }
 
         // exceptions: verify that they are thrown and that the string doesn't change
         {
             StringType s1(data.hello_world);
             // (1) invalid pos raises out_of_range
-            ASSERT_THROW(s1.replace(s1.size(), s1.size() + 3, repl1.data(), repl1.size()),
-                         std::out_of_range);
-            ASSERT_TRUE(s1 == data.hello_world);
+            REQUIRE_THROWS_AS(s1.replace(s1.size(), s1.size() + 3, repl1.data(), repl1.size()),
+                              std::out_of_range);
+            REQUIRE(s1 == data.hello_world);
             // (2) in our class, an invalid count does the same
-            ASSERT_THROW(s1.replace(0, s1.size() + 1, repl1.data(), repl1.size()),
-                         std::out_of_range);
-            ASSERT_TRUE(s1 == data.hello_world);
+            REQUIRE_THROWS_AS(s1.replace(0, s1.size() + 1, repl1.data(), repl1.size()),
+                              std::out_of_range);
+            REQUIRE(s1 == data.hello_world);
         }
     }
 
@@ -524,8 +526,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.data(), len);
             s2.replace(s2.begin(), s2.begin() + 3, repl2.data(), len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
@@ -538,8 +540,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.data(), len);
             s2.replace(s2.begin(), s2.begin() + 3, repl2.data(), len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // shorter
@@ -552,8 +554,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.data(), len);
             s2.replace(s2.begin(), s2.begin() + 3, repl2.data(), len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // various lengths, but with offsets
@@ -566,8 +568,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(s1.cbegin() + 1, s1.cbegin() + 5, repl1.data() + 3, len);
             s2.replace(s2.begin() + 1, s2.begin() + 5, repl2.data() + 3, len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // replace all
@@ -580,10 +582,10 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(s1.begin(), s1.end(), repl1.data(), len);
             s2.replace(s2.begin(), s2.end(), repl2.data(), len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
-            ASSERT_TRUE(s1.empty());
-            ASSERT_TRUE(s2.empty());
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.empty());
+            REQUIRE(s2.empty());
         }
     }
 
@@ -599,24 +601,24 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl2.assign(data.blablabla, 3);
         s1.replace(0, 3, repl1.data());
         s2.replace(0, 3, repl2.data());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         repl1.assign(32, data.blablabla[0]);
         repl2.assign(32, data.blablabla[0]);
         s1.replace(0, 3, repl1.data());
         s2.replace(0, 3, repl2.data());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         repl1.assign(1, data.blablabla[0]);
         repl2.assign(1, data.blablabla[0]);
         s1.replace(0, 3, repl1.data());
         s2.replace(0, 3, repl2.data());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // with offset
         repl1 = data.blablabla;
@@ -625,28 +627,29 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         s2 = data.hello_world;
         s1.replace(3, 7, repl1.data());
         s2.replace(3, 7, repl2.data());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // replace all
         repl1.clear();
         repl2.clear();
         s1.replace(0, s1.size(), repl1.data());
         s2.replace(0, s2.size(), repl2.data());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
-        ASSERT_TRUE(s1.empty());
-        ASSERT_TRUE(s2.empty());
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.empty());
+        REQUIRE(s2.empty());
 
         // exceptions: verify that they are thrown and that the string doesn't change
         {
             StringType s3(data.hello_world);
             // (1) invalid pos raises out_of_range
-            ASSERT_THROW(s3.replace(s3.size(), s3.size() + 3, repl1.data()), std::out_of_range);
-            ASSERT_TRUE(s3 == data.hello_world);
+            REQUIRE_THROWS_AS(s3.replace(s3.size(), s3.size() + 3, repl1.data()),
+                              std::out_of_range);
+            REQUIRE(s3 == data.hello_world);
             // (2) in our class, an invalid count does the same
-            ASSERT_THROW(s3.replace(0, s3.size() + 1, repl1.data()), std::out_of_range);
-            ASSERT_TRUE(s3 == data.hello_world);
+            REQUIRE_THROWS_AS(s3.replace(0, s3.size() + 1, repl1.data()), std::out_of_range);
+            REQUIRE(s3 == data.hello_world);
         }
     }
 
@@ -662,24 +665,24 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl2.assign(data.blablabla, 3);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.data());
         s2.replace(s2.begin(), s2.begin() + 3, repl2.data());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         repl1.assign(32, data.blablabla[0]);
         repl2.assign(32, data.blablabla[0]);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.data());
         s2.replace(s2.begin(), s2.begin() + 3, repl2.data());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         repl1.assign(1, data.blablabla[0]);
         repl2.assign(1, data.blablabla[0]);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl1.data());
         s2.replace(s2.begin(), s2.begin() + 3, repl2.data());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // with offset
         repl1 = data.blablabla;
@@ -688,18 +691,18 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         s2 = data.hello_world;
         s1.replace(s1.begin() + 3, s1.begin() + 7, repl1.data());
         s2.replace(s2.begin() + 3, s2.begin() + 7, repl2.data());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // replace all
         repl1.clear();
         repl2.clear();
         s1.replace(s1.begin(), s1.end(), repl1.data());
         s2.replace(s2.begin(), s2.end(), repl2.data());
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
-        ASSERT_TRUE(s1.empty());
-        ASSERT_TRUE(s2.empty());
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.empty());
+        REQUIRE(s2.empty());
     }
 
     // replace(size_type pos, size_type count, size_type count2, char_type ch);
@@ -711,20 +714,20 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         // same length
         s1.replace(0, 3, 3, repl);
         s2.replace(0, 3, 3, repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         s1.replace(0, 3, 32, repl);
         s2.replace(0, 3, 32, repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         s1.replace(0, 12, 1, repl);
         s2.replace(0, 12, 1, repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // various lengths, but with offset
         std::array<size_t, 5> sizes4{ 0, 1, 3, 5, data.blablabla_len };
@@ -734,27 +737,27 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s4(data.hello_world);
             s3.replace(3, 4, len, repl);
             s4.replace(3, 4, len, repl);
-            ASSERT_EQ(s3.size(), s4.size());
-            ASSERT_TRUE(Traits::compare(s3.data(), s4.data(), s3.size()) == 0);
+            REQUIRE(s3.size() == s4.size());
+            REQUIRE(Traits::compare(s3.data(), s4.data(), s3.size()) == 0);
         }
 
         // replace all
         s1.replace(0, s1.size(), 0, repl);
         s2.replace(0, s2.size(), 0, repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
-        ASSERT_TRUE(s1.empty());
-        ASSERT_TRUE(s2.empty());
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.empty());
+        REQUIRE(s2.empty());
 
         // exceptions: verify that they are thrown and that the string doesn't change
         {
             s1 = data.hello_world;
             // (1) invalid pos raises out_of_range
-            ASSERT_THROW(s1.replace(s1.size() + 1, 3, 3, repl), std::out_of_range);
-            ASSERT_TRUE(s1 == data.hello_world);
+            REQUIRE_THROWS_AS(s1.replace(s1.size() + 1, 3, 3, repl), std::out_of_range);
+            REQUIRE(s1 == data.hello_world);
             // (2) in our class, an invalid count does the same
-            ASSERT_THROW(s1.replace(0, s1.size() + 1, 3, repl), std::out_of_range);
-            ASSERT_TRUE(s1 == data.hello_world);
+            REQUIRE_THROWS_AS(s1.replace(0, s1.size() + 1, 3, repl), std::out_of_range);
+            REQUIRE(s1 == data.hello_world);
         }
     }
 
@@ -767,20 +770,20 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         // same length
         s1.replace(s1.cbegin(), s1.cbegin() + 3, 3, repl);
         s2.replace(s2.begin(), s2.begin() + 3, 3, repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         s1.replace(s1.cbegin(), s1.cbegin() + 3, 32, repl);
         s2.replace(s2.begin(), s2.begin() + 3, 32, repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         s1.replace(s1.cbegin(), s1.cbegin() + 12, 1, repl);
         s2.replace(s2.begin(), s2.begin() + 12, 1, repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // various lengths, but with offset
         std::array<size_t, 5> sizes4{ 0, 1, 3, 5, data.blablabla_len };
@@ -790,17 +793,17 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s4(data.hello_world);
             s3.replace(s3.cbegin() + 3, s3.cbegin() + 4, len, repl);
             s4.replace(s4.begin() + 3, s4.begin() + 4, len, repl);
-            ASSERT_EQ(s3.size(), s4.size());
-            ASSERT_TRUE(Traits::compare(s3.data(), s4.data(), s3.size()) == 0);
+            REQUIRE(s3.size() == s4.size());
+            REQUIRE(Traits::compare(s3.data(), s4.data(), s3.size()) == 0);
         }
 
         // replace all
         s1.replace(s1.begin(), s1.end(), 0, repl);
         s2.replace(s2.begin(), s2.end(), 0, repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
-        ASSERT_TRUE(s1.empty());
-        ASSERT_TRUE(s2.empty());
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.empty());
+        REQUIRE(s2.empty());
     }
 
     // replace(const_iterator first, const_iterator last, std::initializer_list<char_type> ilist);
@@ -822,39 +825,39 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl.assign(data.blablabla, 3);
         s1.replace(0, 3, repl);
         s2.replace(0, 3, repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         repl.assign(32, data.blablabla[0]);
         s1.replace(0, 3, repl);
         s2.replace(0, 3, repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         repl.assign(1, data.blablabla[0]);
         s1.replace(1, 4, repl);
         s2.replace(1, 4, repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // replace all
         repl.clear();
         s1.replace(0, s1.size(), repl);
         s2.replace(0, s2.size(), repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
-        ASSERT_TRUE(s1.empty());
-        ASSERT_TRUE(s2.empty());
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.empty());
+        REQUIRE(s2.empty());
 
         // exceptions
         s1 = data.hello_world;
         repl = data.blablabla;
         // (1) invalid pos raises out_of_range
-        ASSERT_THROW(s1.replace(s1.size(), s1.size() + 3, repl), std::out_of_range);
+        REQUIRE_THROWS_AS(s1.replace(s1.size(), s1.size() + 3, repl), std::out_of_range);
         // (2) in our class, an invalid count does the same
-        ASSERT_THROW(s1.replace(0, s1.size() + 1, repl), std::out_of_range);
+        REQUIRE_THROWS_AS(s1.replace(0, s1.size() + 1, repl), std::out_of_range);
     }
 
     // replace(const_iterator first, const_iterator last, const String&);
@@ -868,31 +871,31 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
         repl.assign(data.blablabla, 3);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl);
         s2.replace(s2.begin(), s2.begin() + 3, repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         repl.assign(32, data.blablabla[0]);
         s1.replace(s1.cbegin(), s1.cbegin() + 3, repl);
         s2.replace(s2.begin(), s2.begin() + 3, repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // shorter
         repl.assign(1, data.blablabla[0]);
         s1.replace(s1.cbegin() + 1, s1.cbegin() + 4, repl);
         s2.replace(s2.begin() + 1, s2.begin() + 4, repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
 
         // replace all
         repl.clear();
         s1.replace(s1.begin(), s1.end(), repl);
         s2.replace(s2.begin(), s2.end(), repl);
-        ASSERT_EQ(s1.size(), s2.size());
-        ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
-        ASSERT_TRUE(s1.empty());
-        ASSERT_TRUE(s2.empty());
+        REQUIRE(s1.size() == s2.size());
+        REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        REQUIRE(s1.empty());
+        REQUIRE(s2.empty());
     }
 
     // replace(size_type pos, size_type count, const String&, size_type pos2, size_type count2 =
@@ -910,8 +913,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(0, 3, repl, 0, len);
             s2.replace(0, 3, repl, 0, len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
@@ -923,8 +926,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(0, 3, repl, 0, len);
             s2.replace(0, 3, repl, 0, len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // shorter
@@ -936,8 +939,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(0, 3, repl, 0, len);
             s2.replace(0, 3, repl, 0, len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // various lengths, but with pos2 != 0
@@ -949,8 +952,8 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(0, 3, repl, 3, len);
             s2.replace(0, 3, repl, 3, len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
         }
 
         // replace all
@@ -962,22 +965,23 @@ TYPED_TEST(StringBaseTest, ReplaceFunctions)
             RefType s2(data.hello_world);
             s1.replace(0, s1.size(), repl, 0, len);
             s2.replace(0, s2.size(), repl, 0, len);
-            ASSERT_EQ(s1.size(), s2.size());
-            ASSERT_TRUE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
-            ASSERT_TRUE(s1.empty());
-            ASSERT_TRUE(s2.empty());
+            REQUIRE(s1.size() == s2.size());
+            REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
+            REQUIRE(s1.empty());
+            REQUIRE(s2.empty());
         }
 
         // exceptions: verify that they are thrown and that the string doesn't change
         {
             StringType s3(data.hello_world);
             // (1) invalid pos raises out_of_range
-            ASSERT_THROW(s3.replace(s3.size(), s3.size() + 3, repl, 0, repl.size()),
-                         std::out_of_range);
-            ASSERT_TRUE(s3 == data.hello_world);
+            REQUIRE_THROWS_AS(s3.replace(s3.size(), s3.size() + 3, repl, 0, repl.size()),
+                              std::out_of_range);
+            REQUIRE(s3 == data.hello_world);
             // (2) in our class, an invalid count does the same
-            ASSERT_THROW(s3.replace(0, s3.size() + 1, repl, 0, repl.size()), std::out_of_range);
-            ASSERT_TRUE(s3 == data.hello_world);
+            REQUIRE_THROWS_AS(s3.replace(0, s3.size() + 1, repl, 0, repl.size()),
+                              std::out_of_range);
+            REQUIRE(s3 == data.hello_world);
         }
     }
 }
