@@ -11,7 +11,7 @@ build_script:
   - set buildcfg=Release
   - md build
   - cd build
-  - cmake ..
+  - cmake .. -A x64
   - cmake --build . --config %buildcfg%
 
 test_script:
