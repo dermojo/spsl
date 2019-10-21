@@ -3,7 +3,7 @@ language: cpp
 
 matrix:
   include:
-    - compiler: gcc
+    - compiler: gcc 4.9
       addons:
         apt:
           sources:
@@ -11,7 +11,7 @@ matrix:
           packages:
             - g++-4.9
       env: MYCC=gcc-4.9 MYCXX=g++-4.9
-    - compiler: gcc
+    - compiler: gcc 5
       addons:
         apt:
           sources:
@@ -19,7 +19,7 @@ matrix:
           packages:
             - g++-5
       env: MYCC=gcc-5 MYCXX=g++-5
-    - compiler: gcc
+    - compiler: gcc 6
       addons:
         apt:
           sources:
@@ -27,7 +27,7 @@ matrix:
           packages:
             - g++-6
       env: MYCC=gcc-6 MYCXX=g++-6
-    - compiler: gcc
+    - compiler: gcc 6 (code cov)
       addons:
         apt:
           sources:
@@ -36,7 +36,7 @@ matrix:
             - g++-6
             - lcov
       env: MYCC=gcc-6 MYCXX=g++-6 CODE_COVERAGE=on
-    - compiler: gcc
+    - compiler: gcc 7
       addons:
         apt:
           sources:
@@ -44,7 +44,7 @@ matrix:
           packages:
             - g++-7
       env: MYCC=gcc-7 MYCXX=g++-7
-    - compiler: gcc
+    - compiler: gcc 8
       addons:
         apt:
           sources:
@@ -52,7 +52,15 @@ matrix:
           packages:
             - g++-8
       env: MYCC=gcc-8 MYCXX=g++-8
-    - compiler: clang
+    - compiler: gcc 9
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
+      env: MYCC=gcc-9 MYCXX=g++-9
+    - compiler: clang 4
       addons:
         apt:
           sources:
@@ -61,7 +69,7 @@ matrix:
           packages:
             - clang-4.0
       env: MYCC=clang-4.0 MYCXX=clang++-4.0
-    - compiler: clang
+    - compiler: clang 5
       addons:
         apt:
           sources:
@@ -70,7 +78,7 @@ matrix:
           packages:
             - clang-5.0
       env: MYCC=clang-5.0 MYCXX=clang++-5.0
-    - compiler: clang
+    - compiler: clang 6
       addons:
         apt:
           sources:
@@ -79,7 +87,7 @@ matrix:
           packages:
             - clang-6.0
       env: MYCC=clang-6.0 MYCXX=clang++-6.0
-    - compiler: clang-7
+    - compiler: clang 7
       addons:
         apt:
           sources:
@@ -88,7 +96,25 @@ matrix:
           packages:
             - clang-7
       env: MYCC=clang MYCXX=clang++
-    - compiler: clang
+    - compiler: clang 8
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-xenial-8
+          packages:
+            - clang-8
+      env: MYCC=clang MYCXX=clang++
+    - compiler: clang 9
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-xenial-9
+          packages:
+            - clang-9
+      env: MYCC=clang MYCXX=clang++
+    - compiler: clang 6 (ASAN)
       addons:
         apt:
           sources:
@@ -97,7 +123,7 @@ matrix:
           packages:
             - clang-6.0
       env: MYCC=clang-6.0 MYCXX=clang++-6.0 ENABLE_ASAN=on
-    - compiler: clang
+    - compiler: clang 6 (UBSAN)
       addons:
         apt:
           sources:
