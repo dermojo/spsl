@@ -11,6 +11,20 @@
 #include "testdata.hpp"
 #include "tests.hpp"
 
+template <class String, class InitList>
+static bool sameContent(const String& s, const InitList& initList)
+{
+    if (s.size() != initList.size())
+        return false;
+
+    const auto beg = initList.begin();
+    for (size_t i = 0; i != s.size(); ++i)
+    {
+        if (s[i] != beg[i])
+            return false;
+    }
+    return true;
+}
 
 /* assignment operators */
 TEMPLATE_LIST_TEST_CASE("StringCore assignment operators", "[string_core]", StringCoreTestTypes)
@@ -44,7 +58,9 @@ TEMPLATE_LIST_TEST_CASE("StringCore assignment operators", "[string_core]", Stri
     // initializer list
     s = initList;
     REQUIRE(s.size() == initList.size());
-    REQUIRE(Traits::compare(s.c_str(), initList.begin(), initList.size()) == 0);
+    // This fails for 'char' and GCC 9 (bug?), so test each character individually
+    // REQUIRE(Traits::compare(s.c_str(), initList.begin(), initList.size()) == 0);
+    REQUIRE(sameContent(s, initList));
 
     // copy
     StringType s2(data.blablabla);
@@ -128,7 +144,9 @@ TEMPLATE_LIST_TEST_CASE("StringCore assignment", "[string_core]", StringCoreTest
     // initializer list
     s.assign(initList);
     REQUIRE(s.size() == initList.size());
-    REQUIRE(Traits::compare(s.c_str(), initList.begin(), initList.size()) == 0);
+    // This fails for 'char' and GCC 9 (bug?), so test each character individually
+    // REQUIRE(Traits::compare(s.c_str(), initList.begin(), initList.size()) == 0);
+    REQUIRE(sameContent(s, initList));
 
     // iterators
     const std::basic_string<CharType> str(data.blablabla);
