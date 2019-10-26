@@ -113,14 +113,15 @@ matrix:
           packages:
             - g++-9
       env: MYCC=gcc-9 MYCXX=g++-9 ENABLE_ASAN=on
-    - compiler: gcc-9
+    - compiler: clang-8
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
+            - llvm-toolchain-xenial-8
           packages:
-            - g++-9
-      env: MYCC=gcc-9 MYCXX=g++-9 ENABLE_UBSAN=on
+            - clang-8
+      env: MYCC=clang MYCXX=clang++ ENABLE_UBSAN=on
     - compiler: x86_64-w64-mingw32-g++
       addons:
         apt:
