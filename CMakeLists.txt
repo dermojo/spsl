@@ -75,7 +75,7 @@ else()
                                           -Wconversion -Wsign-conversion -Wno-conversion-null
                                           -Wcast-align)
     # These are enabled on Clang and don't help...
-    if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
         target_compile_options(testlib PUBLIC -Wno-missing-braces
                                               -Wno-gnu-zero-variadic-macro-arguments)
     endif()
