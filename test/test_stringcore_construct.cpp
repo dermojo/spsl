@@ -5,16 +5,15 @@
  * @license MIT
  */
 
-#include "catch.hpp"
+#include "doctest.h"
 
 #include "spsl.hpp"
 #include "testdata.hpp"
 #include "tests.hpp"
 
 /* check constructor availability */
-TEMPLATE_LIST_TEST_CASE("StringCore constructors", "[string_core]", StringCoreTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringCore constructors", StringType, StringCore_constructors)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
@@ -161,11 +160,11 @@ TEMPLATE_LIST_TEST_CASE("StringCore constructors", "[string_core]", StringCoreTe
         }
     }
 }
+TEST_CASE_TEMPLATE_APPLY(StringCore_constructors, StringCoreTestTypes);
 
 /* check constructor availability */
-TEMPLATE_LIST_TEST_CASE("StringCore constructor iterator", "[string_core]", StringCoreTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringCore constructor iterator", StringType, StringCore_construct_iter)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
@@ -209,3 +208,4 @@ TEMPLATE_LIST_TEST_CASE("StringCore constructor iterator", "[string_core]", Stri
         }
     }
 }
+TEST_CASE_TEMPLATE_APPLY(StringCore_construct_iter, StringCoreTestTypes);

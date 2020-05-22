@@ -5,16 +5,15 @@
  * @license MIT
  */
 
-#include "catch.hpp"
+#include "doctest.h"
 
 #include "spsl.hpp"
 #include "testdata.hpp"
 #include "tests.hpp"
 
 /* comparison functions */
-TEMPLATE_LIST_TEST_CASE("StringCore comparison", "[string_core]", StringCoreTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringCore comparison", StringType, StringCore_comparison)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
@@ -124,11 +123,11 @@ TEMPLATE_LIST_TEST_CASE("StringCore comparison", "[string_core]", StringCoreTest
     REQUIRE(s.compare(1, s.size() - 1, ref, 1, ref.size() - 1) == 0);
     REQUIRE(s.compare(0, s.size(), ref, 0, ref.size() - 1) > 0);
 }
+TEST_CASE_TEMPLATE_APPLY(StringCore_comparison, StringCoreTestTypes);
 
 /* find functions */
-TEMPLATE_LIST_TEST_CASE("StringCore find", "[string_core]", StringCoreTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringCore find", StringType, StringCore_find)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
@@ -221,11 +220,11 @@ TEMPLATE_LIST_TEST_CASE("StringCore find", "[string_core]", StringCoreTestTypes)
     REQUIRE(s.rfind(ref, npos) == 6u);
     REQUIRE(s.rfind(ref, 5) == npos);
 }
+TEST_CASE_TEMPLATE_APPLY(StringCore_find, StringCoreTestTypes);
 
 /* comparison operators */
-TEMPLATE_LIST_TEST_CASE("StringCore comparison operators", "[string_core]", StringCoreTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringCore comparison operators", StringType, StringCore_comparison_ops)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
@@ -348,12 +347,11 @@ TEMPLATE_LIST_TEST_CASE("StringCore comparison operators", "[string_core]", Stri
     REQUIRE_FALSE(ref < s);
     REQUIRE_FALSE(ref <= s);
 }
-
+TEST_CASE_TEMPLATE_APPLY(StringCore_comparison_ops, StringCoreTestTypes);
 
 /* swap implementation */
-TEMPLATE_LIST_TEST_CASE("StringCore swap", "[string_core]", StringCoreTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringCore swap", StringType, StringCore_swap)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
@@ -377,12 +375,11 @@ TEMPLATE_LIST_TEST_CASE("StringCore swap", "[string_core]", StringCoreTestTypes)
     REQUIRE(s1 == data.hello_world);
     REQUIRE(s2 == data.blablabla);
 }
-
+TEST_CASE_TEMPLATE_APPLY(StringCore_swap, StringCoreTestTypes);
 
 /* hash specialization */
-TEMPLATE_LIST_TEST_CASE("StringCore has", "[string_core]", StringCoreTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringCore hash", StringType, StringCore_hash)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
@@ -422,3 +419,4 @@ TEMPLATE_LIST_TEST_CASE("StringCore has", "[string_core]", StringCoreTestTypes)
         REQUIRE(val5 != val7);
     }
 }
+TEST_CASE_TEMPLATE_APPLY(StringCore_hash, StringCoreTestTypes);

@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "catch.hpp"
+#include "doctest.h"
 #include "spsl.hpp"
 #include "testdata.hpp"
 
@@ -51,7 +51,7 @@
     }
 
 // test the has_size traits template
-TEST_CASE("has_size", "[traits]")
+TEST_CASE("has_size")
 {
     ASSERT_HAS_SIZE(size_t, std::string);
     ASSERT_HAS_SIZE(size_t, std::wstring);
@@ -74,7 +74,7 @@ TEST_CASE("has_size", "[traits]")
 }
 
 // test the has_data traits template
-TEST_CASE("has_data", "[traits]")
+TEST_CASE("has_data")
 {
     ASSERT_HAS_DATA(char, std::string);
     ASSERT_HAS_DATA(wchar_t, std::wstring);
@@ -105,7 +105,7 @@ TEST_CASE("has_data", "[traits]")
 }
 
 // test the is_compatible_string traits template
-TEST_CASE("is_compatible", "[traits]")
+TEST_CASE("is_compatible")
 {
     ASSERT_IS_COMPAT(char, size_t, std::string);
     ASSERT_IS_COMPAT(wchar_t, size_t, std::wstring);

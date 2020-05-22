@@ -7,14 +7,14 @@
 
 #include <array>
 
-#include "catch.hpp"
+#include "doctest.h"
 
 #include "spsl/pagealloc.hpp"
 #include "testdata.hpp"
 
 
 // test the constructor
-TEST_CASE("SensitivePageAllocator can be constructed", "[allocator]")
+TEST_CASE("SensitivePageAllocator can be constructed")
 {
     spsl::SensitivePageAllocator alloc;
     REQUIRE(alloc.getPageSize() % spsl::SensitivePageAllocator::chunk_size == 0);
@@ -29,7 +29,7 @@ TEST_CASE("SensitivePageAllocator can be constructed", "[allocator]")
 }
 
 // test the bitmask calculation
-TEST_CASE("BitMask tests", "[allocator]")
+TEST_CASE("BitMask tests")
 {
     // binary literals are actually a C++14 feature...
     auto all64 = spsl::SensitivePageAllocator::all64;
@@ -55,7 +55,7 @@ TEST_CASE("BitMask tests", "[allocator]")
 }
 
 // allocate a segment
-TEST_CASE("ManagedAllocationTest1", "[allocator]")
+TEST_CASE("ManagedAllocationTest1")
 {
     spsl::SensitivePageAllocator alloc;
 
@@ -125,7 +125,7 @@ static void performAllocations(spsl::SensitivePageAllocator& alloc, AllocationLi
 }
 
 // allocate and deallocate multiple segments
-TEST_CASE("ManagedAllocationTest2", "[allocator]")
+TEST_CASE("ManagedAllocationTest2")
 {
     spsl::SensitivePageAllocator alloc;
 
@@ -145,7 +145,7 @@ TEST_CASE("ManagedAllocationTest2", "[allocator]")
 }
 
 // allocate multiple segments and release them in reverse order
-TEST_CASE("ManagedAllocationTest3", "[allocator]")
+TEST_CASE("ManagedAllocationTest3")
 {
     spsl::SensitivePageAllocator alloc;
 
@@ -166,7 +166,7 @@ TEST_CASE("ManagedAllocationTest3", "[allocator]")
 }
 
 // allocate areas large than a page
-TEST_CASE("UnmanagedAllocationTest", "[allocator]")
+TEST_CASE("UnmanagedAllocationTest")
 {
     spsl::SensitivePageAllocator alloc;
     auto pageSize = alloc.getPageSize();
@@ -203,7 +203,7 @@ TEST_CASE("UnmanagedAllocationTest", "[allocator]")
 
 
 // test the leak check in the destructor
-TEST_CASE("LeakCheckTest1", "[allocator]")
+TEST_CASE("LeakCheckTest1")
 {
     AllocationList myLeaks;
     const spsl::SensitivePageAllocator* myInstance = nullptr;
@@ -245,7 +245,7 @@ TEST_CASE("LeakCheckTest1", "[allocator]")
 
 
 // test the leak check in the destructor even more
-TEST_CASE("LeakCheckTest2", "[allocator]")
+TEST_CASE("LeakCheckTest2")
 {
     AllocationList myLeaks;
     const spsl::SensitivePageAllocator* myInstance = nullptr;

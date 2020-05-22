@@ -7,7 +7,7 @@
 
 #include <sstream>
 
-#include "catch.hpp"
+#include "doctest.h"
 
 #include "spsl.hpp"
 #include "testdata.hpp"
@@ -15,9 +15,8 @@
 
 
 /* find_first_of functions */
-TEMPLATE_LIST_TEST_CASE("StringBase find first of", "[string_base]", StringBaseTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringBase find first of", StringType, StringBase_find_first_of)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
@@ -92,12 +91,11 @@ TEMPLATE_LIST_TEST_CASE("StringBase find first of", "[string_base]", StringBaseT
     REQUIRE(sWithNul.find_first_of(chars4) == sWithNul.size() - 1);
     REQUIRE(sWithNul.find_first_of(chars4, 0) == sWithNul.size() - 1);
 }
-
+TEST_CASE_TEMPLATE_APPLY(StringBase_find_first_of, StringBaseTestTypes);
 
 /* find_first_not_of functions */
-TEMPLATE_LIST_TEST_CASE("StringBase find first not of", "[string_base]", StringBaseTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringBase find first not of", StringType, StringBase_find_first_not_of)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
@@ -176,12 +174,12 @@ TEMPLATE_LIST_TEST_CASE("StringBase find first not of", "[string_base]", StringB
     REQUIRE(s.find_first_not_of(chars1.data(), s.size() + 1024) == npos);
     REQUIRE(s.find_first_not_of(chars4.data(), s.size()) == npos);
 }
+TEST_CASE_TEMPLATE_APPLY(StringBase_find_first_not_of, StringBaseTestTypes);
 
 
 /* find_last_of functions */
-TEMPLATE_LIST_TEST_CASE("StringBase find last of", "[string_base]", StringBaseTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringBase find last of", StringType, StringBase_find_last_of)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
@@ -278,11 +276,11 @@ TEMPLATE_LIST_TEST_CASE("StringBase find last of", "[string_base]", StringBaseTe
     REQUIRE(s.find_last_of(chars1, s.size() + 47) == 9u);
     REQUIRE(s.find_last_of(chars1, s.size() + 2048) == 9u);
 }
+TEST_CASE_TEMPLATE_APPLY(StringBase_find_last_of, StringBaseTestTypes);
 
 /* find_last_not_of functions */
-TEMPLATE_LIST_TEST_CASE("StringBase find last not of", "[string_base]", StringBaseTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringBase find last not of", StringType, StringBase_find_last_not_of)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
@@ -377,3 +375,4 @@ TEMPLATE_LIST_TEST_CASE("StringBase find last not of", "[string_base]", StringBa
     REQUIRE(s.find_last_not_of(chars1, s.size() + 47) == 11u);
     REQUIRE(s.find_last_not_of(chars1, s.size() + 2048) == 11u);
 }
+TEST_CASE_TEMPLATE_APPLY(StringBase_find_last_not_of, StringBaseTestTypes);

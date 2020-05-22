@@ -5,7 +5,7 @@
  * @license MIT
  */
 
-#include "catch.hpp"
+#include "doctest.h"
 
 #include "spsl.hpp"
 #include "testdata.hpp"
@@ -27,9 +27,8 @@ static bool sameContent(const String& s, const InitList& initList)
 }
 
 /* assignment operators */
-TEMPLATE_LIST_TEST_CASE("StringCore assignment operators", "[string_core]", StringCoreTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringCore assignment operators", StringType, StringCore_assign_ops)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
@@ -100,12 +99,11 @@ TEMPLATE_LIST_TEST_CASE("StringCore assignment operators", "[string_core]", Stri
     REQUIRE(s == data.blablabla);
 #endif
 }
-
+TEST_CASE_TEMPLATE_APPLY(StringCore_assign_ops, StringCoreTestTypes);
 
 /* assignment functions */
-TEMPLATE_LIST_TEST_CASE("StringCore assignment", "[string_core]", StringCoreTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringCore assignment", StringType, StringCore_assignment)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
@@ -207,11 +205,11 @@ TEMPLATE_LIST_TEST_CASE("StringCore assignment", "[string_core]", StringCoreTest
     // throws if pos is out of range
     REQUIRE_THROWS_AS(s.assign(str, str.size() + 1), std::out_of_range);
 }
+TEST_CASE_TEMPLATE_APPLY(StringCore_assignment, StringCoreTestTypes);
 
 /* append functions */
-TEMPLATE_LIST_TEST_CASE("StringCore append", "[string_core]", StringCoreTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringCore append", StringType, StringCore_append)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
@@ -322,3 +320,4 @@ TEMPLATE_LIST_TEST_CASE("StringCore append", "[string_core]", StringCoreTestType
     // throws if pos is out of range
     REQUIRE_THROWS_AS(s1.append(s2, s2.size() + 1), std::out_of_range);
 }
+TEST_CASE_TEMPLATE_APPLY(StringCore_append, StringCoreTestTypes);

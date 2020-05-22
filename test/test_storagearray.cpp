@@ -7,7 +7,7 @@
 
 #include <tuple>
 
-#include "catch.hpp"
+#include "doctest.h"
 
 #include "spsl/storage_array.hpp"
 #include "testdata.hpp"
@@ -18,9 +18,8 @@ using CharTypes = std::tuple<char, wchar_t, gsl::byte>;
 
 
 /* check if size is checkable on type at run/compile time */
-TEMPLATE_LIST_TEST_CASE("StorageArray static size", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray static size", CharType, StorageArray_static_size)
 {
-    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     using size_type = typename ArrayType::size_type;
 
@@ -36,11 +35,11 @@ TEMPLATE_LIST_TEST_CASE("StorageArray static size", "[storage_array]", CharTypes
     //   static_assert(minSize <= sizeof(ArrayType) && sizeof(ArrayType) <= maxSize,
     //                 "Unexpected object size?");
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_static_size, CharTypes);
 
 /* constructor tests */
-TEMPLATE_LIST_TEST_CASE("StorageArray constructors", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray constructors", CharType, StorageArray_constructors)
 {
-    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const CharType nul = ArrayType::nul();
 
@@ -60,11 +59,11 @@ TEMPLATE_LIST_TEST_CASE("StorageArray constructors", "[storage_array]", CharType
     ArrayType s2(s1);
     ArrayType s3(std::move(s2));
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_constructors, CharTypes);
 
 /* assignment functions */
-TEMPLATE_LIST_TEST_CASE("StorageArray assignment", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray assignment", CharType, StorageArray_assignment)
 {
-    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const TestData<CharType> data;
     using Traits = typename ArrayType::traits_type;
@@ -98,11 +97,11 @@ TEMPLATE_LIST_TEST_CASE("StorageArray assignment", "[storage_array]", CharTypes)
     REQUIRE(Traits::compare(arr.data(), data.hello_world, data.hello_world_len) == 0);
     REQUIRE(bs == arr.data());
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_assignment, CharTypes);
 
 /* push_back/pop_back functions */
-TEMPLATE_LIST_TEST_CASE("StorageArray push and pop", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray push and pop", CharType, StorageArray_push_pop)
 {
-    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const TestData<CharType> data;
     using Traits = typename ArrayType::traits_type;
@@ -128,11 +127,11 @@ TEMPLATE_LIST_TEST_CASE("StorageArray push and pop", "[storage_array]", CharType
     REQUIRE(arr.length() == 0u);
     REQUIRE(arr.empty());
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_push_pop, CharTypes);
 
 /* insert functions */
-TEMPLATE_LIST_TEST_CASE("StorageArray insert", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray insert", CharType, StorageArray_insert)
 {
-    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const TestData<CharType> data;
     using Traits = typename ArrayType::traits_type;
@@ -193,11 +192,11 @@ TEMPLATE_LIST_TEST_CASE("StorageArray insert", "[storage_array]", CharTypes)
     for (size_t i = 15 + data.blablabla_len; i < 20 + data.blablabla_len; ++i)
         REQUIRE(arr[i] == ch);
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_insert, CharTypes);
 
 /* append functions */
-TEMPLATE_LIST_TEST_CASE("StorageArray append", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray append", CharType, StorageArray_append)
 {
-    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const TestData<CharType> data;
 
@@ -235,11 +234,11 @@ TEMPLATE_LIST_TEST_CASE("StorageArray append", "[storage_array]", CharTypes)
     REQUIRE(ref.length() == arr.length());
     REQUIRE(ref.size() == arr.size());
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_append, CharTypes);
 
 /* swap function */
-TEMPLATE_LIST_TEST_CASE("StorageArray swap", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray swap", CharType, StorageArray_swap)
 {
-    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const TestData<CharType> data;
     using Traits = typename ArrayType::traits_type;
@@ -281,11 +280,11 @@ TEMPLATE_LIST_TEST_CASE("StorageArray swap", "[storage_array]", CharTypes)
     REQUIRE(arr1.length() == data.blablabla_len);
     REQUIRE(Traits::compare(arr1.data(), data.blablabla, data.blablabla_len) == 0);
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_swap, CharTypes);
 
 /* resize function */
-TEMPLATE_LIST_TEST_CASE("StorageArray resize", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray resize", CharType, StorageArray_resize)
 {
-    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const TestData<CharType> data;
     const CharType nul = ArrayType::nul();
@@ -332,11 +331,11 @@ TEMPLATE_LIST_TEST_CASE("StorageArray resize", "[storage_array]", CharTypes)
     // quick check: this no-op doesn't kill any kittens...
     arr.shrink_to_fit();
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_resize, CharTypes);
 
 /* truncating when exceeding max_size() during assign() */
-TEMPLATE_LIST_TEST_CASE("StorageArray assignment truncation", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray assignment truncation", CharType, StorageArray_assign_trunc)
 {
-    using CharType = TestType;
     // this variant definitely won't throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
     const TestData<CharType> data;
@@ -393,11 +392,12 @@ TEMPLATE_LIST_TEST_CASE("StorageArray assignment truncation", "[storage_array]",
     for (size_t i = 0; i < arr.length(); ++i)
         REQUIRE(arr[i] == ref[i]);
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_assign_trunc, CharTypes);
 
 /* std::length_error when exceeding max_size() during assign() */
-TEMPLATE_LIST_TEST_CASE("StorageArray assignment length errors", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray assignment length errors", CharType,
+                          StorageArray_assign_length_err)
 {
-    using CharType = TestType;
     // this variant definitely will throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Throw>;
     const TestData<CharType> data;
@@ -449,11 +449,11 @@ TEMPLATE_LIST_TEST_CASE("StorageArray assignment length errors", "[storage_array
     for (size_t i = 0; i < arr.length(); ++i)
         REQUIRE(arr[i] == ch);
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_assign_length_err, CharTypes);
 
 /* truncating when exceeding max_size() during insert() */
-TEMPLATE_LIST_TEST_CASE("StorageArray insert truncation", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray insert truncation", CharType, StorageArray_insert_trunc)
 {
-    using CharType = TestType;
     // this variant definitely won't throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
     const TestData<CharType> data;
@@ -497,11 +497,12 @@ TEMPLATE_LIST_TEST_CASE("StorageArray insert truncation", "[storage_array]", Cha
     for (size_t i = 0; i < n; ++i)
         REQUIRE(arr[arr.length() - n + i] == data.hello_world[i]);
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_insert_trunc, CharTypes);
 
 /* std::length_error when exceeding max_size() during insert() */
-TEMPLATE_LIST_TEST_CASE("StorageArray insert length error", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray insert length error", CharType,
+                          StorageArray_insert_length_err)
 {
-    using CharType = TestType;
     // this variant definitely will throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Throw>;
     const TestData<CharType> data;
@@ -532,11 +533,12 @@ TEMPLATE_LIST_TEST_CASE("StorageArray insert length error", "[storage_array]", C
     for (size_t i = 0; i < arr.length(); ++i)
         REQUIRE(arr[i] == ch);
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_insert_length_err, CharTypes);
 
 /* std::out_of_range when trying to insert past the end */
-TEMPLATE_LIST_TEST_CASE("StorageArray insert range error", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray insert range error", CharType,
+                          StorageArray_insert_range_err)
 {
-    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
     const TestData<CharType> data;
 
@@ -567,12 +569,11 @@ TEMPLATE_LIST_TEST_CASE("StorageArray insert range error", "[storage_array]", Ch
     for (size_t i = 0; i < arr.length(); ++i)
         REQUIRE(arr[i] == ch);
 }
-
+TEST_CASE_TEMPLATE_APPLY(StorageArray_insert_range_err, CharTypes);
 
 /* replace function */
-TEMPLATE_LIST_TEST_CASE("StorageArray replace", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray replace", CharType, StorageArray_replace)
 {
-    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     using Traits = typename ArrayType::traits_type;
     const TestData<CharType> data;
@@ -697,11 +698,11 @@ TEMPLATE_LIST_TEST_CASE("StorageArray replace", "[storage_array]", CharTypes)
         REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
     }
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_replace, CharTypes);
 
 /* truncating when exceeding max_size() during replace() */
-TEMPLATE_LIST_TEST_CASE("StorageArray replace truncation", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray replace truncation", CharType, StorageArray_replace_trunc)
 {
-    using CharType = TestType;
     // this variant definitely won't throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Truncate>;
     using Traits = typename ArrayType::traits_type;
@@ -745,11 +746,12 @@ TEMPLATE_LIST_TEST_CASE("StorageArray replace truncation", "[storage_array]", Ch
     for (size_t i = data.blablabla_len + 14; i < arr.size(); ++i)
         REQUIRE(arr[i] == ch);
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_replace_trunc, CharTypes);
 
 /* std::length_error when exceeding max_size() during replace() */
-TEMPLATE_LIST_TEST_CASE("StorageArray replace length error", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray replace length error", CharType,
+                          StorageArray_replace_length_err)
 {
-    using CharType = TestType;
     // this variant definitely will throw
     using ArrayType = spsl::StorageArray<CharType, 64, spsl::policy::overflow::Throw>;
     using Traits = typename ArrayType::traits_type;
@@ -784,11 +786,11 @@ TEMPLATE_LIST_TEST_CASE("StorageArray replace length error", "[storage_array]", 
     REQUIRE(arr.size() == ref.size());
     REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_replace_length_err, CharTypes);
 
 /* erase function */
-TEMPLATE_LIST_TEST_CASE("StorageArray erase", "[storage_array]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StorageArray erase", CharType, StorageArray_erase)
 {
-    using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     using Traits = typename ArrayType::traits_type;
     const TestData<CharType> data;
@@ -818,3 +820,4 @@ TEMPLATE_LIST_TEST_CASE("StorageArray erase", "[storage_array]", CharTypes)
     REQUIRE(Traits::compare(arr.data(), ref.data(), ref.size()) == 0);
     REQUIRE(arr.empty());
 }
+TEST_CASE_TEMPLATE_APPLY(StorageArray_erase, CharTypes);

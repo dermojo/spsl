@@ -7,7 +7,7 @@
 
 #include <sstream>
 
-#include "catch.hpp"
+#include "doctest.h"
 
 #include "spsl.hpp"
 #include "testdata.hpp"
@@ -15,9 +15,8 @@
 
 
 /* insert functions */
-TEMPLATE_LIST_TEST_CASE("StringBase insert", "[string_base]", StringBaseTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringBase insert", StringType, StringBase_insert)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StorageType::traits_type;
@@ -135,6 +134,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase insert", "[string_base]", StringBaseTestType
         REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
     }
 }
+TEST_CASE_TEMPLATE_APPLY(StringBase_insert, StringBaseTestTypes);
 
 template <class StringType, class CharType>
 void runStreamTests(StringType&&, CharType)
@@ -157,10 +157,11 @@ void runStreamTests(StringType&&, gsl::byte)
 }
 
 /* operator<< */
-TEMPLATE_LIST_TEST_CASE("StringBase output stream", "[string_base]", StringBaseTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringBase output stream", StringType, StringBase_ostream)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     runStreamTests(StringType(), CharType());
 }
+TEST_CASE_TEMPLATE_APPLY(StringBase_ostream, StringBaseTestTypes);
+

@@ -5,7 +5,7 @@
  * @license MIT
  */
 
-#include "catch.hpp"
+#include "doctest.h"
 
 #include "spsl/storage_password.hpp"
 #include "testdata.hpp"
@@ -70,9 +70,8 @@ static int compareStrings(const wchar_t* s1, const wchar_t* s2)
 }
 
 /* constructor tests */
-TEMPLATE_LIST_TEST_CASE("StoragePassword constructor", "[storage_password]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StoragePassword constructor", CharType, StoragePassword_constructor)
 {
-    using CharType = TestType;
     using StorageType = spsl::StoragePassword<CharType>;
     const CharType nul = StorageType::nul();
 
@@ -92,11 +91,11 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword constructor", "[storage_password]", Cha
     StorageType s2(s1);
     StorageType s3(std::move(s2));
 }
+TEST_CASE_TEMPLATE_APPLY(StoragePassword_constructor, CharTypes);
 
 /* assignment functions */
-TEMPLATE_LIST_TEST_CASE("StoragePassword assignment", "[storage_password]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StoragePassword assignment", CharType, StoragePassword_assignment)
 {
-    using CharType = TestType;
     using StorageType = spsl::StoragePassword<CharType>;
     const TestData<CharType> data;
     using Traits = typename StorageType::traits_type;
@@ -130,11 +129,11 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword assignment", "[storage_password]", Char
     REQUIRE(Traits::compare(s.data(), data.hello_world, data.hello_world_len) == 0);
     REQUIRE(bs == s.data());
 }
+TEST_CASE_TEMPLATE_APPLY(StoragePassword_assignment, CharTypes);
 
 /* push_back/pop_back functions */
-TEMPLATE_LIST_TEST_CASE("StoragePassword push and pop", "[storage_password]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StoragePassword push and pop", CharType, StoragePassword_push_pop)
 {
-    using CharType = TestType;
     // use an allocation block size of '4' to force reallocations
     using StorageType = spsl::StoragePassword<CharType, 4>;
     const TestData<CharType> data;
@@ -161,11 +160,11 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword push and pop", "[storage_password]", Ch
     REQUIRE(s.length() == 0u);
     REQUIRE(s.empty());
 }
+TEST_CASE_TEMPLATE_APPLY(StoragePassword_push_pop, CharTypes);
 
 /* insert functions */
-TEMPLATE_LIST_TEST_CASE("StoragePassword insert", "[storage_password]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StoragePassword insert", CharType, StoragePassword_insert)
 {
-    using CharType = TestType;
     using StorageType = spsl::StoragePassword<CharType>;
     const TestData<CharType> data;
     using Traits = typename StorageType::traits_type;
@@ -226,11 +225,12 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword insert", "[storage_password]", CharType
     for (size_t i = 15 + data.blablabla_len; i < 20 + data.blablabla_len; ++i)
         REQUIRE(s[i] == ch);
 }
+TEST_CASE_TEMPLATE_APPLY(StoragePassword_insert, CharTypes);
 
 /* std::out_of_range when trying to insert past the end */
-TEMPLATE_LIST_TEST_CASE("StoragePassword insert range error", "[storage_password]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StoragePassword insert range error", CharType,
+                          StoragePassword_insert_range_err)
 {
-    using CharType = TestType;
     using StorageType = spsl::StoragePassword<CharType>;
     const TestData<CharType> data;
 
@@ -261,11 +261,11 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword insert range error", "[storage_password
     for (size_t i = 0; i < s.length(); ++i)
         REQUIRE(s[i] == ch);
 }
+TEST_CASE_TEMPLATE_APPLY(StoragePassword_insert_range_err, CharTypes);
 
 /* append functions */
-TEMPLATE_LIST_TEST_CASE("StoragePassword append", "[storage_password]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StoragePassword append", CharType, StoragePassword_append)
 {
-    using CharType = TestType;
     using StorageType = spsl::StoragePassword<CharType>;
     const TestData<CharType> data;
 
@@ -303,11 +303,11 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword append", "[storage_password]", CharType
     REQUIRE(ref.length() == s.length());
     REQUIRE(ref.size() == s.size());
 }
+TEST_CASE_TEMPLATE_APPLY(StoragePassword_append, CharTypes);
 
 /* swap function */
-TEMPLATE_LIST_TEST_CASE("StoragePassword swap", "[storage_password]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StoragePassword swap", CharType, StoragePassword_swap)
 {
-    using CharType = TestType;
     using StorageType = spsl::StoragePassword<CharType>;
     const TestData<CharType> data;
     using Traits = typename StorageType::traits_type;
@@ -349,11 +349,11 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword swap", "[storage_password]", CharTypes)
     REQUIRE(str1.length() == data.blablabla_len);
     REQUIRE(Traits::compare(str1.data(), data.blablabla, data.blablabla_len) == 0);
 }
+TEST_CASE_TEMPLATE_APPLY(StoragePassword_swap, CharTypes);
 
 /* resize function */
-TEMPLATE_LIST_TEST_CASE("StoragePassword resize", "[storage_password]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StoragePassword resize", CharType, StoragePassword_resize)
 {
-    using CharType = TestType;
     // block size 32
     using StorageType = spsl::StoragePassword<CharType, 32>;
     const TestData<CharType> data;
@@ -397,11 +397,11 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword resize", "[storage_password]", CharType
     REQUIRE(oldCapa <= s.capacity());
     REQUIRE(oldSize == s.size());
 }
+TEST_CASE_TEMPLATE_APPLY(StoragePassword_resize, CharTypes);
 
 /* allocation function */
-TEMPLATE_LIST_TEST_CASE("StoragePassword realloc", "[storage_password]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StoragePassword realloc", CharType, StoragePassword_realloc)
 {
-    using CharType = TestType;
     // block size 32
     using StorageType = spsl::StoragePassword<CharType, 32>;
     using size_type = typename StorageType::size_type;
@@ -446,14 +446,14 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword realloc", "[storage_password]", CharTyp
     REQUIRE(s.size() == 0u);
     REQUIRE(s.capacity() == 0u);
 }
+TEST_CASE_TEMPLATE_APPLY(StoragePassword_realloc, CharTypes);
 
 /* wiping memory */
-TEMPLATE_LIST_TEST_CASE("StoragePassword wiping", "[storage_password]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StoragePassword wiping", CharType, StoragePassword_wiping)
 {
     // verify that the buffer is wiped automatically upon destruction
     // -> we do this by providing a custom allocator that performs these checks
 
-    using CharType = TestType;
     using StorageType = spsl::StoragePassword<CharType, 32, WipeCheckAllocator<CharType>>;
     using size_type = typename StorageType::size_type;
     const TestData<CharType> data;
@@ -489,11 +489,11 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword wiping", "[storage_password]", CharType
             s2.append(data.blablabla, data.blablabla_len);
     }
 }
+TEST_CASE_TEMPLATE_APPLY(StoragePassword_wiping, CharTypes);
 
 /* replace functions */
-TEMPLATE_LIST_TEST_CASE("StoragePassword replace", "[storage_password]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StoragePassword replace", CharType, StoragePassword_replace)
 {
-    using CharType = TestType;
     using StorageType = spsl::StoragePassword<CharType, 32>;
     using Traits = typename StorageType::traits_type;
     const TestData<CharType> data;
@@ -618,11 +618,11 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword replace", "[storage_password]", CharTyp
         REQUIRE(Traits::compare(s.data(), ref.data(), ref.size()) == 0);
     }
 }
+TEST_CASE_TEMPLATE_APPLY(StoragePassword_replace, CharTypes);
 
 /* copy & move tests */
-TEMPLATE_LIST_TEST_CASE("StoragePassword copy and move", "[storage_password]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StoragePassword copy and move", CharType, StoragePassword_copy_move)
 {
-    using CharType = TestType;
     using StorageType = spsl::StoragePassword<CharType>;
     const TestData<CharType> data;
 
@@ -677,11 +677,11 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword copy and move", "[storage_password]", C
     REQUIRE(string1.getAllocator().pageAllocator() == &alloc1);
     REQUIRE(string5.getAllocator().pageAllocator() == defaultAlloc);
 }
+TEST_CASE_TEMPLATE_APPLY(StoragePassword_copy_move, CharTypes);
 
 /* erase function */
-TEMPLATE_LIST_TEST_CASE("StoragePassword erase", "[storage_password]", CharTypes)
+TEST_CASE_TEMPLATE_DEFINE("StoragePassword erase", CharType, StoragePassword_erase)
 {
-    using CharType = TestType;
     using StorageType = spsl::StoragePassword<CharType>;
     using Traits = typename StorageType::traits_type;
     const TestData<CharType> data;
@@ -711,3 +711,4 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword erase", "[storage_password]", CharTypes
     REQUIRE(Traits::compare(s.data(), ref.data(), ref.size()) == 0);
     REQUIRE(s.empty());
 }
+TEST_CASE_TEMPLATE_APPLY(StoragePassword_erase, CharTypes);

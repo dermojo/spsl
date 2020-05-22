@@ -7,7 +7,7 @@
 
 #include <sstream>
 
-#include "catch.hpp"
+#include "doctest.h"
 
 #include "spsl.hpp"
 #include "testdata.hpp"
@@ -152,9 +152,8 @@ public:
 
 
 /* replace functions */
-TEMPLATE_LIST_TEST_CASE("StringBase replace", "[string_base]", StringBaseTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringBase replace", StringType, StringBase_replace)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StorageType::traits_type;
@@ -985,3 +984,4 @@ TEMPLATE_LIST_TEST_CASE("StringBase replace", "[string_base]", StringBaseTestTyp
         }
     }
 }
+TEST_CASE_TEMPLATE_APPLY(StringBase_replace, StringBaseTestTypes);

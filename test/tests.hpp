@@ -11,7 +11,7 @@
 #include <tuple>
 
 #include <gsl.hpp>
-#include "catch.hpp"
+#include "doctest.h"
 
 
 // all string types we want to test (StringBase-specific only)

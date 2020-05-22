@@ -7,7 +7,7 @@
 
 #include <sstream>
 
-#include "catch.hpp"
+#include "doctest.h"
 
 #include "spsl.hpp"
 #include "testdata.hpp"
@@ -15,9 +15,8 @@
 
 
 /* erase functions */
-TEMPLATE_LIST_TEST_CASE("StringBase erase", "[string_base]", StringBaseTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringBase erase", StringType, StringBase_erase)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
@@ -84,6 +83,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase erase", "[string_base]", StringBaseTestTypes
         REQUIRE_THROWS_AS(s.erase(s.end(), s.begin()), std::out_of_range);
     }
 }
+TEST_CASE_TEMPLATE_APPLY(StringBase_erase, StringBaseTestTypes);
 
 /*
  * The following class templates are a big workaround for std::initializer_list problems on
@@ -222,12 +222,13 @@ public:
 };
 
 /* erase functions */
-TEMPLATE_LIST_TEST_CASE("StringBase erase initializer_list", "[string_base]", StringBaseTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringBase erase initializer_list", StringType,
+                          StringBase_erase_initlist)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
 
     TestEraseInitializerList<CharType, StringType> test;
     test.run();
 }
+TEST_CASE_TEMPLATE_APPLY(StringBase_erase_initlist, StringBaseTestTypes);

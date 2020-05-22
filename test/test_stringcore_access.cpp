@@ -5,7 +5,7 @@
  * @license MIT
  */
 
-#include "catch.hpp"
+#include "doctest.h"
 
 #include "spsl.hpp"
 #include "testdata.hpp"
@@ -13,9 +13,8 @@
 
 
 /* access functions */
-TEMPLATE_LIST_TEST_CASE("StringCore access", "[string_core]", StringCoreTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringCore access", StringType, StringCore_access)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
@@ -102,11 +101,11 @@ TEMPLATE_LIST_TEST_CASE("StringCore access", "[string_core]", StringCoreTestType
         REQUIRE(Traits::length(s.c_str()) == 0u);
     }
 }
+TEST_CASE_TEMPLATE_APPLY(StringCore_access, StringCoreTestTypes);
 
 /* iterator functions */
-TEMPLATE_LIST_TEST_CASE("StringCore iterator", "[string_core]", StringCoreTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringCore iterator", StringType, StringCore_iterator)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
@@ -203,12 +202,11 @@ TEMPLATE_LIST_TEST_CASE("StringCore iterator", "[string_core]", StringCoreTestTy
         }
     }
 }
-
+TEST_CASE_TEMPLATE_APPLY(StringCore_iterator, StringCoreTestTypes);
 
 /* capacity functions */
-TEMPLATE_LIST_TEST_CASE("StringCore capacity", "[string_core]", StringCoreTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringCore capacity", StringType, StringCore_capacity)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
@@ -239,12 +237,11 @@ TEMPLATE_LIST_TEST_CASE("StringCore capacity", "[string_core]", StringCoreTestTy
     s.shrink_to_fit();
     REQUIRE(s == data.blablabla);
 }
-
+TEST_CASE_TEMPLATE_APPLY(StringCore_capacity, StringCoreTestTypes);
 
 /* operations */
-TEMPLATE_LIST_TEST_CASE("StringCore operations", "[string_core]", StringCoreTestTypes)
+TEST_CASE_TEMPLATE_DEFINE("StringCore operations", StringType, StringCore_operations)
 {
-    using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
@@ -396,3 +393,4 @@ TEMPLATE_LIST_TEST_CASE("StringCore operations", "[string_core]", StringCoreTest
     REQUIRE(s1 == data.hello_world);
     REQUIRE(s3 == data.blablabla);
 }
+TEST_CASE_TEMPLATE_APPLY(StringCore_operations, StringCoreTestTypes);
