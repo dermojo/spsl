@@ -164,4 +164,3 @@ TEST_CASE_TEMPLATE_DEFINE("StringBase output stream", StringType, StringBase_ost
     runStreamTests(StringType(), CharType());
 }
 TEST_CASE_TEMPLATE_APPLY(StringBase_ostream, StringBaseTestTypes);
-
