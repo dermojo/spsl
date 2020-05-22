@@ -12,6 +12,7 @@
 #include <functional>
 #include <iostream>
 #include <mutex>
+#include <string>
 #include <vector>
 #include "spsl/compat.hpp"
 
