@@ -105,6 +105,15 @@ matrix:
           packages:
             - clang-8
       env: MYCC=clang MYCXX=clang++
+    - compiler: clang-9
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-xenial-9
+          packages:
+            - clang-9
+      env: MYCC=clang MYCXX=clang++
     - compiler: gcc-9
       addons:
         apt:
