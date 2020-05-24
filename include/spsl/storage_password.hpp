@@ -432,8 +432,7 @@ protected:
         /// number of bytes (*not* characters) allocated
         size_type m_capacity;
     };
-    union
-    {
+    union {
         SizeInfo _l;
         // actually _b[1] is sufficient, but triggers overflow warnings in GCC
         char_type _b[sizeof(SizeInfo)];
