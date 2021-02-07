@@ -55,7 +55,7 @@ public:
     // no-op - there is nothing to shrink
     void shrink_to_fit() {}
 
-    inline size_type capacity_left() const { return max_size() - size(); }
+    size_type capacity_left() const { return max_size() - size(); }
 
     // default constructor
     StorageArray() : m_length(0), m_buffer() { m_buffer[0] = nul(); }
@@ -77,15 +77,21 @@ public:
     StorageArray& operator=(const this_type& other) noexcept
     {
         // note: 'other' has the same max. length, so we can skip all checks
-        assign_nothrow(other.data(), other.size());
+        if (this != &other)
+        {
+            assign_nothrow(other.data(), other.size());
+        }
         return *this;
     }
     StorageArray& operator=(this_type&& other) noexcept
     {
         // swapping is more expensive than this...
         // note: 'other' has the same max. length, so we can skip all checks
-        assign_nothrow(other.data(), other.size());
-        other.clear();
+        if (this != &other)
+        {
+            assign_nothrow(other.data(), other.size());
+            other.clear();
+        }
         return *this;
     }
 
@@ -321,12 +327,13 @@ protected:
         m_buffer[m_length] = nul();
     }
 
-protected:
+private:
     /// number of bytes (*not* characters) in the buffer, not including the terminating NUL
-    size_type m_length; // NOLINT: disable modernize-use-default-member-init
+    size_type m_length;
     /// the underlying buffer: an array that can hold MaxSize characters (+ terminating NUL)
     std::array<char_type, MaxSize + 1> m_buffer;
 };
+
 } // namespace spsl
 
 #endif /* SPSL_STORAGE_ARRAY_HPP_ */

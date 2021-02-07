@@ -1,7 +1,6 @@
 /**
- * @file	Special Purpose Strings Library: test_stringcore_construct.cpp
  * @author	Daniel Evers
- * @brief	StringCore unit tests: constructor tests
+ * @brief	StringBase unit tests: constructor tests
  * @license MIT
  */
 
@@ -12,7 +11,7 @@
 #include "tests.hpp"
 
 /* check constructor availability */
-TEMPLATE_LIST_TEST_CASE("StringCore constructors", "[string_core]", StringCoreTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase constructors", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;
@@ -148,9 +147,9 @@ TEMPLATE_LIST_TEST_CASE("StringCore constructors", "[string_core]", StringCoreTe
             REQUIRE(s == data.hello_world);
         }
 
-        // 3: from another version of StringCore
+        // 3: from another version of StringBase
         {
-            const spsl::StringCore<
+            const spsl::StringBase<
               spsl::StorageArray<CharType, 123, spsl::policy::overflow::Truncate>>
               other(data.hello_world);
             StringType s(other);
@@ -163,7 +162,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore constructors", "[string_core]", StringCoreTe
 }
 
 /* check constructor availability */
-TEMPLATE_LIST_TEST_CASE("StringCore constructor iterator", "[string_core]", StringCoreTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase constructor iterator", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;
@@ -196,9 +195,9 @@ TEMPLATE_LIST_TEST_CASE("StringCore constructor iterator", "[string_core]", Stri
             REQUIRE(s == data.hello_world);
         }
 
-        // 3: from another version of StringCore
+        // 3: from another version of StringBase
         {
-            const spsl::StringCore<
+            const spsl::StringBase<
               spsl::StorageArray<CharType, 123, spsl::policy::overflow::Truncate>>
               other(data.hello_world);
             StringType s(other.begin(), other.end());

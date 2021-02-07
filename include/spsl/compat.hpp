@@ -71,23 +71,13 @@ inline void deallocatePageAligned(void* addr)
  * Exclude an area of memory from core dumps.
  * * This function is a dummy *
  */
-inline void disableDump(void* addr, std::size_t len, std::error_code* ec = nullptr)
-{
-    (void)addr;
-    (void)len;
-    (void)ec;
-}
+inline void disableDump(void*, std::size_t, std::error_code* = nullptr) {}
 
 /**
  * Include an area of memory in core dumps again.
  * * This function is a dummy *
  */
-inline void enableDump(void* addr, std::size_t len, std::error_code* ec = nullptr)
-{
-    (void)addr;
-    (void)len;
-    (void)ec;
-}
+inline void enableDump(void*, std::size_t, std::error_code* = nullptr) {}
 
 
 /**
@@ -136,6 +126,7 @@ namespace spsl
 {
 namespace os
 {
+
 /// @return the system's page size
 inline std::size_t getPageSize()
 {
@@ -153,7 +144,7 @@ inline std::size_t getPageSize()
  */
 inline void* allocatePageAligned(std::size_t pageSize, std::size_t n)
 {
-    void* addr;
+    void* addr = nullptr;
     if (posix_memalign(&addr, pageSize, n) != 0)
         addr = nullptr;
     return addr;

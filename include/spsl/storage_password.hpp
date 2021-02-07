@@ -160,7 +160,8 @@ public:
 
     StoragePassword& operator=(const this_type& other)
     {
-        assign(other.data(), other.size());
+        if (this != &other)
+            assign(other.data(), other.size());
         return *this;
     }
     StoragePassword& operator=(this_type&& other) noexcept
@@ -422,7 +423,7 @@ protected:
     void _wipe() noexcept { _wipe(0, capacity()); }
 
 
-protected:
+private:
     // we store length + capacity information in a union that we also use as empty string
     // representation (assumption: m_buffer == _b => m_length == m_capacity == 0)
     struct SizeInfo
@@ -432,7 +433,8 @@ protected:
         /// number of bytes (*not* characters) allocated
         size_type m_capacity;
     };
-    union {
+    union
+    {
         SizeInfo _l;
         // actually _b[1] is sufficient, but triggers overflow warnings in GCC
         char_type _b[sizeof(SizeInfo)];

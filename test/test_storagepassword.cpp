@@ -1,5 +1,4 @@
 /**
- * @file	Special Purpose Strings Library: test_storagepassword.cpp
  * @author	Daniel Evers
  * @brief   StoragePassword unit tests
  * @license MIT
@@ -42,7 +41,7 @@ struct WipeCheckAllocator
 
 
 // all character types we want to test
-using CharTypes = std::tuple<char, wchar_t, gsl::byte>;
+using CharTypes = std::tuple<char, wchar_t, std::byte>;
 
 
 // helper functions that convert bytes into characters...
@@ -54,7 +53,7 @@ inline const wchar_t* asString(const wchar_t* s)
 {
     return s;
 }
-inline const char* asString(const gsl::byte* s)
+inline const char* asString(const std::byte* s)
 {
     return reinterpret_cast<const char*>(s);
 }

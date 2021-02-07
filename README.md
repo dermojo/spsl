@@ -38,8 +38,6 @@ are for you.
 
 The SPSL itself only relies on the STL and has no dependencies. To compile the tests, you'll need:
 * [CMake](https://cmake.org/) 3.2 or higher
-* [GSL-Lite](https://github.com/martinmoene/gsl-lite) (as [git submodule](https://git-scm.com/docs/git-submodule)):
-  Used to test compatibility with `gsl::byte`.
 
 (A copy of the [Catch2 test framework](https://github.com/catchorg/Catch2) is contained.)
 

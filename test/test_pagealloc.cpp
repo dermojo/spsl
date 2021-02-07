@@ -1,5 +1,4 @@
 /**
- * @file    Special Purpose Strings Library: test_pagealloc.cpp
  * @author  Daniel Evers
  * @brief   Unit tests for the page allocator
  * @license MIT
@@ -79,7 +78,8 @@ TEST_CASE("ManagedAllocationTest1", "[allocator]")
     REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
 }
 
-using AllocationList = std::vector<spsl::SensitivePageAllocator::AllocationInfo>;
+using AllocationInfo = spsl::SensitivePageAllocator::AllocationInfo;
+using AllocationList = std::vector<AllocationInfo>;
 
 // note: GTest requires that this function returns void
 static void performAllocations(spsl::SensitivePageAllocator& alloc, AllocationList& allocations)
@@ -103,7 +103,7 @@ static void performAllocations(spsl::SensitivePageAllocator& alloc, AllocationLi
         void* mem = alloc.allocate(size);
         REQUIRE(mem != nullptr);
 
-        allocations.emplace_back(mem, size);
+        allocations.emplace_back(AllocationInfo{ mem, size });
 
         REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 1 * alloc.getChunksPerPage());
         REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
@@ -117,7 +117,7 @@ static void performAllocations(spsl::SensitivePageAllocator& alloc, AllocationLi
         void* mem = alloc.allocate(size);
         REQUIRE(mem != nullptr);
 
-        allocations.emplace_back(mem, size);
+        allocations.emplace_back(AllocationInfo{ mem, size });
 
         REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 2 * alloc.getChunksPerPage());
         REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);

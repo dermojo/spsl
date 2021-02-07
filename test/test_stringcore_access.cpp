@@ -1,7 +1,6 @@
 /**
- * @file	Special Purpose Strings Library: test_stringcore_access.cpp
  * @author	Daniel Evers
- * @brief	StringCore unit tests: various accessor functions
+ * @brief	StringBase unit tests: various accessor functions
  * @license MIT
  */
 
@@ -13,7 +12,7 @@
 
 
 /* access functions */
-TEMPLATE_LIST_TEST_CASE("StringCore access", "[string_core]", StringCoreTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase access", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;
@@ -104,7 +103,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore access", "[string_core]", StringCoreTestType
 }
 
 /* iterator functions */
-TEMPLATE_LIST_TEST_CASE("StringCore iterator", "[string_core]", StringCoreTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase iterator", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;
@@ -206,7 +205,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore iterator", "[string_core]", StringCoreTestTy
 
 
 /* capacity functions */
-TEMPLATE_LIST_TEST_CASE("StringCore capacity", "[string_core]", StringCoreTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase capacity", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;
@@ -242,7 +241,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore capacity", "[string_core]", StringCoreTestTy
 
 
 /* operations */
-TEMPLATE_LIST_TEST_CASE("StringCore operations", "[string_core]", StringCoreTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase operations", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;

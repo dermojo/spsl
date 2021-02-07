@@ -1,7 +1,6 @@
 /**
- * @file	Special Purpose Strings Library: test_stringcore.cpp
  * @author	Daniel Evers
- * @brief	StringCore unit tests: various functions
+ * @brief	StringBase unit tests: various functions
  * @license MIT
  */
 
@@ -12,7 +11,7 @@
 #include "tests.hpp"
 
 /* comparison functions */
-TEMPLATE_LIST_TEST_CASE("StringCore comparison", "[string_core]", StringCoreTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase comparison", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;
@@ -126,7 +125,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore comparison", "[string_core]", StringCoreTest
 }
 
 /* find functions */
-TEMPLATE_LIST_TEST_CASE("StringCore find", "[string_core]", StringCoreTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase find", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;
@@ -223,7 +222,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore find", "[string_core]", StringCoreTestTypes)
 }
 
 /* comparison operators */
-TEMPLATE_LIST_TEST_CASE("StringCore comparison operators", "[string_core]", StringCoreTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase comparison operators", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;
@@ -235,7 +234,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore comparison operators", "[string_core]", Stri
     const StringType hello(data.hello_world);
     std::basic_string<CharType> ref;
 
-    // 1. StringCore, char_type*
+    // 1. StringBase, char_type*
     REQUIRE(s == data.hello_world);
     REQUIRE(s != data.blablabla);
     REQUIRE_FALSE(s == data.blablabla);
@@ -255,7 +254,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore comparison operators", "[string_core]", Stri
     REQUIRE_FALSE(s > ref.c_str());
     REQUIRE_FALSE(s >= ref.c_str());
 
-    // 2. char_type*, StringCore
+    // 2. char_type*, StringBase
     REQUIRE(data.hello_world == s);
     REQUIRE(data.blablabla != s);
     REQUIRE_FALSE(data.blablabla == s);
@@ -275,7 +274,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore comparison operators", "[string_core]", Stri
     REQUIRE_FALSE(ref.c_str() < s);
     REQUIRE_FALSE(ref.c_str() <= s);
 
-    // 3. StringCore, StringCore
+    // 3. StringBase, StringBase
     REQUIRE(s == s);
     REQUIRE_FALSE(s != s);
     REQUIRE(s == hello);
@@ -298,7 +297,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore comparison operators", "[string_core]", Stri
     REQUIRE_FALSE(s > ref2);
     REQUIRE_FALSE(s >= ref2);
 
-    // 4. StringCore, other string class
+    // 4. StringBase, other string class
     ref = s.c_str();
     REQUIRE(s == ref);
     REQUIRE_FALSE(s != ref);
@@ -323,7 +322,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore comparison operators", "[string_core]", Stri
     REQUIRE_FALSE(s > ref);
     REQUIRE_FALSE(s >= ref);
 
-    // 5. other string class, StringCore
+    // 5. other string class, StringBase
     ref = s.c_str();
     REQUIRE(ref == s);
     REQUIRE_FALSE(ref != s);
@@ -351,7 +350,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore comparison operators", "[string_core]", Stri
 
 
 /* swap implementation */
-TEMPLATE_LIST_TEST_CASE("StringCore swap", "[string_core]", StringCoreTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase swap", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;
@@ -380,7 +379,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore swap", "[string_core]", StringCoreTestTypes)
 
 
 /* hash specialization */
-TEMPLATE_LIST_TEST_CASE("StringCore has", "[string_core]", StringCoreTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase has", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;

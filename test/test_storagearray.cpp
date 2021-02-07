@@ -1,5 +1,4 @@
 /**
- * @file	Special Purpose Strings Library: test_storagearray.cpp
  * @author	Daniel Evers
  * @brief   StorageArray unit tests
  * @license MIT
@@ -14,7 +13,7 @@
 
 
 // all character types we want to test
-using CharTypes = std::tuple<char, wchar_t, gsl::byte>;
+using CharTypes = std::tuple<char, wchar_t, std::byte>;
 
 
 /* check if size is checkable on type at run/compile time */

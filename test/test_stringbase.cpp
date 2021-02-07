@@ -1,5 +1,4 @@
 /**
- * @file	Special Purpose Strings Library: test_stringbase.cpp
  * @author	Daniel Evers
  * @brief	StringBase unit tests: various functions
  * @license MIT
@@ -150,9 +149,9 @@ void runStreamTests(StringType&&, CharType)
     REQUIRE(outputStream.str() == ref);
 }
 
-// disable for gsl::byte
+// disable for std::byte
 template <class StringType>
-void runStreamTests(StringType&&, gsl::byte)
+void runStreamTests(StringType&&, std::byte)
 {
 }
 

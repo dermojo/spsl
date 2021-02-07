@@ -8,6 +8,7 @@
 #ifndef SPSL_TYPE_TRAITS_HPP_
 #define SPSL_TYPE_TRAITS_HPP_
 
+#include <iterator>
 #include <type_traits>
 
 namespace spsl
@@ -97,8 +98,9 @@ struct is_compatible_string2
  * Checks whether a given type satisfies the InputIterator requirements.
  */
 template <typename Iter>
-using checkInputIter = typename std::enable_if<std::is_convertible<
-  typename std::iterator_traits<Iter>::iterator_category, std::input_iterator_tag>::value>::type;
+using checkInputIter = typename std::enable_if_t<std::is_convertible_v<
+  typename std::iterator_traits<Iter>::iterator_category, std::input_iterator_tag>>;
+
 } // namespace spsl
 
 #endif /* SPSL_TYPE_TRAITS_HPP_ */

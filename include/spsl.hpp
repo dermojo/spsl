@@ -25,7 +25,6 @@
 #include "spsl/storage_array.hpp"
 #include "spsl/storage_password.hpp"
 #include "spsl/stringbase.hpp"
-#include "spsl/stringcore.hpp"
 
 namespace spsl
 {
@@ -46,12 +45,10 @@ using ArrayStringW = StringBase<StorageArray<wchar_t, MaxSize, OverflowPolicy>>;
  * PasswordString / PasswordString:
  * These string implementations may be used to store sensitive data, such as passwords. All
  * allocated memory is zero'd before returning it to the OS.
- * These strings use the "reduced" StringCore template because the more "advanced" string functions
- * like "erase" and "replace" are usually not required/useful for passwords and are therefore
- * not available here.
  */
-using PasswordString = StringCore<StoragePassword<char>>;
-using PasswordStringW = StringCore<StoragePassword<wchar_t>>;
+using PasswordString = StringBase<StoragePassword<char>>;
+using PasswordStringW = StringBase<StoragePassword<wchar_t>>;
+
 } // namespace spsl
 
 

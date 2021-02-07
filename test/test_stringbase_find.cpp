@@ -1,5 +1,4 @@
 /**
- * @file	Special Purpose Strings Library: test_stringbase_find.cpp
  * @author	Daniel Evers
  * @brief	StringBase unit tests: find functions
  * @license MIT

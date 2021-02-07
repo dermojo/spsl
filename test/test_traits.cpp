@@ -1,5 +1,4 @@
 /**
- * @file    Special Purpose Strings Library: test_traits.cpp
  * @author  Daniel Evers
  * @brief   Type traits unit tests
  * @license MIT
@@ -64,10 +63,8 @@ TEST_CASE("has_size", "[traits]")
     ASSERT_HAS_SIZE(size_t, spsl::PasswordString);
     ASSERT_HAS_SIZE(size_t, spsl::PasswordStringW);
 
-#ifdef TEST_STRING_VIEW
     ASSERT_HAS_SIZE(size_t, std::string_view);
     ASSERT_HAS_SIZE(size_t, std::wstring_view);
-#endif
 
     ASSERT_HAS_NO_SIZE(size_t, const char*);
     ASSERT_HAS_NO_SIZE(size_t, std::exception);
@@ -95,10 +92,8 @@ TEST_CASE("has_data", "[traits]")
     ASSERT_HAS_NO_DATA(wchar_t, spsl::PasswordString);
     ASSERT_HAS_NO_DATA(char, spsl::PasswordStringW);
 
-#ifdef TEST_STRING_VIEW
     ASSERT_HAS_DATA(char, std::string_view);
     ASSERT_HAS_DATA(wchar_t, std::wstring_view);
-#endif
 
     ASSERT_HAS_NO_DATA(char, const char*);
     ASSERT_HAS_NO_DATA(char, std::exception);
@@ -126,10 +121,8 @@ TEST_CASE("is_compatible", "[traits]")
     ASSERT_IS_NOT_COMPAT(wchar_t, size_t, spsl::PasswordString);
     ASSERT_IS_NOT_COMPAT(char, size_t, spsl::PasswordStringW);
 
-#ifdef TEST_STRING_VIEW
     ASSERT_IS_COMPAT(char, size_t, std::string_view);
     ASSERT_IS_COMPAT(wchar_t, size_t, std::wstring_view);
-#endif
 
     ASSERT_IS_NOT_COMPAT(char, size_t, const char*);
     ASSERT_IS_NOT_COMPAT(char, size_t, std::exception);

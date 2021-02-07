@@ -12,9 +12,6 @@ project(spsl VERSION 1.3 LANGUAGES CXX)
 # Setup testing
 enable_testing()
 
-# include GSL-Lite for unit testing
-add_subdirectory(extern/gsl-lite)
-
 #
 # Build targets
 #
@@ -53,13 +50,12 @@ add_dependencies(runtest testlib)
 # compiling the library, and will be added to consumers' build
 # paths.
 target_include_directories(testlib PUBLIC include)
-target_include_directories(testlib SYSTEM PUBLIC extern/gsl-lite/include)
 target_include_directories(testlib SYSTEM PUBLIC extern)
 target_include_directories(example PUBLIC include)
 
-set_property(TARGET testlib PROPERTY CXX_STANDARD 11)
+set_property(TARGET testlib PROPERTY CXX_STANDARD 17)
 set_property(TARGET testlib PROPERTY CXX_STANDARD_REQUIRED ON)
-set_property(TARGET example PROPERTY CXX_STANDARD 11)
+set_property(TARGET example PROPERTY CXX_STANDARD 17)
 set_property(TARGET example PROPERTY CXX_STANDARD_REQUIRED ON)
 
 # We want a lot of warnings!
@@ -79,8 +75,6 @@ else()
         target_compile_options(testlib PUBLIC -Wno-missing-braces
                                               -Wno-gnu-zero-variadic-macro-arguments)
     endif()
-    # raised for gsl::byte
-    target_compile_options(testlib PUBLIC -Wno-missing-field-initializers)
     target_link_libraries(testlib pthread)
 endif()
 

@@ -1,5 +1,4 @@
 /**
- * @file	Special Purpose Strings Library: test_stringbase_replace.cpp
  * @author	Daniel Evers
  * @brief	StringBase unit tests: replace functions
  * @license MIT
@@ -107,14 +106,14 @@ public:
 };
 
 template <typename StringType>
-class TestReplaceInitializerList<gsl::byte, StringType>
+class TestReplaceInitializerList<std::byte, StringType>
 {
 public:
     void run()
     {
-        TestData<gsl::byte> data;
+        TestData<std::byte> data;
         TestData<char> sdata;
-        using Traits = std::char_traits<gsl::byte>;
+        using Traits = std::char_traits<std::byte>;
 
         StringType s1(data.hello_world, data.hello_world_len);
         std::string s2(sdata.hello_world);
@@ -124,28 +123,28 @@ public:
         s1.replace(s1.cbegin(), s1.cbegin() + initListSize, { 'T'_b, 'e'_b, 's'_b, 't'_b });
         s2.replace(s2.begin(), s2.begin() + initListSize, { 'T', 'e', 's', 't' });
         REQUIRE(s1.size() == s2.size());
-        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
+        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const std::byte*>(s2.data()),
                                 s1.size()) == 0);
 
         // longer (forcing a reallocation for Password, but shorter than the max. array)
         s1.replace(s1.cbegin(), s1.cbegin() + 1, { 'T'_b, 'e'_b, 's'_b, 't'_b });
         s2.replace(s2.begin(), s2.begin() + 1, { 'T', 'e', 's', 't' });
         REQUIRE(s1.size() == s2.size());
-        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
+        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const std::byte*>(s2.data()),
                                 s1.size()) == 0);
 
         // shorter
         s1.replace(s1.cbegin(), s1.cbegin() + initListSize + 3, { 'T'_b, 'e'_b, 's'_b, 't'_b });
         s2.replace(s2.begin(), s2.begin() + initListSize + 3, { 'T', 'e', 's', 't' });
         REQUIRE(s1.size() == s2.size());
-        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
+        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const std::byte*>(s2.data()),
                                 s1.size()) == 0);
 
         // with offset
         s1.replace(s1.begin() + 3, s1.begin() + 5, { 'T'_b, 'e'_b, 's'_b, 't'_b });
         s2.replace(s2.begin() + 3, s2.begin() + 5, { 'T', 'e', 's', 't' });
         REQUIRE(s1.size() == s2.size());
-        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const gsl::byte*>(s2.data()),
+        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const std::byte*>(s2.data()),
                                 s1.size()) == 0);
     }
 };

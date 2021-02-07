@@ -55,18 +55,6 @@ public:
     /// information about an allocated area of memory
     struct AllocationInfo
     {
-        AllocationInfo(pointer a, std::size_t s) : addr(a), size(s) {}
-        AllocationInfo(const AllocationInfo&) noexcept = default;
-        AllocationInfo(AllocationInfo&& other) noexcept : addr(other.addr), size(other.size) {}
-        AllocationInfo& operator=(const AllocationInfo&) noexcept = default;
-        AllocationInfo& operator=(AllocationInfo&& other) noexcept
-        {
-            addr = other.addr;
-            size = other.size;
-            return *this;
-        }
-        ~AllocationInfo() = default;
-
         /// the allocated address
         pointer addr;
         /// number of bytes allocated
@@ -233,10 +221,10 @@ public:
         std::cerr << "!!!   " << leak.size << " bytes @ address " << leak.addr << '\n';
     }
 
-    std::size_t max_size() const noexcept { return static_cast<std::size_t>(-1); }
+    [[nodiscard]] std::size_t max_size() const noexcept { return static_cast<std::size_t>(-1); }
 
-    inline std::size_t getPageSize() const { return m_pageSize; }
-    inline std::size_t getChunksPerPage() const { return m_chunksPerPage; }
+    [[nodiscard]] std::size_t getPageSize() const { return m_pageSize; }
+    [[nodiscard]] std::size_t getChunksPerPage() const { return m_chunksPerPage; }
 
     static inline constexpr std::size_t calcSegmentCount(std::size_t n)
     {
@@ -335,7 +323,7 @@ private:
         pointer addr = allocatePage(m_pageSize, size);
 
         // save
-        m_unmanagedAreas.emplace_back(addr, size);
+        m_unmanagedAreas.emplace_back(AllocationInfo{ addr, size });
         return addr;
     }
 
@@ -574,7 +562,7 @@ public:
      */
     void swap(SensitiveSegmentAllocator& other) noexcept { std::swap(m_alloc, other.m_alloc); }
 
-    SensitivePageAllocator* pageAllocator() const noexcept { return m_alloc; }
+    [[nodiscard]] SensitivePageAllocator* pageAllocator() const noexcept { return m_alloc; }
 
     // allocation / deallocation
 
@@ -582,7 +570,7 @@ public:
 
     void deallocate(T* p, std::size_t n) { m_alloc->deallocate(p, n * sizeof(T)); }
 
-    std::size_t max_size() const noexcept { return m_alloc->max_size() / sizeof(T); }
+    [[nodiscard]] std::size_t max_size() const noexcept { return m_alloc->max_size() / sizeof(T); }
 
 private:
     /// non-owning pointer to the "real" allocator

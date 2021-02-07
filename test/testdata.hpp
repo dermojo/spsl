@@ -1,5 +1,4 @@
 /**
- * @file    Special Purpose Strings Library: testdata.hpp
  * @author  Daniel Evers
  * @brief   Common data for all unit tests
  * @license MIT
@@ -11,17 +10,7 @@
 #include <cstddef>
 #include <cstring>
 #include <string>
-
-#include <gsl.hpp>
-
-
-// enable basic_string_view tests if available
-#if __cplusplus >= 201703L
-#define TEST_STRING_VIEW
-
 #include <string_view>
-
-#endif
 
 
 // define test strings for every character type
@@ -33,7 +22,7 @@ struct TestData
 template <>
 struct TestData<char>
 {
-    TestData() {}
+    TestData() = default;
     ~TestData() = default;
     // not needed
     TestData(const TestData&) = delete;
@@ -94,46 +83,52 @@ struct TestData<wchar_t>
 };
 
 /*
- * Some global operators that help dealing with gsl::byte in our tests.
+ * Some global operators that help dealing with std::byte in our tests.
  */
 
-/// used to declare literals
-constexpr gsl::byte operator"" _b(char b)
+template <class CharType>
+constexpr std::byte to_byte(CharType b)
 {
-    return gsl::to_byte(b);
+    return static_cast<std::byte>(b);
+}
+
+/// used to declare literals
+constexpr std::byte operator"" _b(char b)
+{
+    return to_byte(b);
 }
 
 /// prefix decrement
-inline gsl::byte& operator--(gsl::byte& b)
+inline std::byte& operator--(std::byte& b)
 {
-    unsigned char v = gsl::to_integer<unsigned char>(b);
-    return b = gsl::to_byte(v - 1);
+    auto v = std::to_integer<unsigned char>(b);
+    return b = to_byte(v - 1);
 }
 /// prefix increment
-inline gsl::byte& operator++(gsl::byte& b)
+inline std::byte& operator++(std::byte& b)
 {
-    unsigned char v = gsl::to_integer<unsigned char>(b);
-    return b = gsl::to_byte(v + 1);
+    auto v = std::to_integer<unsigned char>(b);
+    return b = to_byte(v + 1);
 }
 
 /// subtraction
-inline gsl::byte operator-(gsl::byte b, int i)
+inline std::byte operator-(std::byte b, int i)
 {
-    unsigned char v = gsl::to_integer<unsigned char>(b);
-    return gsl::to_byte(v - i);
+    auto v = std::to_integer<unsigned char>(b);
+    return to_byte(v - i);
 }
 /// addition
-inline gsl::byte operator+(gsl::byte b, int i)
+inline std::byte operator+(std::byte b, int i)
 {
-    unsigned char v = gsl::to_integer<unsigned char>(b);
-    return gsl::to_byte(v + i);
+    auto v = std::to_integer<unsigned char>(b);
+    return to_byte(v + i);
 }
 
 
 template <>
-struct TestData<gsl::byte>
+struct TestData<std::byte>
 {
-    TestData() {}
+    TestData() = default;
     ~TestData() = default;
     // not needed
     TestData(const TestData&) = delete;
@@ -141,24 +136,24 @@ struct TestData<gsl::byte>
     TestData& operator=(const TestData&) = delete;
     TestData& operator=(TestData&&) = delete;
 
-    const gsl::byte* const hello_world = reinterpret_cast<const gsl::byte*>("Hello World!\0");
+    const std::byte* const hello_world = reinterpret_cast<const std::byte*>("Hello World!\0");
     const size_t hello_world_len = 12;
-    const gsl::byte* const blablabla = reinterpret_cast<const gsl::byte*>("blablabla\0");
+    const std::byte* const blablabla = reinterpret_cast<const std::byte*>("blablabla\0");
     const size_t blablabla_len = 9;
-    const gsl::byte* const empty = reinterpret_cast<const gsl::byte*>("\0");
+    const std::byte* const empty = reinterpret_cast<const std::byte*>("\0");
 
-    std::initializer_list<gsl::byte> initializerList() const
+    std::initializer_list<std::byte> initializerList() const
     {
-        static const std::initializer_list<gsl::byte> list{
+        static const std::initializer_list<std::byte> list{
             'T'_b, 'h'_b, 'i'_b, 's'_b, ' '_b, 'i'_b, 's'_b, ' '_b, 'a'_b,
             'n'_b, ' '_b, 'a'_b, 's'_b, 's'_b, 'i'_b, 'g'_b, 'n'_b, 'm'_b,
             'e'_b, 'n'_b, 't'_b, ' '_b, 't'_b, 'e'_b, 's'_b, 't'_b
         };
         return list;
     }
-    std::initializer_list<gsl::byte> initializerList2() const
+    std::initializer_list<std::byte> initializerList2() const
     {
-        static const std::initializer_list<gsl::byte> list{ 'T'_b, 'e'_b, 's'_b, 't'_b };
+        static const std::initializer_list<std::byte> list{ 'T'_b, 'e'_b, 's'_b, 't'_b };
         return list;
     }
 };

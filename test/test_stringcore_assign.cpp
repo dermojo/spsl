@@ -1,7 +1,6 @@
 /**
- * @file	Special Purpose Strings Library: test_stringcore_assign.cpp
  * @author	Daniel Evers
- * @brief	StringCore unit tests: assignment and append functions
+ * @brief	StringBase unit tests: assignment and append functions
  * @license MIT
  */
 
@@ -27,7 +26,7 @@ static bool sameContent(const String& s, const InitList& initList)
 }
 
 /* assignment operators */
-TEMPLATE_LIST_TEST_CASE("StringCore assignment operators", "[string_core]", StringCoreTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase assignment operators", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;
@@ -91,19 +90,17 @@ TEMPLATE_LIST_TEST_CASE("StringCore assignment operators", "[string_core]", Stri
     REQUIRE(s.size() == data.hello_world_len);
     REQUIRE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
     REQUIRE(s == data.hello_world);
-// 3. basic_string_view if available
-#ifdef TEST_STRING_VIEW
-    std::experimental::basic_string_view<CharType> view(data.blablabla, data.blablabla_len);
+    // 3. basic_string_view if available
+    std::basic_string_view<CharType> view(data.blablabla, data.blablabla_len);
     s = view;
     REQUIRE(s.size() == data.blablabla_len);
     REQUIRE(Traits::compare(s.c_str(), data.blablabla, data.blablabla_len) == 0);
     REQUIRE(s == data.blablabla);
-#endif
 }
 
 
 /* assignment functions */
-TEMPLATE_LIST_TEST_CASE("StringCore assignment", "[string_core]", StringCoreTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase assignment", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;
@@ -183,14 +180,12 @@ TEMPLATE_LIST_TEST_CASE("StringCore assignment", "[string_core]", StringCoreTest
     REQUIRE(s.size() == data.hello_world_len);
     REQUIRE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
     REQUIRE(s == data.hello_world);
-// 3. basic_string_view if available
-#ifdef TEST_STRING_VIEW
-    std::experimental::basic_string_view<CharType> view(data.blablabla, data.blablabla_len);
+    // 3. basic_string_view if available
+    std::basic_string_view<CharType> view(data.blablabla, data.blablabla_len);
     s.assign(view);
     REQUIRE(s.size() == data.blablabla_len);
     REQUIRE(Traits::compare(s.c_str(), data.blablabla, data.blablabla_len) == 0);
     REQUIRE(s == data.blablabla);
-#endif
 
     // other string class with pos and count
     s.assign(str, 1, 3);
@@ -209,7 +204,7 @@ TEMPLATE_LIST_TEST_CASE("StringCore assignment", "[string_core]", StringCoreTest
 }
 
 /* append functions */
-TEMPLATE_LIST_TEST_CASE("StringCore append", "[string_core]", StringCoreTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase append", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;
