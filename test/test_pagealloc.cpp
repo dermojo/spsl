@@ -16,15 +16,16 @@
 TEST_CASE("SensitivePageAllocator can be constructed", "[allocator]")
 {
     spsl::SensitivePageAllocator alloc;
+    INFO("page size is " << alloc.getPageSize());
     REQUIRE(alloc.getPageSize() % spsl::SensitivePageAllocator::chunk_size == 0);
     REQUIRE(alloc.getPageSize() % spsl::SensitivePageAllocator::segment_size == 0);
     REQUIRE(alloc.getChunksPerPage() >= 1);
-    // for now, I only know of Solaris with 8K pages...
-    REQUIRE(alloc.getChunksPerPage() <= 2);
+    // 8k pages on SOlaris, 16k pages on OS X
+    REQUIRE(alloc.getChunksPerPage() <= 4);
 
     // note: this may fail on some exotic systems...
-    REQUIRE(alloc.getPageSize() == 4096u);
-    REQUIRE(alloc.getChunksPerPage() == 1u);
+    // REQUIRE(alloc.getPageSize() == 4096u);
+    // REQUIRE(alloc.getChunksPerPage() == 1u);
 }
 
 // test the bitmask calculation
@@ -32,14 +33,14 @@ TEST_CASE("BitMask tests", "[allocator]")
 {
     // binary literals are actually a C++14 feature...
     auto all64 = spsl::SensitivePageAllocator::all64;
-    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(0) == 0b0);
-    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(1) == 0b1);
-    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(2) == 0b11);
-    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(3) == 0b111);
-    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(4) == 0b1111);
-    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(5) == 0b11111);
-    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(6) == 0b111111);
-    //    REQUIRE(spsl::SensitivePageAllocator::getBitmask(20) == 0b11111111111111111111);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(0) == 0b0);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(1) == 0b1);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(2) == 0b11);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(3) == 0b111);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(4) == 0b1111);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(5) == 0b11111);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(6) == 0b111111);
+    REQUIRE(spsl::SensitivePageAllocator::getBitmask(20) == 0b11111111111111111111);
     REQUIRE(spsl::SensitivePageAllocator::getBitmask(0) == 0x0);
     REQUIRE(spsl::SensitivePageAllocator::getBitmask(1) == 0x1);
     REQUIRE(spsl::SensitivePageAllocator::getBitmask(2) == 0x3);
@@ -68,7 +69,7 @@ TEST_CASE("ManagedAllocationTest1", "[allocator]")
     void* mem = alloc.allocate(size1);
     REQUIRE(mem != nullptr);
 
-    REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 1 * alloc.getChunksPerPage());
+    REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 1);
     REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
 
     alloc.deallocate(mem, size1);
@@ -105,7 +106,7 @@ static void performAllocations(spsl::SensitivePageAllocator& alloc, AllocationLi
 
         allocations.emplace_back(AllocationInfo{ mem, size });
 
-        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 1 * alloc.getChunksPerPage());
+        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 1);
         REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
     }
 
@@ -119,7 +120,7 @@ static void performAllocations(spsl::SensitivePageAllocator& alloc, AllocationLi
 
         allocations.emplace_back(AllocationInfo{ mem, size });
 
-        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 2 * alloc.getChunksPerPage());
+        REQUIRE(alloc.getNumberOfManagedAllocatedPages() <= 2);
         REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
     }
 }
@@ -169,31 +170,31 @@ TEST_CASE("ManagedAllocationTest3", "[allocator]")
 TEST_CASE("UnmanagedAllocationTest", "[allocator]")
 {
     spsl::SensitivePageAllocator alloc;
-    auto pageSize = alloc.getPageSize();
 
     // nothing allocated yet
     REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
     REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
 
-    // allocating a page is managed
+    // allocating 4K is managed
+    constexpr auto fourK = 4096;
     {
-        void* mem = alloc.allocate(pageSize);
+        void* mem = alloc.allocate(fourK);
         REQUIRE(mem != nullptr);
-        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 1u);
-        REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
-        alloc.deallocate(mem, pageSize);
-        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
-        REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
+        CHECK(alloc.getNumberOfManagedAllocatedPages() == 1u);
+        CHECK(alloc.getNumberOfUnmanagedAreas() == 0u);
+        alloc.deallocate(mem, fourK);
+        CHECK(alloc.getNumberOfManagedAllocatedPages() == 0u);
+        CHECK(alloc.getNumberOfUnmanagedAreas() == 0u);
     }
     // allocating more is "unmanaged"
     {
-        void* mem = alloc.allocate(pageSize + 1);
+        void* mem = alloc.allocate(fourK + 1);
         REQUIRE(mem != nullptr);
-        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
-        REQUIRE(alloc.getNumberOfUnmanagedAreas() == 1u);
-        alloc.deallocate(mem, pageSize + 1);
-        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 0u);
-        REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
+        CHECK(alloc.getNumberOfManagedAllocatedPages() == 0u);
+        CHECK(alloc.getNumberOfUnmanagedAreas() == 1u);
+        alloc.deallocate(mem, fourK + 1);
+        CHECK(alloc.getNumberOfManagedAllocatedPages() == 0u);
+        CHECK(alloc.getNumberOfUnmanagedAreas() == 0u);
     }
 
     // in the end, no allocation is left
@@ -280,8 +281,8 @@ TEST_CASE("LeakCheckTest2", "[allocator]")
             alloc.deallocate(entry.addr, entry.size);
 
         // there is one page left
-        REQUIRE(alloc.getNumberOfManagedAllocatedPages() == 2u);
-        REQUIRE(alloc.getNumberOfUnmanagedAreas() == 0u);
+        CHECK(alloc.getNumberOfManagedAllocatedPages() >= 1);
+        CHECK(alloc.getNumberOfUnmanagedAreas() == 0u);
     }
 
     // now check the leaks
