@@ -10,7 +10,6 @@
 
 #include <system_error>
 
-#define SPSL_HAS_CONSTEXPR_ARRAY
 
 #ifdef _WIN32   // Windows
 #ifdef _MSC_VER // Visual Studio
@@ -19,9 +18,6 @@
 #include <crtdefs.h>
 typedef intptr_t ssize_t;
 
-
-// can't use constexpr values in array definitions...
-#undef SPSL_HAS_CONSTEXPR_ARRAY
 
 #endif // _MSC_VER
 
@@ -116,7 +112,7 @@ inline void unlockMemory(void* addr, std::size_t len, std::error_code* ec = null
 } // namespace os
 } // namespace spsl
 
-#else // Linux
+#else // Linux/UNIX
 
 #include <cerrno>
 #include <sys/mman.h>

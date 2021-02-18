@@ -1,11 +1,11 @@
 # SPSL - Special Purpose Strings Library
 
-[![Travis-CI status](https://travis-ci.org/dermojo/spsl.svg?branch=master)](https://travis-ci.org/dermojo/spsl)
-[![AppVeyor status](https://ci.appveyor.com/api/projects/status/github/dermojo/spsl?branch=master&svg=true)](https://ci.appveyor.com/project/dermojo/spsl)
-[![codecov](https://codecov.io/gh/dermojo/spsl/branch/master/graph/badge.svg)](https://codecov.io/gh/dermojo/spsl)
+[![Travis-CI status](https://travis-ci.org/dermojo/spsl.svg?branch=develop)](https://travis-ci.org/dermojo/spsl)
+[![AppVeyor status](https://ci.appveyor.com/api/projects/status/github/dermojo/spsl?branch=develop&svg=true)](https://ci.appveyor.com/project/dermojo/spsl)
+[![codecov](https://codecov.io/gh/dermojo/spsl/branch/develop/graph/badge.svg)](https://codecov.io/gh/dermojo/spsl)
 
-SPSL is a header-only library for "special" string implementations. It contains the following
-string class templates:
+SPSL is a header-only library for "special" string implementations for C++17 and later.
+It contains the following string class templates:
 * `ArrayString`/`ArrayStringW`: Purely stack based string, similar to "plain" C arrays.
 * `PasswordString`/`PasswordStringW`: String variant for sensitive data. All memory used by
   this string implementation is locked in RAM (i.e. it may not be swapped to disk) and is
@@ -70,9 +70,3 @@ ctest -VV
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 tl;dr: Feel free to use and modify the code or to include it in your commercial application.
-
-
-## Acknowledgments
-
-This library uses the MurmurHash3 hash functions, copied thankfully from
-[https://github.com/aappleby/smhasher](https://github.com/aappleby/smhasher). Thanks a lot!

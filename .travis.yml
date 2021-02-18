@@ -3,47 +3,6 @@ language: cpp
 
 matrix:
   include:
-    - compiler: gcc-4.9
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.9
-      env: MYCC=gcc-4.9 MYCXX=g++-4.9
-    - compiler: gcc-5
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env: MYCC=gcc-5 MYCXX=g++-5
-    - compiler: gcc-6
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-      env: MYCC=gcc-6 MYCXX=g++-6
-    - compiler: gcc-6
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-            - lcov
-      env: MYCC=gcc-6 MYCXX=g++-6 CODE_COVERAGE=on
-    - compiler: gcc-7
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
-      env: MYCC=gcc-7 MYCXX=g++-7
     - compiler: gcc-8
       addons:
         apt:
@@ -69,51 +28,6 @@ matrix:
           packages:
             - g++-10
       env: MYCC=gcc-10 MYCXX=g++-10
-    - compiler: clang-4.0
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial
-          packages:
-            - clang-4.0
-      env: MYCC=clang-4.0 MYCXX=clang++-4.0
-    - compiler: clang-5.0
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial
-          packages:
-            - clang-5.0
-      env: MYCC=clang-5.0 MYCXX=clang++-5.0
-    - compiler: clang-6.0
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-6.0
-          packages:
-            - clang-6.0
-      env: MYCC=clang-6.0 MYCXX=clang++-6.0
-    - compiler: clang-7
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-7
-          packages:
-            - clang-7
-      env: MYCC=clang MYCXX=clang++
-    - compiler: clang-8
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-8
-          packages:
-            - clang-8
-      env: MYCC=clang MYCXX=clang++
     - compiler: clang-9
       addons:
         apt:
@@ -143,14 +57,16 @@ matrix:
           packages:
             - g++-9
       env: MYCC=gcc-9 MYCXX=g++-9 ENABLE_ASAN=on
-    - compiler: clang-8
+    - compiler: clang-10
+      dist: bionic
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-8
+            - sourceline: deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main
+              key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
           packages:
-            - clang-8
+            - clang-10
       env: MYCC=clang MYCXX=clang++ ENABLE_UBSAN=on
     - compiler: x86_64-w64-mingw32-g++
       addons:
@@ -165,15 +81,16 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-6.0
+            - sourceline: deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main
+              key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
           packages:
-            - clang-format-6.0
-            - clang-6.0
+            - clang-format-10.0
+            - clang-10.0
       script:
         - mkdir build
         - cd build
-        - ADD_OPTS="-DCMAKE_C_COMPILER=clang-6.0 -DCMAKE_CXX_COMPILER=clang++-6.0"
-        - ADD_OPTS="$ADD_OPTS -DCLANG_FORMAT=/usr/bin/clang-format-6.0"
+        - ADD_OPTS="-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
+        - ADD_OPTS="$ADD_OPTS -DCLANG_FORMAT=/usr/bin/clang-format
         - cmake $ADD_OPTS ..
         - make format
         - |
@@ -190,14 +107,15 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-6.0
+            - sourceline: deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main
+              key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
           packages:
-            - clang-tidy-6.0
-            - clang-6.0
+            - clang-tidy-10.0
+            - clang-10.0
       script:
         - mkdir build
         - cd build
-        - ADD_OPTS="-DCMAKE_C_COMPILER=clang-6.0 -DCMAKE_CXX_COMPILER=clang++-6.0"
+        - ADD_OPTS="-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
         - cmake $ADD_OPTS ..
         - make tidy >output.txt
         - |
