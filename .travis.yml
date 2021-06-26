@@ -28,16 +28,6 @@ matrix:
           packages:
             - g++-10
       env: MYCC=gcc-10 MYCXX=g++-10
-    - compiler: clang-9
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - sourceline: deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-9 main
-              key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
-          packages:
-            - clang-9
-      env: MYCC=clang-9 MYCXX=clang++-9
     - compiler: clang-10
       dist: bionic
       addons:
@@ -49,6 +39,17 @@ matrix:
           packages:
             - clang-10
       env: MYCC=clang-10 MYCXX=clang++-10
+    - compiler: clang-11
+      dist: bionic
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main
+              key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
+          packages:
+            - clang-11
+      env: MYCC=clang-11 MYCXX=clang++-11
     - compiler: gcc-9
       addons:
         apt:
