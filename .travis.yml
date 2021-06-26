@@ -70,12 +70,14 @@ matrix:
             - clang-10
       env: MYCC=clang MYCXX=clang++ ENABLE_UBSAN=on
     - compiler: x86_64-w64-mingw32-g++
+      dist: focal
       addons:
         apt:
           packages:
             - g++-mingw-w64-x86-64
       env: MYCC=/usr/bin/x86_64-w64-mingw32-gcc MYCXX=/usr/bin/x86_64-w64-mingw32-g++
     - os: linux
+      dist: bionic
       env:
         - TEST="Clang Format"
       addons:
@@ -102,6 +104,7 @@ matrix:
             exit -1
           fi
     - os: linux
+      dist: bionic
       env:
         - TEST="Clang Tidy"
       addons:
