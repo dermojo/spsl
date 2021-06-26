@@ -3,7 +3,7 @@
 #
 # Requires CMake 3.2 or higher
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
-project(spsl VERSION 1.3 LANGUAGES CXX)
+project(spsl VERSION 2.0 LANGUAGES CXX)
 
 # Release version with debug info: Compiles with optimizations, and if a unit test crashes,
 # there may be hope for analysis...
