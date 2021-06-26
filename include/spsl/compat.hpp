@@ -254,5 +254,4 @@ inline void unlockMemory(void* addr, std::size_t len, std::error_code* ec = null
 
 #endif
 
-// define a secure memset function
 #endif /* SPSL_COMPAT_HPP_ */

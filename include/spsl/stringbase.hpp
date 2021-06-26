@@ -8,9 +8,13 @@
 #ifndef SPSL_STRINGBASE_HPP_
 #define SPSL_STRINGBASE_HPP_
 
-#include <iosfwd> // for ostream support
+#include <algorithm>
+#include <initializer_list>
+#include <ios> // for ostream support
 #include <iterator>
 #include <limits>
+#include <stdexcept>
+#include <string_view>
 
 #include "spsl/type_traits.hpp"
 
@@ -50,6 +54,9 @@ public:
     // well, somewhat...
     using allocator_type = storage_type;
 
+    // view type alias, using the same character type
+    using string_view_type = std::basic_string_view<char_type>;
+
 
     // For now, we use plain pointers. If this isn't sufficient, we need to roll our own...
     using iterator = pointer;
@@ -59,7 +66,7 @@ public:
 
 
     static constexpr size_type npos = static_cast<size_type>(-1);
-    static constexpr char_type nul() { return char_type(); }
+    static constexpr char_type nul = static_cast<char_type>(0);
 
 
     /* ************************************ CONSTRUCTORS ************************************ */
@@ -90,13 +97,8 @@ public:
     /// construct from another storage instance
     explicit StringBase(const storage_type& storage) : m_storage(storage) {}
 
-    /// construct from another string-like container (may even be a vector...)
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    explicit StringBase(const StringClass& s) : m_storage()
-    {
-        assign(s.data(), s.size());
-    }
+    /// construct from another string type
+    explicit StringBase(const string_view_type& s) : StringBase(s.data(), s.size()) {}
 
     /* ********************************** ASSIGNMENT OPERATORS ********************************** */
 
@@ -124,10 +126,8 @@ public:
         return *this;
     }
 
-    /// allow assignment from another string-like container (may even be a vector...)
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    this_type& operator=(const StringClass& s)
+    /// allow assignment from another string type
+    this_type& operator=(const string_view_type& s)
     {
         assign(s.data(), s.size());
         return *this;
@@ -174,6 +174,8 @@ public:
     char_type& back() { return m_storage[size() - 1]; }
     const char_type& back() const { return m_storage[size() - 1]; }
 
+    // allow conversion to a view
+    constexpr operator string_view_type() const { return string_view_type(data(), size()); }
 
     /* ********************************** ITERATOR FUNCTIONS ********************************** */
 
@@ -222,7 +224,7 @@ public:
         return count;
     }
 
-    void resize(size_type count) { resize(count, nul()); }
+    void resize(size_type count) { resize(count, nul); }
     void resize(size_type count, char_type ch) { m_storage.resize(count, ch); }
     void swap(this_type& other) noexcept { m_storage.swap(other.m_storage); }
 
@@ -263,24 +265,18 @@ public:
         return _compare(data() + pos1, count1, s, count2);
     }
 
-    // comparisons for (other) string-like classes
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    int compare(const StringClass& s) const
+    // comparisons for (other) string types
+    int compare(const string_view_type& s) const
     {
         return _compare(data(), size(), s.data(), s.size());
     }
 
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    int compare(size_type pos1, size_type count1, const StringClass& s) const
+    int compare(size_type pos1, size_type count1, const string_view_type& s) const
     {
         return _compare(data() + pos1, count1, s.data(), s.size());
     }
 
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    int compare(size_type pos1, size_type count1, const StringClass& s, size_type pos2,
+    int compare(size_type pos1, size_type count1, const string_view_type& s, size_type pos2,
                 size_type count2 = npos) const
     {
         return _compare(data() + pos1, count1, s.data() + pos2,
@@ -311,43 +307,13 @@ public:
     bool operator>(const this_type& rhs) const { return compare(rhs) > 0; }
     bool operator>=(const this_type& rhs) const { return compare(rhs) >= 0; }
 
-    // StringBase, other string class
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    bool operator==(const StringClass& rhs) const
-    {
-        return compare(rhs) == 0;
-    }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    bool operator!=(const StringClass& rhs) const
-    {
-        return compare(rhs) != 0;
-    }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    bool operator<(const StringClass& rhs) const
-    {
-        return compare(rhs) < 0;
-    }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    bool operator<=(const StringClass& rhs) const
-    {
-        return compare(rhs) <= 0;
-    }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    bool operator>(const StringClass& rhs) const
-    {
-        return compare(rhs) > 0;
-    }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    bool operator>=(const StringClass& rhs) const
-    {
-        return compare(rhs) >= 0;
-    }
+    // StringBase, other string type
+    bool operator==(const string_view_type& rhs) const { return compare(rhs) == 0; }
+    bool operator!=(const string_view_type& rhs) const { return compare(rhs) != 0; }
+    bool operator<(const string_view_type& rhs) const { return compare(rhs) < 0; }
+    bool operator<=(const string_view_type& rhs) const { return compare(rhs) <= 0; }
+    bool operator>(const string_view_type& rhs) const { return compare(rhs) > 0; }
+    bool operator>=(const string_view_type& rhs) const { return compare(rhs) >= 0; }
 
 
     /* ********************************** ASSIGNMENT FUNCTIONS ********************************** */
@@ -381,18 +347,11 @@ public:
     this_type& assign(const this_type& s) { return *this = s; }
     this_type& assign(this_type&& s) { return *this = std::move(s); }
 
-    /// allow assignment from another string-like container or view (may even be a vector...)
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    this_type& assign(const StringClass& s)
-    {
-        return assign(s.data(), s.size());
-    }
+    /// allow assignment from another string type
+    this_type& assign(const string_view_type& s) { return assign(s.data(), s.size()); }
 
     /// same, but with pos and count
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    this_type& assign(const StringClass& s, size_type pos, size_type count = npos)
+    this_type& assign(const string_view_type& s, size_type pos, size_type count = npos)
     {
         if (pos > s.size())
             throw std::out_of_range("pos > size()");
@@ -419,17 +378,13 @@ public:
         m_storage.insert(index, s, s + count);
         return *this;
     }
-    // another string-like class
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    this_type& insert(size_type index, const StringClass& s)
+    // another string type
+    this_type& insert(size_type index, const string_view_type& s)
     {
         return insert(index, s.data(), s.size());
     }
     // another string-like class with index and count
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    this_type& insert(size_type index, const StringClass& s, size_type index_str,
+    this_type& insert(size_type index, const string_view_type& s, size_type index_str,
                       size_type count = npos)
     {
         return insert(index, s.data() + index_str, std::min(s.size() - index_str, count));
@@ -481,15 +436,8 @@ public:
         return *this;
     }
 
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    this_type& append(const StringClass& s)
-    {
-        return append(s.data(), s.size());
-    }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    this_type& append(const StringClass& s, size_type pos, size_type count = npos)
+    this_type& append(const string_view_type& s) { return append(s.data(), s.size()); }
+    this_type& append(const string_view_type& s, size_type pos, size_type count = npos)
     {
         if (pos > s.size())
             throw std::out_of_range("pos > size()");
@@ -503,12 +451,7 @@ public:
     }
     this_type& operator+=(const char_type* s) { return append(s); }
     this_type& operator+=(std::initializer_list<char_type> init) { return append(init); }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    this_type& operator+=(const StringClass& s)
-    {
-        return append(s);
-    }
+    this_type& operator+=(const string_view_type& s) { return append(s); }
 
 
     /* ********************************** ERASE FUNCTIONS ********************************** */
@@ -611,24 +554,18 @@ public:
                        ilist.begin(), ilist.size());
     }
 
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    this_type& replace(size_type pos, size_type count, const StringClass& s)
+    this_type& replace(size_type pos, size_type count, const string_view_type& s)
     {
         return replace(pos, count, s.data(), s.size());
     }
 
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    this_type& replace(const_iterator first, const_iterator last, const StringClass& s)
+    this_type& replace(const_iterator first, const_iterator last, const string_view_type& s)
     {
         return replace(static_cast<size_type>(first - data()), static_cast<size_type>(last - first),
                        s.data(), s.size());
     }
 
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    this_type& replace(size_type pos, size_type count, const StringClass& s, size_type pos2,
+    this_type& replace(size_type pos, size_type count, const string_view_type& s, size_type pos2,
                        size_type count2 = npos)
     {
         return replace(pos, count, s.data() + pos2, std::min(count2, s.size() - pos2));
@@ -678,9 +615,7 @@ public:
         return find(s, pos, traits_type::length(s));
     }
 
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    size_type find(const StringClass& str, size_type pos = 0) const noexcept
+    size_type find(const string_view_type& str, size_type pos = 0) const noexcept
     {
         return find(str.data(), pos, str.size());
     }
@@ -724,9 +659,7 @@ public:
         return rfind(s, pos, traits_type::length(s));
     }
 
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    size_type rfind(const StringClass& str, size_type pos = npos) const noexcept
+    size_type rfind(const string_view_type& str, size_type pos = npos) const noexcept
     {
         return rfind(str.data(), pos, str.size());
     }
@@ -756,9 +689,7 @@ public:
     {
         return find_first_of(s, pos, traits_type::length(s));
     }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    size_type find_first_of(const StringClass& s, size_type pos = 0) const noexcept
+    size_type find_first_of(const string_view_type& s, size_type pos = 0) const noexcept
     {
         return find_first_of(s.data(), pos, s.size());
     }
@@ -794,9 +725,7 @@ public:
     {
         return find_first_not_of(s, pos, traits_type::length(s));
     }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    size_type find_first_not_of(const StringClass& s, size_type pos = 0) const noexcept
+    size_type find_first_not_of(const string_view_type& s, size_type pos = 0) const noexcept
     {
         return find_first_not_of(s.data(), pos, s.size());
     }
@@ -831,9 +760,7 @@ public:
     {
         return find_last_of(s, pos, traits_type::length(s));
     }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    size_type find_last_of(const StringClass& s, size_type pos = npos) const noexcept
+    size_type find_last_of(const string_view_type& s, size_type pos = npos) const noexcept
     {
         return find_last_of(s.data(), pos, s.size());
     }
@@ -883,9 +810,7 @@ public:
     {
         return find_last_not_of(s, pos, traits_type::length(s));
     }
-    template <typename StringClass, typename std::enable_if<is_compatible_string<
-                                      char_type, size_type, StringClass>::value>::type* = nullptr>
-    size_type find_last_not_of(const StringClass& s, size_type pos = npos) const noexcept
+    size_type find_last_not_of(const string_view_type& s, size_type pos = npos) const noexcept
     {
         return find_last_not_of(s.data(), pos, s.size());
     }
@@ -904,79 +829,34 @@ public:
 /* ********************************** COMPARISON OPERATORS ********************************** */
 // These are the (non-member) functions, that can't be implemented as members.
 
-// const char_type*, StringBase
-template <typename StorageType>
-bool operator==(const typename StorageType::char_type* lhs, const StringBase<StorageType>& rhs)
+// SOMETHING, StringBase
+template <typename OtherString, typename StorageType>
+bool operator==(const OtherString& lhs, const StringBase<StorageType>& rhs)
 {
     return rhs.compare(lhs) == 0;
 }
-template <typename StorageType>
-bool operator!=(const typename StorageType::char_type* lhs, const StringBase<StorageType>& rhs)
+template <typename OtherString, typename StorageType>
+bool operator!=(const OtherString& lhs, const StringBase<StorageType>& rhs)
 {
     return rhs.compare(lhs) != 0;
 }
-template <typename StorageType>
-bool operator<(const typename StorageType::char_type* lhs, const StringBase<StorageType>& rhs)
+template <typename OtherString, typename StorageType>
+bool operator<(const OtherString& lhs, const StringBase<StorageType>& rhs)
 {
     return rhs.compare(lhs) > 0;
 }
-template <typename StorageType>
-bool operator<=(const typename StorageType::char_type* lhs, const StringBase<StorageType>& rhs)
+template <typename OtherString, typename StorageType>
+bool operator<=(const OtherString& lhs, const StringBase<StorageType>& rhs)
 {
     return rhs.compare(lhs) >= 0;
 }
-template <typename StorageType>
-bool operator>(const typename StorageType::char_type* lhs, const StringBase<StorageType>& rhs)
+template <typename OtherString, typename StorageType>
+bool operator>(const OtherString& lhs, const StringBase<StorageType>& rhs)
 {
     return rhs.compare(lhs) < 0;
 }
-template <typename StorageType>
-bool operator>=(const typename StorageType::char_type* lhs, const StringBase<StorageType>& rhs)
-{
-    return rhs.compare(lhs) <= 0;
-}
-
-
-// other string class, StringBase
-template <
-  typename StringClass, typename StorageType,
-  typename std::enable_if<is_compatible_string2<StorageType, StringClass>::value>::type* = nullptr>
-bool operator==(const StringClass& lhs, const StringBase<StorageType>& rhs)
-{
-    return rhs.compare(lhs) == 0;
-}
-template <
-  typename StringClass, typename StorageType,
-  typename std::enable_if<is_compatible_string2<StorageType, StringClass>::value>::type* = nullptr>
-bool operator!=(const StringClass& lhs, const StringBase<StorageType>& rhs)
-{
-    return rhs.compare(lhs) != 0;
-}
-template <
-  typename StringClass, typename StorageType,
-  typename std::enable_if<is_compatible_string2<StorageType, StringClass>::value>::type* = nullptr>
-bool operator<(const StringClass& lhs, const StringBase<StorageType>& rhs)
-{
-    return rhs.compare(lhs) > 0;
-}
-template <
-  typename StringClass, typename StorageType,
-  typename std::enable_if<is_compatible_string2<StorageType, StringClass>::value>::type* = nullptr>
-bool operator<=(const StringClass& lhs, const StringBase<StorageType>& rhs)
-{
-    return rhs.compare(lhs) >= 0;
-}
-template <
-  typename StringClass, typename StorageType,
-  typename std::enable_if<is_compatible_string2<StorageType, StringClass>::value>::type* = nullptr>
-bool operator>(const StringClass& lhs, const StringBase<StorageType>& rhs)
-{
-    return rhs.compare(lhs) < 0;
-}
-template <
-  typename StringClass, typename StorageType,
-  typename std::enable_if<is_compatible_string2<StorageType, StringClass>::value>::type* = nullptr>
-bool operator>=(const StringClass& lhs, const StringBase<StorageType>& rhs)
+template <typename OtherString, typename StorageType>
+bool operator>=(const OtherString& lhs, const StringBase<StorageType>& rhs)
 {
     return rhs.compare(lhs) <= 0;
 }
@@ -1002,19 +882,10 @@ struct hash<spsl::StringBase<StorageType>>
 
     size_t operator()(const argument_type& s) const noexcept
     {
-        // Re-use string_view's hash. That requires some trickery for std::byte, since there is no
-        // std::basic_string_view<std::byte> in the STL (at least no hash specialization).
+        // re-use string_view's hash
         using char_type = typename argument_type::char_type;
-        if constexpr (is_same_v<char_type, byte>)
-        {
-            using view_type = basic_string_view<char>;
-            return hash<view_type>()(view_type(reinterpret_cast<const char*>(s.data()), s.size()));
-        }
-        else
-        {
-            using view_type = basic_string_view<char_type>;
-            return hash<view_type>()(view_type(s.data(), s.size()));
-        }
+        using view_type = basic_string_view<char_type>;
+        return hash<view_type>()(view_type(s.data(), s.size()));
     }
 };
 

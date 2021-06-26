@@ -302,4 +302,25 @@ TEST_CASE("LeakCheckTest2", "[allocator]")
     REQUIRE(cbLeaks[5].size == 64u);
 }
 
+
+// make sure we can use the allocator in a standard container
+TEST_CASE("Use allocator for vector", "[allocator]")
+{
+    using Vector = std::vector<std::byte, spsl::SensitiveSegmentAllocator<std::byte>>;
+
+    Vector vec;
+    REQUIRE(vec.empty());
+
+    vec.push_back(to_byte(0x01));
+    vec.push_back(to_byte(0x02));
+    vec.push_back(to_byte(0x03));
+    vec.push_back(to_byte(0x04));
+    REQUIRE(vec.size() == 4);
+
+    // allocate a large block
+    constexpr size_t size = 10 * 1024 * 1024;
+    vec.resize(size);
+    REQUIRE(vec.size() == size);
+}
+
 // TODO: test other page sizes

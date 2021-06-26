@@ -21,7 +21,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase find first of", "[string_base]", StringBaseT
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
     const auto npos = StringType::npos;
-    const auto nul = StringType::nul();
+    const auto nul = StringType::nul;
 
     const StringType s(data.hello_world);
     StringType sWithNul(s);
@@ -101,7 +101,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase find first not of", "[string_base]", StringB
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
     const auto npos = StringType::npos;
-    const auto nul = StringType::nul();
+    const auto nul = StringType::nul;
 
     const StringType s(data.hello_world);
     const CharType H = data.hello_world[0];
@@ -185,7 +185,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase find last of", "[string_base]", StringBaseTe
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
     const auto npos = StringType::npos;
-    const auto nul = StringType::nul();
+    const auto nul = StringType::nul;
 
     const StringType s(data.hello_world);
     StringType sWithNul(s);
@@ -286,7 +286,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase find last not of", "[string_base]", StringBa
     using CharType = typename StorageType::char_type;
     const TestData<CharType> data;
     const auto npos = StringType::npos;
-    const auto nul = StringType::nul();
+    const auto nul = StringType::nul;
 
     const StringType s(data.hello_world);
     StringType sWithNul(s);

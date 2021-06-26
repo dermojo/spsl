@@ -41,22 +41,8 @@ struct WipeCheckAllocator
 
 
 // all character types we want to test
-using CharTypes = std::tuple<char, wchar_t, std::byte>;
+using CharTypes = std::tuple<char, wchar_t>;
 
-
-// helper functions that convert bytes into characters...
-inline const char* asString(const char* s)
-{
-    return s;
-}
-inline const wchar_t* asString(const wchar_t* s)
-{
-    return s;
-}
-inline const char* asString(const std::byte* s)
-{
-    return reinterpret_cast<const char*>(s);
-}
 
 // generic string comparisons
 static int compareStrings(const char* s1, const char* s2)
@@ -73,7 +59,7 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword constructor", "[storage_password]", Cha
 {
     using CharType = TestType;
     using StorageType = spsl::StoragePassword<CharType>;
-    const CharType nul = StorageType::nul();
+    const CharType nul = StorageType::nul;
 
     const StorageType s1;
     REQUIRE(s1.capacity() == 0u);
@@ -357,7 +343,7 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword resize", "[storage_password]", CharType
     using StorageType = spsl::StoragePassword<CharType, 32>;
     const TestData<CharType> data;
     using size_type = typename StorageType::size_type;
-    const CharType nul = StorageType::nul();
+    const CharType nul = StorageType::nul;
 
     StorageType s;
     // empty
@@ -406,7 +392,7 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword realloc", "[storage_password]", CharTyp
     using size_type = typename StorageType::size_type;
     const size_type block_size = StorageType::block_size();
     const TestData<CharType> data;
-    const CharType nul = StorageType::nul();
+    const CharType nul = StorageType::nul;
     const CharType ch(data.hello_world[2]);
 
     StorageType s;
@@ -457,7 +443,7 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword wiping", "[storage_password]", CharType
     using size_type = typename StorageType::size_type;
     const TestData<CharType> data;
     const CharType ch = data.blablabla[0];
-    const CharType nul = StorageType::nul();
+    const CharType nul = StorageType::nul;
 
     StorageType s;
     s.assign(data.hello_world, data.hello_world_len);
@@ -634,24 +620,24 @@ TEMPLATE_LIST_TEST_CASE("StoragePassword copy and move", "[storage_password]", C
     string2.assign(data.hello_world, data.hello_world_len);
 
     // same content, different allocators
-    REQUIRE(compareStrings(asString(string1.data()), asString(string2.data())) == 0);
+    REQUIRE(compareStrings(string1.data(), string2.data()) == 0);
     REQUIRE(string1.getAllocator().pageAllocator() == &alloc1);
     REQUIRE(string2.getAllocator().pageAllocator() == &alloc2);
 
     // swap: allocators are swapped, too
     std::swap(string1, string2);
-    REQUIRE(compareStrings(asString(string1.data()), asString(string2.data())) == 0);
+    REQUIRE(compareStrings(string1.data(), string2.data()) == 0);
     REQUIRE(string1.getAllocator().pageAllocator() == &alloc2);
     REQUIRE(string2.getAllocator().pageAllocator() == &alloc1);
 
     // change the content and swap back
     string1.assign(data.blablabla, data.blablabla_len);
-    REQUIRE(compareStrings(asString(string1.data()), asString(data.blablabla)) == 0);
-    REQUIRE(compareStrings(asString(string2.data()), asString(data.hello_world)) == 0);
-    REQUIRE(compareStrings(asString(string1.data()), asString(string2.data())) != 0);
+    REQUIRE(compareStrings(string1.data(), data.blablabla) == 0);
+    REQUIRE(compareStrings(string2.data(), data.hello_world) == 0);
+    REQUIRE(compareStrings(string1.data(), string2.data()) != 0);
     std::swap(string1, string2);
-    REQUIRE(compareStrings(asString(string1.data()), asString(data.hello_world)) == 0);
-    REQUIRE(compareStrings(asString(string2.data()), asString(data.blablabla)) == 0);
+    REQUIRE(compareStrings(string1.data(), data.hello_world) == 0);
+    REQUIRE(compareStrings(string2.data(), data.blablabla) == 0);
     REQUIRE(string1.getAllocator().pageAllocator() == &alloc1);
     REQUIRE(string2.getAllocator().pageAllocator() == &alloc2);
 

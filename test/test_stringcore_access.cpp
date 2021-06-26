@@ -18,8 +18,9 @@ TEMPLATE_LIST_TEST_CASE("StringBase access", "[string_core]", StringBaseTestType
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
+    using StringView = typename StringType::string_view_type;
     const TestData<CharType> data;
-    const CharType nul = StorageType::nul();
+    const CharType nul = StorageType::nul;
 
     // 1. empty string, const
     {
@@ -34,6 +35,10 @@ TEMPLATE_LIST_TEST_CASE("StringBase access", "[string_core]", StringBaseTestType
         REQUIRE_THROWS_AS(s.at(1), std::out_of_range);
         // front() and back() won't throw, but back() isn't allowed here
         REQUIRE(s.front() == nul);
+        const StringView v = s;
+        REQUIRE(v.data() == s.data());
+        REQUIRE(v.size() == s.size());
+        REQUIRE(v == s);
     }
 
     // 2. empty string, non-const
@@ -49,6 +54,10 @@ TEMPLATE_LIST_TEST_CASE("StringBase access", "[string_core]", StringBaseTestType
         REQUIRE_THROWS_AS(s.at(1), std::out_of_range);
         // front() and back() won't throw, but back() isn't allowed here
         REQUIRE(s.front() == nul);
+        const StringView v = s;
+        REQUIRE(v.data() == s.data());
+        REQUIRE(v.size() == s.size());
+        REQUIRE(v == s);
     }
 
     // 3. non-empty string, const
@@ -71,6 +80,10 @@ TEMPLATE_LIST_TEST_CASE("StringBase access", "[string_core]", StringBaseTestType
 
         REQUIRE(s.front() == data.hello_world[0]);
         REQUIRE(s.back() == data.hello_world[data.hello_world_len - 1]);
+        const StringView v = s;
+        REQUIRE(v.data() == s.data());
+        REQUIRE(v.size() == s.size());
+        REQUIRE(v == s);
     }
 
     // 4. non-empty string, non-const
@@ -99,6 +112,10 @@ TEMPLATE_LIST_TEST_CASE("StringBase access", "[string_core]", StringBaseTestType
         REQUIRE_FALSE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
         REQUIRE(Traits::length(s.data()) == 0u);
         REQUIRE(Traits::length(s.c_str()) == 0u);
+        const StringView v = s;
+        REQUIRE(v.data() == s.data());
+        REQUIRE(v.size() == s.size());
+        REQUIRE(v == s);
     }
 }
 
@@ -248,7 +265,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase operations", "[string_core]", StringBaseTest
     using CharType = typename StorageType::char_type;
     using Traits = typename StringType::traits_type;
     const TestData<CharType> data;
-    const CharType nul = StorageType::nul();
+    const CharType nul = StorageType::nul;
 
     StringType s1;
     const CharType ch = data.hello_world[3];
@@ -351,7 +368,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase operations", "[string_core]", StringBaseTest
     REQUIRE(s1 == data.hello_world);
     REQUIRE(s1.size() == data.hello_world_len);
     // add a NUL character
-    s1.append(1, s1.nul());
+    s1.append(1, s1.nul);
     REQUIRE(s1.size() == data.hello_world_len + 1);
     REQUIRE(Traits::compare(s1.c_str(), data.hello_world, data.hello_world_len) == 0);
     REQUIRE(s1[s1.size()] == nul);

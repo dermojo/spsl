@@ -135,11 +135,9 @@ TEMPLATE_LIST_TEST_CASE("StringBase constructors", "[string_core]", StringBaseTe
             REQUIRE(s == data.hello_world);
         }
 
-        // 2: from a std::vector
+        // 2: from a std::basic_string_view
         {
-            std::vector<CharType> ref;
-            ref.resize(data.hello_world_len);
-            memcpy(ref.data(), data.hello_world, data.hello_world_len * sizeof(CharType));
+            std::basic_string_view<CharType> ref(data.hello_world, data.hello_world_len);
             StringType s(ref);
             REQUIRE(s.length() == data.hello_world_len);
             REQUIRE(s.size() == data.hello_world_len);

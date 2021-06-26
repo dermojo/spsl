@@ -27,10 +27,7 @@ using StringBaseTestTypes =
              spsl::ArrayStringW<128, spsl::policy::overflow::Truncate>,
              spsl::ArrayString<128, spsl::policy::overflow::Throw>,
              spsl::ArrayStringW<128, spsl::policy::overflow::Throw>, spsl::PasswordString,
-             spsl::PasswordStringW,
-             // BYTE tests
-             spsl::StringBase<spsl::StorageArray<std::byte, 64, spsl::policy::overflow::Truncate>>,
-             spsl::StringBase<spsl::StoragePassword<std::byte>>>;
+             spsl::PasswordStringW>;
 
 
 #endif /* TEST_TESTS_HPP_ */

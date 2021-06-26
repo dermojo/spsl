@@ -98,65 +98,6 @@ constexpr std::byte operator"" _b(char b)
     return to_byte(b);
 }
 
-/// prefix decrement
-inline std::byte& operator--(std::byte& b)
-{
-    auto v = std::to_integer<unsigned char>(b);
-    return b = to_byte(v - 1);
-}
-/// prefix increment
-inline std::byte& operator++(std::byte& b)
-{
-    auto v = std::to_integer<unsigned char>(b);
-    return b = to_byte(v + 1);
-}
-
-/// subtraction
-inline std::byte operator-(std::byte b, int i)
-{
-    auto v = std::to_integer<unsigned char>(b);
-    return to_byte(v - i);
-}
-/// addition
-inline std::byte operator+(std::byte b, int i)
-{
-    auto v = std::to_integer<unsigned char>(b);
-    return to_byte(v + i);
-}
-
-
-template <>
-struct TestData<std::byte>
-{
-    TestData() = default;
-    ~TestData() = default;
-    // not needed
-    TestData(const TestData&) = delete;
-    TestData(TestData&&) = delete;
-    TestData& operator=(const TestData&) = delete;
-    TestData& operator=(TestData&&) = delete;
-
-    const std::byte* const hello_world = reinterpret_cast<const std::byte*>("Hello World!\0");
-    const size_t hello_world_len = 12;
-    const std::byte* const blablabla = reinterpret_cast<const std::byte*>("blablabla\0");
-    const size_t blablabla_len = 9;
-    const std::byte* const empty = reinterpret_cast<const std::byte*>("\0");
-
-    std::initializer_list<std::byte> initializerList() const
-    {
-        static const std::initializer_list<std::byte> list{
-            'T'_b, 'h'_b, 'i'_b, 's'_b, ' '_b, 'i'_b, 's'_b, ' '_b, 'a'_b,
-            'n'_b, ' '_b, 'a'_b, 's'_b, 's'_b, 'i'_b, 'g'_b, 'n'_b, 'm'_b,
-            'e'_b, 'n'_b, 't'_b, ' '_b, 't'_b, 'e'_b, 's'_b, 't'_b
-        };
-        return list;
-    }
-    std::initializer_list<std::byte> initializerList2() const
-    {
-        static const std::initializer_list<std::byte> list{ 'T'_b, 'e'_b, 's'_b, 't'_b };
-        return list;
-    }
-};
 
 #ifdef ENABLE_HEXDUMP
 inline std::string hexdump(const void* ptr, size_t buflen)

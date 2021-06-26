@@ -149,12 +149,6 @@ void runStreamTests(StringType&&, CharType)
     REQUIRE(outputStream.str() == ref);
 }
 
-// disable for std::byte
-template <class StringType>
-void runStreamTests(StringType&&, std::byte)
-{
-}
-
 /* operator<< */
 TEMPLATE_LIST_TEST_CASE("StringBase output stream", "[string_base]", StringBaseTestTypes)
 {

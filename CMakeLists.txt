@@ -28,7 +28,6 @@ add_executable(testlib
     test/test_stringcore_access.cpp
     test/test_stringcore_assign.cpp
     test/test_stringcore_construct.cpp
-    test/test_traits.cpp
     test/test_pagealloc.cpp
     test/test_main.cpp
     )

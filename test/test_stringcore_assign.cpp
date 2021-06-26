@@ -82,15 +82,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase assignment operators", "[string_core]", Stri
     REQUIRE(s.size() == data.blablabla_len);
     REQUIRE(Traits::compare(s.c_str(), data.blablabla, data.blablabla_len) == 0);
     REQUIRE(s == data.blablabla);
-    // 2. std::vector
-    std::vector<CharType> vec;
-    vec.resize(data.hello_world_len);
-    Traits::copy(vec.data(), data.hello_world, data.hello_world_len);
-    s = vec;
-    REQUIRE(s.size() == data.hello_world_len);
-    REQUIRE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
-    REQUIRE(s == data.hello_world);
-    // 3. basic_string_view if available
+    // 2. basic_string_view if available
     std::basic_string_view<CharType> view(data.blablabla, data.blablabla_len);
     s = view;
     REQUIRE(s.size() == data.blablabla_len);
@@ -108,7 +100,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase assignment", "[string_core]", StringBaseTest
     using Traits = typename StringType::traits_type;
     const TestData<CharType> data;
     std::initializer_list<CharType> initList = data.initializerList();
-    const CharType nul = StorageType::nul();
+    const CharType nul = StorageType::nul;
 
     StringType s;
     const CharType ch = data.hello_world[0];
@@ -172,15 +164,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase assignment", "[string_core]", StringBaseTest
     REQUIRE(s.size() == data.blablabla_len);
     REQUIRE(Traits::compare(s.c_str(), data.blablabla, data.blablabla_len) == 0);
     REQUIRE(s == data.blablabla);
-    // 2. std::vector
-    std::vector<CharType> vec;
-    vec.resize(data.hello_world_len);
-    Traits::copy(vec.data(), data.hello_world, data.hello_world_len);
-    s.assign(vec);
-    REQUIRE(s.size() == data.hello_world_len);
-    REQUIRE(Traits::compare(s.c_str(), data.hello_world, data.hello_world_len) == 0);
-    REQUIRE(s == data.hello_world);
-    // 3. basic_string_view if available
+    // 2. basic_string_view if available
     std::basic_string_view<CharType> view(data.blablabla, data.blablabla_len);
     s.assign(view);
     REQUIRE(s.size() == data.blablabla_len);
@@ -251,8 +235,8 @@ TEMPLATE_LIST_TEST_CASE("StringBase append", "[string_core]", StringBaseTestType
 
     // iterator range
     const std::vector<CharType> vec(23, ch);
-    s1.append(vec);
-    // std::basic_string can' do this
+    s1.append(vec.begin(), vec.end());
+    // std::basic_string can't do this
     s2.append(23, ch);
     REQUIRE(s1 == s2);
     REQUIRE(s1.size() == s2.size());

@@ -105,50 +105,6 @@ public:
     }
 };
 
-template <typename StringType>
-class TestReplaceInitializerList<std::byte, StringType>
-{
-public:
-    void run()
-    {
-        TestData<std::byte> data;
-        TestData<char> sdata;
-        using Traits = std::char_traits<std::byte>;
-
-        StringType s1(data.hello_world, data.hello_world_len);
-        std::string s2(sdata.hello_world);
-        const size_t initListSize = 4;
-
-        // same length
-        s1.replace(s1.cbegin(), s1.cbegin() + initListSize, { 'T'_b, 'e'_b, 's'_b, 't'_b });
-        s2.replace(s2.begin(), s2.begin() + initListSize, { 'T', 'e', 's', 't' });
-        REQUIRE(s1.size() == s2.size());
-        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const std::byte*>(s2.data()),
-                                s1.size()) == 0);
-
-        // longer (forcing a reallocation for Password, but shorter than the max. array)
-        s1.replace(s1.cbegin(), s1.cbegin() + 1, { 'T'_b, 'e'_b, 's'_b, 't'_b });
-        s2.replace(s2.begin(), s2.begin() + 1, { 'T', 'e', 's', 't' });
-        REQUIRE(s1.size() == s2.size());
-        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const std::byte*>(s2.data()),
-                                s1.size()) == 0);
-
-        // shorter
-        s1.replace(s1.cbegin(), s1.cbegin() + initListSize + 3, { 'T'_b, 'e'_b, 's'_b, 't'_b });
-        s2.replace(s2.begin(), s2.begin() + initListSize + 3, { 'T', 'e', 's', 't' });
-        REQUIRE(s1.size() == s2.size());
-        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const std::byte*>(s2.data()),
-                                s1.size()) == 0);
-
-        // with offset
-        s1.replace(s1.begin() + 3, s1.begin() + 5, { 'T'_b, 'e'_b, 's'_b, 't'_b });
-        s2.replace(s2.begin() + 3, s2.begin() + 5, { 'T', 'e', 's', 't' });
-        REQUIRE(s1.size() == s2.size());
-        REQUIRE(Traits::compare(s1.data(), reinterpret_cast<const std::byte*>(s2.data()),
-                                s1.size()) == 0);
-    }
-};
-
 
 /* replace functions */
 TEMPLATE_LIST_TEST_CASE("StringBase replace", "[string_base]", StringBaseTestTypes)
@@ -378,7 +334,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase replace", "[string_base]", StringBaseTestTyp
         s2.replace(s2.begin(), s2.begin() + 3, repl2.begin(), repl2.end());
         REQUIRE(s1.size() == s2.size());
         REQUIRE(Traits::compare(s1.data(), s2.data(), s1.size()) == 0);
-        // again, using std::vector for our string class
+        // again, using std::vector as container
         std::vector<CharType> vec(32, data.blablabla[0]);
         s1 = data.hello_world;
         s2 = data.hello_world;

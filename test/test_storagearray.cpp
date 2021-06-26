@@ -13,7 +13,7 @@
 
 
 // all character types we want to test
-using CharTypes = std::tuple<char, wchar_t, std::byte>;
+using CharTypes = std::tuple<char, wchar_t>;
 
 
 /* check if size is checkable on type at run/compile time */
@@ -41,7 +41,7 @@ TEMPLATE_LIST_TEST_CASE("StorageArray constructors", "[storage_array]", CharType
 {
     using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
-    const CharType nul = ArrayType::nul();
+    const CharType nul = ArrayType::nul;
 
     const ArrayType s1;
     REQUIRE(s1.capacity() == 64u);
@@ -287,7 +287,7 @@ TEMPLATE_LIST_TEST_CASE("StorageArray resize", "[storage_array]", CharTypes)
     using CharType = TestType;
     using ArrayType = spsl::StorageArray<CharType, 64>;
     const TestData<CharType> data;
-    const CharType nul = ArrayType::nul();
+    const CharType nul = ArrayType::nul;
 
     // we'll stay within max_size() here
     ArrayType arr;

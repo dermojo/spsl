@@ -133,7 +133,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase find", "[string_core]", StringBaseTestTypes)
     using Traits = typename StringType::traits_type;
     const TestData<CharType> data;
     const auto npos = StringType::npos;
-    const CharType nul = StorageType::nul();
+    const CharType nul = StorageType::nul;
 
     const StringType s(data.hello_world);
     const CharType H = data.hello_world[0];
