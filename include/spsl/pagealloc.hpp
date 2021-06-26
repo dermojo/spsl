@@ -9,10 +9,11 @@
 #define SPSL_PAGEALLOC_HPP_
 
 #include <algorithm>
+#include <cstdio> // less overhead than iostreams...
 #include <functional>
-#include <iostream>
 #include <mutex>
 #include <vector>
+
 #include "spsl/compat.hpp"
 
 
@@ -207,7 +208,7 @@ public:
 
 
     /**
-     * Default leak callback: logs to std::cerr
+     * Default leak callback: logs to stderr.
      * @param[in] instance      the PageAllocator instance
      * @param[in] leak          information about the area that hasn't been deallocated
      * @param[in] first         set to @c true for the first call of this function
@@ -216,15 +217,17 @@ public:
                          bool first)
     {
         if (first)
-            std::cerr << "!!! Leaks detected in PageAllocator("
-                      << reinterpret_cast<const void*>(instance) << "):\n";
-        std::cerr << "!!!   " << leak.size << " bytes @ address " << leak.addr << '\n';
+        {
+            const void* ptr = instance;
+            fprintf(stderr, "!!! Leaks detected in PageAllocator(%p):\n", ptr);
+        }
+        fprintf(stderr, "!!! %zu bytes @ address %p\n", leak.size, leak.addr);
     }
 
-    [[nodiscard]] std::size_t max_size() const noexcept { return static_cast<std::size_t>(-1); }
+    std::size_t max_size() const noexcept { return static_cast<std::size_t>(-1); }
 
-    [[nodiscard]] std::size_t getPageSize() const { return m_pageSize; }
-    [[nodiscard]] std::size_t getChunksPerPage() const { return m_chunksPerPage; }
+    std::size_t getPageSize() const { return m_pageSize; }
+    std::size_t getChunksPerPage() const { return m_chunksPerPage; }
 
     static inline constexpr std::size_t calcSegmentCount(std::size_t n)
     {
@@ -464,12 +467,12 @@ private:
         os::lockMemory(addr, size, &ec);
         if (ec)
         {
-            std::cerr << "Failed to lock memory page: " << ec.message() << '\n';
+            fprintf(stderr, "Failed to lock memory page: %s\n", ec.message().c_str());
             ec.clear();
         }
         os::disableDump(addr, size, &ec);
         if (ec)
-            std::cerr << "Failed to disable core dump: " << ec.message() << '\n';
+            fprintf(stderr, "Failed to disable core dump: %s\n", ec.message().c_str());
         return addr;
     }
 
@@ -479,12 +482,12 @@ private:
         os::unlockMemory(addr, size, &ec);
         if (ec)
         {
-            std::cerr << "Failed to unlock memory page: " << ec.message() << '\n';
+            fprintf(stderr, "Failed to unlock memory page: %s\n", ec.message().c_str());
             ec.clear();
         }
         os::enableDump(addr, size, &ec);
         if (ec)
-            std::cerr << "Failed to re-enable core dump: " << ec.message() << '\n';
+            fprintf(stderr, "Failed to re-enable core dump: %s\n", ec.message().c_str());
         os::deallocatePageAligned(addr);
     }
 
@@ -515,7 +518,7 @@ private:
     std::vector<AllocationInfo> m_unmanagedAreas;
 
     /// This function is called by the destructor for every memory location that hasn't been
-    /// deallocated yet. The default implementation prints using std::cerr.
+    /// deallocated yet. The default implementation prints to stderr.
     LeakCallbackFunction m_leakCallback;
 };
 
@@ -570,7 +573,7 @@ public:
 
     void deallocate(T* p, std::size_t n) { m_alloc->deallocate(p, n * sizeof(T)); }
 
-    [[nodiscard]] std::size_t max_size() const noexcept { return m_alloc->max_size() / sizeof(T); }
+    std::size_t max_size() const noexcept { return m_alloc->max_size() / sizeof(T); }
 
 private:
     /// non-owning pointer to the "real" allocator
