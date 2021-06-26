@@ -1,6 +1,6 @@
 # SPSL - Special Purpose Strings Library
 
-[![Travis-CI status](https://travis-ci.org/dermojo/spsl.svg?branch=develop)](https://travis-ci.org/dermojo/spsl)
+[![Travis-CI status](https://travis-ci.com/dermojo/spsl.svg?branch=develop)](https://travis-ci.com/dermojo/spsl)
 [![AppVeyor status](https://ci.appveyor.com/api/projects/status/github/dermojo/spsl?branch=develop&svg=true)](https://ci.appveyor.com/project/dermojo/spsl)
 [![codecov](https://codecov.io/gh/dermojo/spsl/branch/develop/graph/badge.svg)](https://codecov.io/gh/dermojo/spsl)
 
