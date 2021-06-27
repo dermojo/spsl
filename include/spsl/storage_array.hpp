@@ -48,17 +48,17 @@ public:
     // size information functions
     constexpr static size_type max_size() { return MaxSize; }
     constexpr static size_type capacity() { return MaxSize; }
-    size_type length() const { return m_length; }
-    size_type size() const { return m_length; }
-    bool empty() const { return m_length == 0; }
+    [[nodiscard]] size_type length() const { return m_length; }
+    [[nodiscard]] size_type size() const { return m_length; }
+    [[nodiscard]] bool empty() const { return m_length == 0; }
     void reserve(size_type new_cap = 0) { overflow_policy::checkReserve(new_cap, max_size()); }
     // no-op - there is nothing to shrink
     void shrink_to_fit() {}
 
-    size_type capacity_left() const { return max_size() - size(); }
+    [[nodiscard]] size_type capacity_left() const { return max_size() - size(); }
 
     // default constructor
-    StorageArray() : m_length(0), m_buffer() { m_buffer[0] = nul; }
+    StorageArray() { m_buffer[0] = nul; }
 
     // implement copy & move
     StorageArray(const this_type& other) noexcept : StorageArray()
@@ -101,11 +101,11 @@ public:
 
     // buffer access functions
 
-    char_type* data() { return m_buffer.data(); }
-    const char_type* data() const { return m_buffer.data(); }
+    [[nodiscard]] char_type* data() { return m_buffer.data(); }
+    [[nodiscard]] const char_type* data() const { return m_buffer.data(); }
 
-    char_type& operator[](size_type pos) { return m_buffer[pos]; }
-    const char_type& operator[](size_type pos) const { return m_buffer[pos]; }
+    [[nodiscard]] char_type& operator[](size_type pos) { return m_buffer[pos]; }
+    [[nodiscard]] const char_type& operator[](size_type pos) const { return m_buffer[pos]; }
 
     void assign(const char_type* s, size_type n)
     {
@@ -329,7 +329,7 @@ protected:
 
 private:
     /// number of bytes (*not* characters) in the buffer, not including the terminating NUL
-    size_type m_length;
+    size_type m_length = 0;
     /// the underlying buffer: an array that can hold MaxSize characters (+ terminating NUL)
     std::array<char_type, MaxSize + 1> m_buffer;
 };

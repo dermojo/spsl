@@ -106,8 +106,6 @@ public:
         {
             for (auto& chunk : m_managedChunks)
             {
-                if (chunk.segments != all64)
-                {
                     // call the callback function for every contiguous range of addresses
                     while (chunk.segments != all64)
                     {
@@ -117,14 +115,14 @@ public:
                         std::size_t startIndex = 0;
                         std::size_t endIndex = 0;
                         bool searchingForStart = true;
-                        for (std::size_t i = 0; i < 64; ++i)
+                        for (std::size_t i = 0; i < segment_size; ++i)
                         {
                             if (searchingForStart)
                             {
                                 if ((chunk.segments & mask) == 0)
                                 {
                                     startIndex = i;
-                                    endIndex = 63;
+                                    endIndex = segment_size - 1;
                                     searchingForStart = false;
                                 }
                             }
@@ -149,7 +147,6 @@ public:
                         firstCbCall = false;
                     }
                 }
-            }
         }
         // finally, remove all associated pages
         while (!m_managedChunks.empty())
@@ -224,10 +221,10 @@ public:
         fprintf(stderr, "!!! %zu bytes @ address %p\n", leak.size, leak.addr);
     }
 
-    std::size_t max_size() const noexcept { return static_cast<std::size_t>(-1); }
+    [[nodiscard]] std::size_t max_size() const noexcept { return static_cast<std::size_t>(-1); }
 
-    std::size_t getPageSize() const { return m_pageSize; }
-    std::size_t getChunksPerPage() const { return m_chunksPerPage; }
+    [[nodiscard]] std::size_t getPageSize() const { return m_pageSize; }
+    [[nodiscard]] std::size_t getChunksPerPage() const { return m_chunksPerPage; }
 
     static inline constexpr std::size_t calcSegmentCount(std::size_t n)
     {
@@ -573,7 +570,7 @@ public:
 
     void deallocate(T* p, std::size_t n) { m_alloc->deallocate(p, n * sizeof(T)); }
 
-    std::size_t max_size() const noexcept { return m_alloc->max_size() / sizeof(T); }
+    [[nodiscard]] std::size_t max_size() const noexcept { return m_alloc->max_size() / sizeof(T); }
 
 private:
     /// non-owning pointer to the "real" allocator

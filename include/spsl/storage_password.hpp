@@ -66,23 +66,23 @@ public:
     static constexpr char_type nul = static_cast<char_type>(0);
 
     // size information functions
-    size_type max_size() const
+    [[nodiscard]] size_type max_size() const
     {
         const allocator& a = *this;
         return a.max_size();
     }
-    constexpr static size_type block_size() { return BlockSize; }
-    size_type capacity() const { return _l.m_capacity; }
-    size_type length() const { return _l.m_length; }
-    size_type size() const { return _l.m_length; }
-    bool empty() const { return _l.m_length == 0; }
+    [[nodiscard]] constexpr static size_type block_size() { return BlockSize; }
+    [[nodiscard]] size_type capacity() const { return _l.m_capacity; }
+    [[nodiscard]] size_type length() const { return _l.m_length; }
+    [[nodiscard]] size_type size() const { return _l.m_length; }
+    [[nodiscard]] bool empty() const { return _l.m_length == 0; }
 
     // access to the underlying allocator
-    allocator& getAllocator() noexcept { return *this; }
-    const allocator& getAllocator() const noexcept { return *this; }
+    [[nodiscard]] allocator& getAllocator() noexcept { return *this; }
+    [[nodiscard]] const allocator& getAllocator() const noexcept { return *this; }
 
     // note: This function is *not* constexpr to stay compatible with C++11
-    static size_type _roundRequiredCapacityToBlockSize(size_type cap)
+    [[nodiscard]] static size_type _roundRequiredCapacityToBlockSize(size_type cap)
     {
         size_type numBlocks = cap / BlockSize;
         if (numBlocks * BlockSize < cap)
@@ -185,11 +185,11 @@ public:
 
     // buffer access functions
 
-    char_type* data() { return m_buffer; }
-    const char_type* data() const { return m_buffer; }
+    [[nodiscard]] char_type* data() { return m_buffer; }
+    [[nodiscard]] const char_type* data() const { return m_buffer; }
 
-    char_type& operator[](size_type pos) { return data()[pos]; }
-    const char_type& operator[](size_type pos) const { return data()[pos]; }
+    [[nodiscard]] char_type& operator[](size_type pos) { return data()[pos]; }
+    [[nodiscard]] const char_type& operator[](size_type pos) const { return data()[pos]; }
 
     void assign(const char_type* s, size_type n)
     {
@@ -437,7 +437,7 @@ private:
     {
         SizeInfo _l;
         // actually _b[1] is sufficient, but triggers overflow warnings in GCC
-        char_type _b[sizeof(SizeInfo)];
+        char_type _b[sizeof(SizeInfo)]; // NOLINT (no std::array here)
     };
 
     /// the underlying buffer

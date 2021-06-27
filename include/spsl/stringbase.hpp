@@ -137,10 +137,10 @@ public:
     /* ********************************** CAPACITY FUNCTIONS ********************************** */
 
     [[nodiscard]] bool empty() const noexcept { return size() == 0; }
-    size_type max_size() const noexcept { return m_storage.max_size(); }
-    size_type capacity() const noexcept { return max_size(); }
-    size_type length() const noexcept { return m_storage.size(); }
-    size_type size() const noexcept { return m_storage.size(); }
+    [[nodiscard]] size_type max_size() const noexcept { return m_storage.max_size(); }
+    [[nodiscard]] size_type capacity() const noexcept { return max_size(); }
+    [[nodiscard]] size_type length() const noexcept { return m_storage.size(); }
+    [[nodiscard]] size_type size() const noexcept { return m_storage.size(); }
 
     void reserve(size_type new_cap = 0) { m_storage.reserve(new_cap); }
     void shrink_to_fit() { m_storage.shrink_to_fit(); }
@@ -149,19 +149,19 @@ public:
     /* ********************************** ACCESS FUNCTIONS ********************************** */
 
     /// @return a pointer to the internal C-string (NUL terminated)
-    const char_type* c_str() const { return m_storage.data(); }
-    const char_type* data() const { return m_storage.data(); }
-    char_type* data() { return m_storage.data(); }
+    [[nodiscard]] const char_type* c_str() const { return m_storage.data(); }
+    [[nodiscard]] const char_type* data() const { return m_storage.data(); }
+    [[nodiscard]] char_type* data() { return m_storage.data(); }
 
-    char_type& operator[](size_type pos) { return m_storage[pos]; }
-    const char_type& operator[](size_type pos) const { return m_storage[pos]; }
-    char_type& at(size_type pos)
+    [[nodiscard]] char_type& operator[](size_type pos) { return m_storage[pos]; }
+    [[nodiscard]] const char_type& operator[](size_type pos) const { return m_storage[pos]; }
+    [[nodiscard]] char_type& at(size_type pos)
     {
         if (pos >= size())
             throw std::out_of_range("pos >= size()");
         return m_storage[pos];
     }
-    const char_type& at(size_type pos) const
+    [[nodiscard]] const char_type& at(size_type pos) const
     {
         if (pos >= size())
             throw std::out_of_range("pos >= size()");
@@ -169,35 +169,50 @@ public:
     }
 
     // front() and back() require that this string is !empty(), otherwise -> UB
-    char_type& front() { return m_storage[0]; }
-    const char_type& front() const { return m_storage[0]; }
-    char_type& back() { return m_storage[size() - 1]; }
-    const char_type& back() const { return m_storage[size() - 1]; }
+    [[nodiscard]] char_type& front() { return m_storage[0]; }
+    [[nodiscard]] const char_type& front() const { return m_storage[0]; }
+    [[nodiscard]] char_type& back() { return m_storage[size() - 1]; }
+    [[nodiscard]] const char_type& back() const { return m_storage[size() - 1]; }
 
     // allow conversion to a view
     constexpr operator string_view_type() const { return string_view_type(data(), size()); }
 
     /* ********************************** ITERATOR FUNCTIONS ********************************** */
 
-    iterator begin() noexcept { return iterator(m_storage.data()); }
-    const_iterator begin() const noexcept { return const_iterator(m_storage.data()); }
-    const_iterator cbegin() const noexcept { return const_iterator(m_storage.data()); }
-    iterator end() noexcept { return iterator(m_storage.data() + m_storage.size()); }
-    const_iterator end() const noexcept
+    [[nodiscard]] iterator begin() noexcept { return iterator(m_storage.data()); }
+    [[nodiscard]] const_iterator begin() const noexcept { return const_iterator(m_storage.data()); }
+    [[nodiscard]] const_iterator cbegin() const noexcept
+    {
+        return const_iterator(m_storage.data());
+    }
+    [[nodiscard]] iterator end() noexcept { return iterator(m_storage.data() + m_storage.size()); }
+    [[nodiscard]] const_iterator end() const noexcept
     {
         return const_iterator(m_storage.data() + m_storage.size());
     }
-    const_iterator cend() const noexcept
+    [[nodiscard]] const_iterator cend() const noexcept
     {
         return const_iterator(m_storage.data() + m_storage.size());
     }
 
-    reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
-    const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
-    const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
-    reverse_iterator rend() noexcept { return reverse_iterator(begin()); }
-    const_reverse_iterator rend() const noexcept { return const_reverse_iterator(begin()); }
-    const_reverse_iterator crend() const noexcept { return const_reverse_iterator(begin()); }
+    [[nodiscard]] reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
+    [[nodiscard]] const_reverse_iterator rbegin() const noexcept
+    {
+        return const_reverse_iterator(end());
+    }
+    [[nodiscard]] const_reverse_iterator crbegin() const noexcept
+    {
+        return const_reverse_iterator(end());
+    }
+    [[nodiscard]] reverse_iterator rend() noexcept { return reverse_iterator(begin()); }
+    [[nodiscard]] const_reverse_iterator rend() const noexcept
+    {
+        return const_reverse_iterator(begin());
+    }
+    [[nodiscard]] const_reverse_iterator crend() const noexcept
+    {
+        return const_reverse_iterator(begin());
+    }
 
 
     /* ********************************** OPERATIONS ********************************** */
@@ -208,7 +223,7 @@ public:
     void pop_back() { m_storage.pop_back(); }
 
     // sub-string
-    this_type substr(size_type pos = 0, size_type count = npos) const
+    [[nodiscard]] this_type substr(size_type pos = 0, size_type count = npos) const
     {
         if (pos > size())
             throw std::out_of_range("pos > size()");
@@ -250,34 +265,35 @@ public:
         return r;
     }
 
-    int compare(const char_type* s) const
+    [[nodiscard]] int compare(const char_type* s) const
     {
         return _compare(data(), size(), s, traits_type::length(s));
     }
 
-    int compare(size_type pos1, size_type count1, const char_type* s) const
+    [[nodiscard]] int compare(size_type pos1, size_type count1, const char_type* s) const
     {
         return _compare(data() + pos1, count1, s, traits_type::length(s));
     }
 
-    int compare(size_type pos1, size_type count1, const char_type* s, size_type count2) const
+    [[nodiscard]] int compare(size_type pos1, size_type count1, const char_type* s,
+                              size_type count2) const
     {
         return _compare(data() + pos1, count1, s, count2);
     }
 
     // comparisons for (other) string types
-    int compare(const string_view_type& s) const
+    [[nodiscard]] int compare(const string_view_type& s) const
     {
         return _compare(data(), size(), s.data(), s.size());
     }
 
-    int compare(size_type pos1, size_type count1, const string_view_type& s) const
+    [[nodiscard]] int compare(size_type pos1, size_type count1, const string_view_type& s) const
     {
         return _compare(data() + pos1, count1, s.data(), s.size());
     }
 
-    int compare(size_type pos1, size_type count1, const string_view_type& s, size_type pos2,
-                size_type count2 = npos) const
+    [[nodiscard]] int compare(size_type pos1, size_type count1, const string_view_type& s,
+                              size_type pos2, size_type count2 = npos) const
     {
         return _compare(data() + pos1, count1, s.data() + pos2,
                         (count2 == npos ? s.size() : count2));
@@ -577,7 +593,7 @@ public:
     // Note: The standard plays ping-pong with "noexcept". We'll simply declare them all "noexcept"
     //       and don't raise any exceptions. I.e. there's no bounds checking...
 
-    size_type find(const char_type* s, size_type pos, size_type count) const noexcept
+    [[nodiscard]] size_type find(const char_type* s, size_type pos, size_type count) const noexcept
     {
         const size_type mysize = size();
         const char_type* mydata = data();
@@ -595,7 +611,7 @@ public:
         return npos;
     }
 
-    size_type find(char_type ch, size_type pos = 0) const noexcept
+    [[nodiscard]] size_type find(char_type ch, size_type pos = 0) const noexcept
     {
         size_type ret = npos;
         const size_type mysize = this->size();
@@ -610,18 +626,18 @@ public:
         return ret;
     }
 
-    size_type find(const char_type* s, size_type pos = 0) const noexcept
+    [[nodiscard]] size_type find(const char_type* s, size_type pos = 0) const noexcept
     {
         return find(s, pos, traits_type::length(s));
     }
 
-    size_type find(const string_view_type& str, size_type pos = 0) const noexcept
+    [[nodiscard]] size_type find(const string_view_type& str, size_type pos = 0) const noexcept
     {
         return find(str.data(), pos, str.size());
     }
 
 
-    size_type rfind(const char_type* s, size_type pos, size_type count) const noexcept
+    [[nodiscard]] size_type rfind(const char_type* s, size_type pos, size_type count) const noexcept
     {
         const size_type mysize = size();
         if (mysize && count <= mysize)
@@ -638,7 +654,7 @@ public:
         return npos;
     }
 
-    size_type rfind(char_type ch, size_type pos = npos) const noexcept
+    [[nodiscard]] size_type rfind(char_type ch, size_type pos = npos) const noexcept
     {
         if (size())
         {
@@ -654,12 +670,12 @@ public:
         return npos;
     }
 
-    size_type rfind(const char_type* s, size_type pos = npos) const noexcept
+    [[nodiscard]] size_type rfind(const char_type* s, size_type pos = npos) const noexcept
     {
         return rfind(s, pos, traits_type::length(s));
     }
 
-    size_type rfind(const string_view_type& str, size_type pos = npos) const noexcept
+    [[nodiscard]] size_type rfind(const string_view_type& str, size_type pos = npos) const noexcept
     {
         return rfind(str.data(), pos, str.size());
     }
@@ -667,7 +683,8 @@ public:
 
     // FIND_FIRST_OF
 
-    size_type find_first_of(const char_type* s, size_type pos, size_type count) const noexcept
+    [[nodiscard]] size_type find_first_of(const char_type* s, size_type pos,
+                                          size_type count) const noexcept
     {
         for (size_type index = pos; index < size(); ++index)
         {
@@ -680,23 +697,25 @@ public:
         return npos;
     }
 
-    size_type find_first_of(char_type ch, size_type pos = 0) const noexcept
+    [[nodiscard]] size_type find_first_of(char_type ch, size_type pos = 0) const noexcept
     {
         return find(ch, pos);
     }
 
-    size_type find_first_of(const char_type* s, size_type pos = 0) const noexcept
+    [[nodiscard]] size_type find_first_of(const char_type* s, size_type pos = 0) const noexcept
     {
         return find_first_of(s, pos, traits_type::length(s));
     }
-    size_type find_first_of(const string_view_type& s, size_type pos = 0) const noexcept
+    [[nodiscard]] size_type find_first_of(const string_view_type& s,
+                                          size_type pos = 0) const noexcept
     {
         return find_first_of(s.data(), pos, s.size());
     }
 
     // FIND_FIRST_NOT_OF
 
-    size_type find_first_not_of(const char_type* s, size_type pos, size_type count) const noexcept
+    [[nodiscard]] size_type find_first_not_of(const char_type* s, size_type pos,
+                                              size_type count) const noexcept
     {
         for (size_type index = pos; index < size(); ++index)
         {
@@ -711,7 +730,7 @@ public:
         }
         return npos;
     }
-    size_type find_first_not_of(char_type ch, size_type pos = 0) const noexcept
+    [[nodiscard]] size_type find_first_not_of(char_type ch, size_type pos = 0) const noexcept
     {
         for (size_type index = pos; index < size(); ++index)
         {
@@ -721,18 +740,20 @@ public:
         return npos;
     }
 
-    size_type find_first_not_of(const char_type* s, size_type pos = 0) const noexcept
+    [[nodiscard]] size_type find_first_not_of(const char_type* s, size_type pos = 0) const noexcept
     {
         return find_first_not_of(s, pos, traits_type::length(s));
     }
-    size_type find_first_not_of(const string_view_type& s, size_type pos = 0) const noexcept
+    [[nodiscard]] size_type find_first_not_of(const string_view_type& s,
+                                              size_type pos = 0) const noexcept
     {
         return find_first_not_of(s.data(), pos, s.size());
     }
 
     // FIND_LAST_OF
 
-    size_type find_last_of(const char_type* s, size_type pos, size_type count) const noexcept
+    [[nodiscard]] size_type find_last_of(const char_type* s, size_type pos,
+                                         size_type count) const noexcept
     {
         if (size())
         {
@@ -751,23 +772,25 @@ public:
         }
         return npos;
     }
-    size_type find_last_of(char_type ch, size_type pos = npos) const noexcept
+    [[nodiscard]] size_type find_last_of(char_type ch, size_type pos = npos) const noexcept
     {
         return rfind(ch, pos);
     }
 
-    size_type find_last_of(const char_type* s, size_type pos = npos) const noexcept
+    [[nodiscard]] size_type find_last_of(const char_type* s, size_type pos = npos) const noexcept
     {
         return find_last_of(s, pos, traits_type::length(s));
     }
-    size_type find_last_of(const string_view_type& s, size_type pos = npos) const noexcept
+    [[nodiscard]] size_type find_last_of(const string_view_type& s,
+                                         size_type pos = npos) const noexcept
     {
         return find_last_of(s.data(), pos, s.size());
     }
 
     // FIND_LAST_NOT_OF
 
-    size_type find_last_not_of(const char_type* s, size_type pos, size_type count) const noexcept
+    [[nodiscard]] size_type find_last_not_of(const char_type* s, size_type pos,
+                                             size_type count) const noexcept
     {
         if (size())
         {
@@ -789,7 +812,7 @@ public:
         }
         return npos;
     }
-    size_type find_last_not_of(char_type ch, size_type pos = npos) const noexcept
+    [[nodiscard]] size_type find_last_not_of(char_type ch, size_type pos = npos) const noexcept
     {
         if (size())
         {
@@ -806,11 +829,13 @@ public:
         return npos;
     }
 
-    size_type find_last_not_of(const char_type* s, size_type pos = npos) const noexcept
+    [[nodiscard]] size_type find_last_not_of(const char_type* s,
+                                             size_type pos = npos) const noexcept
     {
         return find_last_not_of(s, pos, traits_type::length(s));
     }
-    size_type find_last_not_of(const string_view_type& s, size_type pos = npos) const noexcept
+    [[nodiscard]] size_type find_last_not_of(const string_view_type& s,
+                                             size_type pos = npos) const noexcept
     {
         return find_last_not_of(s.data(), pos, s.size());
     }
