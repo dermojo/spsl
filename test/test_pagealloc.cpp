@@ -215,11 +215,13 @@ TEST_CASE("LeakCheckTest1", "[allocator]")
         spsl::SensitivePageAllocator alloc;
         myInstance = &alloc;
         // get informed about leaks from the destructor
-        alloc.setLeakCallback([&](const spsl::SensitivePageAllocator* p,
-                                  const spsl::SensitivePageAllocator::AllocationInfo& leak, bool) {
-            cbInstance = p;
-            cbLeaks.push_back(leak);
-        });
+        alloc.setLeakCallback(
+          [&](const spsl::SensitivePageAllocator* p,
+              const spsl::SensitivePageAllocator::AllocationInfo& leak, bool)
+          {
+              cbInstance = p;
+              cbLeaks.push_back(leak);
+          });
 
         AllocationList allocations;
         performAllocations(alloc, allocations);
@@ -257,11 +259,13 @@ TEST_CASE("LeakCheckTest2", "[allocator]")
         spsl::SensitivePageAllocator alloc;
         myInstance = &alloc;
         // get informed about leaks from the destructor
-        alloc.setLeakCallback([&](const spsl::SensitivePageAllocator* p,
-                                  const spsl::SensitivePageAllocator::AllocationInfo& leak, bool) {
-            cbInstance = p;
-            cbLeaks.push_back(leak);
-        });
+        alloc.setLeakCallback(
+          [&](const spsl::SensitivePageAllocator* p,
+              const spsl::SensitivePageAllocator::AllocationInfo& leak, bool)
+          {
+              cbInstance = p;
+              cbLeaks.push_back(leak);
+          });
 
         AllocationList allocations;
         performAllocations(alloc, allocations);
