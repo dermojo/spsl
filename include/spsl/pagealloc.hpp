@@ -106,47 +106,47 @@ public:
         {
             for (auto& chunk : m_managedChunks)
             {
-                    // call the callback function for every contiguous range of addresses
-                    while (chunk.segments != all64)
+                // call the callback function for every contiguous range of addresses
+                while (chunk.segments != all64)
+                {
+                    // search for the first used segment
+                    uint64_t mask = 0x1;
+                    uint64_t resetMask = 0;
+                    std::size_t startIndex = 0;
+                    std::size_t endIndex = 0;
+                    bool searchingForStart = true;
+                    for (std::size_t i = 0; i < segment_size; ++i)
                     {
-                        // search for the first used segment
-                        uint64_t mask = 0x1;
-                        uint64_t resetMask = 0;
-                        std::size_t startIndex = 0;
-                        std::size_t endIndex = 0;
-                        bool searchingForStart = true;
-                        for (std::size_t i = 0; i < segment_size; ++i)
+                        if (searchingForStart)
                         {
-                            if (searchingForStart)
+                            if ((chunk.segments & mask) == 0)
                             {
-                                if ((chunk.segments & mask) == 0)
-                                {
-                                    startIndex = i;
-                                    endIndex = segment_size - 1;
-                                    searchingForStart = false;
-                                }
+                                startIndex = i;
+                                endIndex = segment_size - 1;
+                                searchingForStart = false;
                             }
-                            else if ((chunk.segments & mask) == mask)
-                            {
-                                endIndex = i - 1;
-                                break;
-                            }
-                            resetMask |= mask;
-                            mask <<= 1;
                         }
-
-                        // mask as free
-                        chunk.segments |= resetMask;
-
-                        // notify the callback
-                        m_leakCallback(this,
-                                       AllocationInfo{ reinterpret_cast<char*>(chunk.addr) +
-                                                         startIndex * segment_size,
-                                                       (endIndex - startIndex + 1) * segment_size },
-                                       firstCbCall);
-                        firstCbCall = false;
+                        else if ((chunk.segments & mask) == mask)
+                        {
+                            endIndex = i - 1;
+                            break;
+                        }
+                        resetMask |= mask;
+                        mask <<= 1;
                     }
+
+                    // mask as free
+                    chunk.segments |= resetMask;
+
+                    // notify the callback
+                    m_leakCallback(this,
+                                   AllocationInfo{ reinterpret_cast<char*>(chunk.addr) +
+                                                     startIndex * segment_size,
+                                                   (endIndex - startIndex + 1) * segment_size },
+                                   firstCbCall);
+                    firstCbCall = false;
                 }
+            }
         }
         // finally, remove all associated pages
         while (!m_managedChunks.empty())
@@ -155,9 +155,8 @@ public:
             deallocatePage(pageAddr, m_pageSize);
 
             m_managedChunks.erase(std::remove_if(m_managedChunks.begin(), m_managedChunks.end(),
-                                                 [pageAddr](const ChunkManagementInfo& chunk) {
-                                                     return chunk.pageAddr == pageAddr;
-                                                 }),
+                                                 [pageAddr](const ChunkManagementInfo& chunk)
+                                                 { return chunk.pageAddr == pageAddr; }),
                                   m_managedChunks.end());
         }
 
@@ -338,10 +337,10 @@ private:
         std::unique_lock<std::mutex> lock(m_mutex);
         size = roundToPageSize(size);
         deallocatePage(addr, size);
-        m_unmanagedAreas.erase(
-          std::remove_if(m_unmanagedAreas.begin(), m_unmanagedAreas.end(),
-                         [=](const AllocationInfo& a) { return a.addr == addr; }),
-          m_unmanagedAreas.end());
+        m_unmanagedAreas.erase(std::remove_if(m_unmanagedAreas.begin(), m_unmanagedAreas.end(),
+                                              [=](const AllocationInfo& a)
+                                              { return a.addr == addr; }),
+                               m_unmanagedAreas.end());
     }
 
     /**
@@ -447,9 +446,8 @@ private:
             }
             deallocatePage(pageAddr, m_pageSize);
             m_managedChunks.erase(std::remove_if(m_managedChunks.begin(), m_managedChunks.end(),
-                                                 [pageAddr](const ChunkManagementInfo& chunk) {
-                                                     return chunk.pageAddr == pageAddr;
-                                                 }),
+                                                 [pageAddr](const ChunkManagementInfo& chunk)
+                                                 { return chunk.pageAddr == pageAddr; }),
                                   m_managedChunks.end());
         }
     }
