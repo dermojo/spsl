@@ -93,7 +93,7 @@ matrix:
         - mkdir build
         - cd build
         - ADD_OPTS="-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
-        - ADD_OPTS="$ADD_OPTS -DCLANG_FORMAT=/usr/bin/clang-format"
+        - ADD_OPTS="$ADD_OPTS -DCLANG_FORMAT=/usr/bin/clang-format-10"
         - cmake $ADD_OPTS ..
         - make format
         - |
@@ -120,7 +120,7 @@ matrix:
         - mkdir build
         - cd build
         - ADD_OPTS="-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
-        - ADD_OPTS="$ADD_OPTS -DCLANG_TIDY=/usr/bin/clang-tidy"
+        - ADD_OPTS="$ADD_OPTS -DCLANG_TIDY=/usr/bin/clang-tidy-10"
         - cmake $ADD_OPTS ..
         - make tidy >output.txt
         - |
