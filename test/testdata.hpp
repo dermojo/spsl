@@ -53,7 +53,7 @@ struct TestData<char>
 template <>
 struct TestData<wchar_t>
 {
-    TestData() {}
+    TestData() = default;
     ~TestData() = default;
     // not needed
     TestData(const TestData&) = delete;

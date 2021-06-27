@@ -23,7 +23,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase find first of", "[string_base]", StringBaseT
     const auto npos = StringType::npos;
     const auto nul = StringType::nul;
 
-    const StringType s(data.hello_world);
+    const StringType s(data.hello_world, data.hello_world_len);
     StringType sWithNul(s);
     sWithNul += nul;
     REQUIRE(s.size() + 1 == sWithNul.size());
@@ -103,7 +103,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase find first not of", "[string_base]", StringB
     const auto npos = StringType::npos;
     const auto nul = StringType::nul;
 
-    const StringType s(data.hello_world);
+    const StringType s(data.hello_world, data.hello_world_len);
     const CharType H = data.hello_world[0];
     const CharType l = data.hello_world[3];
     const CharType W = data.hello_world[6];
@@ -187,7 +187,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase find last of", "[string_base]", StringBaseTe
     const auto npos = StringType::npos;
     const auto nul = StringType::nul;
 
-    const StringType s(data.hello_world);
+    const StringType s(data.hello_world, data.hello_world_len);
     StringType sWithNul(s);
     sWithNul += nul;
     REQUIRE(s.size() + 1 == sWithNul.size());
@@ -288,7 +288,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase find last not of", "[string_base]", StringBa
     const auto npos = StringType::npos;
     const auto nul = StringType::nul;
 
-    const StringType s(data.hello_world);
+    const StringType s(data.hello_world, data.hello_world_len);
     StringType sWithNul(s);
     sWithNul += nul;
     REQUIRE(s.size() + 1 == sWithNul.size());
