@@ -4,7 +4,8 @@
 [![AppVeyor status](https://ci.appveyor.com/api/projects/status/github/dermojo/spsl?branch=develop&svg=true)](https://ci.appveyor.com/project/dermojo/spsl)
 [![codecov](https://codecov.io/gh/dermojo/spsl/branch/develop/graph/badge.svg)](https://codecov.io/gh/dermojo/spsl)
 
-SPSL is a header-only library for "special" string implementations for C++17 and later.
+SPSL is a header-only library for "special" string implementations for C++17 and later
+(if you're limited to C++11, you can still check out the 1.4 release).
 It contains the following string class templates:
 * `ArrayString`/`ArrayStringW`: Purely stack based string, similar to "plain" C arrays.
 * `PasswordString`/`PasswordStringW`: String variant for sensitive data. All memory used by
@@ -41,8 +42,8 @@ The SPSL itself only relies on the STL and has no dependencies. To compile the t
 
 (A copy of the [Catch2 test framework](https://github.com/catchorg/Catch2) is contained.)
 
-Supported compilers (we'll, the ones I've tested) include GCC 4.9+ and clang 4+
-on Linux and Microsoft Visual Studio 2015+.
+Supported compilers (we'll, the ones I've tested) include GCC 8+ and clang 10+
+on Linux and Microsoft Visual Studio 2019.
 
 Make sure to clone this repository with:
 ```bash
