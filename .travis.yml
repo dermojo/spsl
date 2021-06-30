@@ -38,6 +38,16 @@ jobs:
           packages:
             - g++-11
       env: MYCC=gcc-11 MYCXX=g++-11
+    - compiler: gcc-11
+      dist: bionic
+      arch: arm64
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-11
+      env: MYCC=gcc-11 MYCXX=g++-11
     - compiler: clang-10
       dist: bionic
       addons:
@@ -62,18 +72,6 @@ jobs:
       env: MYCC=clang-11 MYCXX=clang++-11
     - compiler: clang-12
       dist: bionic
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - sourceline: deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-12 main
-              key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
-          packages:
-            - clang-12
-      env: MYCC=clang-12 MYCXX=clang++-12
-    - compiler: clang-12
-      dist: bionic
-      arch: arm64
       addons:
         apt:
           sources:
