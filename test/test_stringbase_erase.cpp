@@ -59,7 +59,7 @@ TEMPLATE_LIST_TEST_CASE("StringBase erase", "[string_base]", StringBaseTestTypes
         REQUIRE(sResult == s.begin() + 4);
         REQUIRE(refResult == ref.begin() + 4);
 
-        REQUIRE_THROWS_AS(s.erase(s.end() + 1), std::out_of_range);
+        REQUIRE_THROWS_AS(s.erase(std::next(s.end())), std::out_of_range);
     }
 
     // iterator range
@@ -78,7 +78,9 @@ TEMPLATE_LIST_TEST_CASE("StringBase erase", "[string_base]", StringBaseTestTypes
         REQUIRE(sResult == s.end());
 
         s.assign(data.hello_world, data.hello_world_len);
-        REQUIRE_THROWS_AS(s.erase(s.end() + 1, s.end() + 2), std::out_of_range);
+        auto pastEnd = std::next(s.end());
+        auto twoPastEnd = std::next(pastEnd);
+        REQUIRE_THROWS_AS(s.erase(pastEnd, twoPastEnd), std::out_of_range);
         REQUIRE_THROWS_AS(s.erase(s.begin() - 1, s.end()), std::out_of_range);
         REQUIRE_THROWS_AS(s.erase(s.end(), s.begin()), std::out_of_range);
     }
