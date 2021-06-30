@@ -84,6 +84,7 @@ jobs:
             - clang-12
       env: MYCC=clang-12 MYCXX=clang++-12
     - compiler: gcc-11
+      dist: bionic
       addons:
         apt:
           sources:
