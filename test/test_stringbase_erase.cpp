@@ -59,7 +59,15 @@ TEMPLATE_LIST_TEST_CASE("StringBase erase", "[string_base]", StringBaseTestTypes
         REQUIRE(sResult == s.begin() + 4);
         REQUIRE(refResult == ref.begin() + 4);
 
+        // GCC 11's optimizer is too eager here
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-overflow="
+#endif
         REQUIRE_THROWS_AS(s.erase(std::next(s.end())), std::out_of_range);
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
     }
 
     // iterator range
