@@ -30,7 +30,7 @@ jobs:
             - g++-10
       env: MYCC=gcc-10 MYCXX=g++-10
     - compiler: gcc-11
-      dist: bionic
+      dist: focal
       addons:
         apt:
           sources:
@@ -39,7 +39,7 @@ jobs:
             - g++-11
       env: MYCC=gcc-11 MYCXX=g++-11
     - compiler: gcc-11
-      dist: bionic
+      dist: focal
       arch: arm64
       addons:
         apt:
@@ -82,7 +82,7 @@ jobs:
             - clang-12
       env: MYCC=clang-12 MYCXX=clang++-12
     - compiler: gcc-11
-      dist: bionic
+      dist: focal
       addons:
         apt:
           sources:
