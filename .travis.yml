@@ -87,7 +87,7 @@ jobs:
         apt:
           sources:
             - sourceline: 'ppa:ubuntu-toolchain-r/test'
-        packages:
+          packages:
             - g++-11
       env: MYCC=gcc-11 MYCXX=g++-11 ENABLE_ASAN=on
     - compiler: clang-12
