@@ -34,7 +34,7 @@ jobs:
       addons:
         apt:
           sources:
-            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
             - g++-11
       env: MYCC=gcc-11 MYCXX=g++-11
@@ -44,7 +44,7 @@ jobs:
       addons:
         apt:
           sources:
-            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
             - g++-11
       env: MYCC=gcc-11 MYCXX=g++-11
@@ -86,8 +86,8 @@ jobs:
       addons:
         apt:
           sources:
-            - ubuntu-toolchain-r-test
-          packages:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+        packages:
             - g++-11
       env: MYCC=gcc-11 MYCXX=g++-11 ENABLE_ASAN=on
     - compiler: clang-12
