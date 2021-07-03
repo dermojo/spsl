@@ -10,7 +10,6 @@
 
 #include <algorithm>
 #include <initializer_list>
-#include <ios> // for ostream support
 #include <iterator>
 #include <limits>
 #include <stdexcept>
@@ -838,15 +837,6 @@ public:
                                              size_type pos = npos) const noexcept
     {
         return find_last_not_of(s.data(), pos, s.size());
-    }
-
-    // output stream operator
-    template <typename CharTraits>
-    friend std::basic_ostream<char_type, CharTraits>& operator<<(
-      std::basic_ostream<char_type, CharTraits>& os, const this_type& str)
-    {
-        os.write(str.data(), static_cast<std::streamsize>(str.size()));
-        return os;
     }
 };
 

@@ -22,6 +22,8 @@
 #ifndef SPSL_SPSL_HPP_
 #define SPSL_SPSL_HPP_
 
+#include <ostream>
+
 #include "spsl/storage_array.hpp"
 #include "spsl/storage_password.hpp"
 #include "spsl/stringbase.hpp"
@@ -40,6 +42,17 @@ using ArrayString = StringBase<StorageArray<char, MaxSize, OverflowPolicy>>;
 
 template <size_t MaxSize, typename OverflowPolicy = policy::overflow::Truncate>
 using ArrayStringW = StringBase<StorageArray<wchar_t, MaxSize, OverflowPolicy>>;
+
+
+// output stream operator for ArrayString*
+template <typename CharType, typename CharTraits, size_t MaxSize, typename Policy>
+std::basic_ostream<CharType, CharTraits>& operator<<(
+  std::basic_ostream<CharType, CharTraits>& os,
+  const StringBase<StorageArray<CharType, MaxSize, Policy>>& str)
+{
+    os.write(str.data(), static_cast<std::streamsize>(str.size()));
+    return os;
+}
 
 /*
  * PasswordString / PasswordString:

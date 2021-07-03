@@ -135,25 +135,48 @@ TEMPLATE_LIST_TEST_CASE("StringBase insert", "[string_base]", StringBaseTestType
     }
 }
 
-template <class StringType, class CharType>
-void runStreamTests(StringType&&, CharType)
+
+// simple type trait to test for streamability
+template <typename S, typename T>
+class is_streamable
 {
+    template <typename SS, typename TT>
+    static auto test(int) -> decltype(std::declval<SS&>() << std::declval<TT>(), std::true_type());
+
+    template <typename, typename>
+    static auto test(...) -> std::false_type;
+
+public:
+    static const bool value = decltype(test<S, T>(0))::value;
+};
+
+/* operator<< */
+TEMPLATE_LIST_TEST_CASE("StringBase output stream", "[string_base]", StringBaseStreamableTypes)
+{
+    using StringType = TestType;
+    using StorageType = typename StringType::storage_type;
+    using CharType = typename StorageType::char_type;
+
     const TestData<CharType> data;
 
     const StringType s(data.hello_world);
     const std::basic_string<CharType> ref(data.hello_world);
 
     // using a string stream for testing
-    std::basic_stringstream<CharType> outputStream;
+    using StreamType = std::basic_stringstream<CharType>;
+    static_assert(is_streamable<StreamType, StringType>::value,
+                  "expected this type to be streamable!");
+    StreamType outputStream;
     outputStream << s;
     REQUIRE(outputStream.str() == ref);
 }
 
-/* operator<< */
-TEMPLATE_LIST_TEST_CASE("StringBase output stream", "[string_base]", StringBaseTestTypes)
+TEMPLATE_LIST_TEST_CASE("StringBase non-streamable", "[string_base]", StringBaseNonStreamableTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
-    runStreamTests(StringType(), CharType());
+    using StreamType = std::basic_stringstream<CharType>;
+    static_assert(!is_streamable<StreamType, StringType>::value,
+                  "expected this type to be non-streamable!");
 }
