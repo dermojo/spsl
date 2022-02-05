@@ -52,10 +52,13 @@ target_include_directories(testlib PUBLIC include)
 target_include_directories(testlib SYSTEM PUBLIC extern)
 target_include_directories(example PUBLIC include)
 
-set_property(TARGET testlib PROPERTY CXX_STANDARD 17)
+if (NOT "${CMAKE_CXX_STANDARD}")
+    set_property(TARGET testlib PROPERTY CXX_STANDARD 17)
+    set_property(TARGET example PROPERTY CXX_STANDARD 17)
+endif()
 set_property(TARGET testlib PROPERTY CXX_STANDARD_REQUIRED ON)
-set_property(TARGET example PROPERTY CXX_STANDARD 17)
 set_property(TARGET example PROPERTY CXX_STANDARD_REQUIRED ON)
+
 
 # We want a lot of warnings!
 if(MSVC)
