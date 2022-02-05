@@ -81,6 +81,17 @@ jobs:
           packages:
             - clang-12
       env: MYCC=clang-12 MYCXX=clang++-12
+    - compiler: clang-12
+      dist: bionic
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-12 main
+              key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
+          packages:
+            - clang-12
+      env: MYCC=clang-12 MYCXX=clang++-12 CXXSTD=20
     - compiler: gcc-11
       dist: focal
       addons:
@@ -192,8 +203,12 @@ script:
       BUILD_TYPE=Debug
     fi
   - ADD_OPTS="$ADD_OPTS -DCMAKE_BUILD_TYPE=$BUILD_TYPE"
+  - |
+    if [[ -n "$CXXSTD" ]] ; then
+      ADD_OPTS="$ADD_OPTS -DCMAKE_CXX_STANDARD=$CXXSTD"
+    fi
   - cmake $ADD_OPTS ..
-  - make
+  - cmake --build .
   - if [[ "$MYCC" != *mingw* ]] ; then make runtest; fi
   - |
     if [[ -n "$CODE_COVERAGE" ]] ; then
