@@ -10,17 +10,62 @@
 #include "testdata.hpp"
 #include "tests.hpp"
 
+template <class Char>
+class DerivedString : public spsl::StringBase<spsl::StorageArray<Char, 64>>
+{
+public:
+    /// alias of the type we're inheriting from
+    using base_type = spsl::StringBase<spsl::StorageArray<Char, 64>>;
+    using base_type::base_type;
+
+    using base_type::operator=;
+
+    friend bool operator==(const DerivedString<Char>& lhs, const DerivedString<Char>& rhs) {
+        return lhs.compare(rhs) == 0;
+    }
+    friend bool operator!=(const DerivedString<Char>& lhs, const DerivedString<Char>& rhs) {
+        return lhs.compare(rhs) != 0;
+    }
+};
+
 /* comparison functions */
 TEMPLATE_LIST_TEST_CASE("StringBase comparison", "[string_core]", StringBaseTestTypes)
 {
     using StringType = TestType;
     using StorageType = typename StringType::storage_type;
     using CharType = typename StorageType::char_type;
+    using ViewType = std::basic_string_view<CharType>;
     const TestData<CharType> data;
 
     const StringType s(data.hello_world);
     StringType ref(data.hello_world);
     // note: if the prefix is identical, comparing with a shorter string yields rc > 0
+
+    // operator==
+    REQUIRE(s == ref);
+    REQUIRE(ref == s);
+    REQUIRE(s == ViewType(ref));
+    REQUIRE(ViewType(ref) == s);
+    REQUIRE(s == ref.c_str());
+    REQUIRE(ref.c_str() == s);
+    REQUIRE(s == data.hello_world);
+    REQUIRE(data.hello_world == s);
+    REQUIRE(!(s != ref));
+    REQUIRE(!(ref != s));
+    REQUIRE(!(s != ViewType(ref)));
+    REQUIRE(!(ViewType(ref) != s));
+    REQUIRE(!(s != ref.c_str()));
+    REQUIRE(!(ref.c_str() != s));
+    REQUIRE(!(s != data.hello_world));
+    REQUIRE(!(data.hello_world != s));
+    {
+        // special test for C++20 and overloaded operators / ambiguity
+        DerivedString<CharType> derived(data.hello_world);
+        REQUIRE(derived == s);
+        REQUIRE(!(s != derived));
+        REQUIRE(derived == derived);
+        REQUIRE(!(derived != derived));
+    }
 
     // char_type*
     REQUIRE(s.compare(ref.c_str()) == 0);

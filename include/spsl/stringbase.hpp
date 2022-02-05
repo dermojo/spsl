@@ -301,34 +301,95 @@ public:
 
     /* **************************** COMPARISON OPERATORS **************************** */
 
-    // note: While we can implement these as non-members (which shall be preferred according to
-    //       Effective C++), having member functions allows us to hand them down to sub-classes.
 
-    // TODO: update to hidden friends
+    // compare to this_type
+    friend bool operator==(const this_type& lhs, const this_type& rhs)
+    {
+        return lhs.compare(rhs) == 0;
+    }
+    friend bool operator!=(const this_type& lhs, const this_type& rhs)
+    {
+        return lhs.compare(rhs) != 0;
+    }
+    friend bool operator<(const this_type& lhs, const this_type& rhs)
+    {
+        return lhs.compare(rhs) < 0;
+    }
+    friend bool operator<=(const this_type& lhs, const this_type& rhs)
+    {
+        return lhs.compare(rhs) <= 0;
+    }
+    friend bool operator>(const this_type& lhs, const this_type& rhs)
+    {
+        return lhs.compare(rhs) > 0;
+    }
+    friend bool operator>=(const this_type& lhs, const this_type& rhs)
+    {
+        return lhs.compare(rhs) >= 0;
+    }
 
-    // StringBase, const char_type*
-    bool operator==(const char_type* rhs) const { return compare(rhs) == 0; }
-    bool operator!=(const char_type* rhs) const { return compare(rhs) != 0; }
-    bool operator<(const char_type* rhs) const { return compare(rhs) < 0; }
-    bool operator<=(const char_type* rhs) const { return compare(rhs) <= 0; }
-    bool operator>(const char_type* rhs) const { return compare(rhs) > 0; }
-    bool operator>=(const char_type* rhs) const { return compare(rhs) >= 0; }
+    // compare to anything else
+    template <typename OtherString>
+    friend bool operator==(const this_type& lhs, const OtherString& rhs)
+    {
+        return lhs.compare(rhs) == 0;
+    }
+    template <typename OtherString>
+    friend bool operator==(const OtherString& lhs, const this_type& rhs)
+    {
+        return rhs.compare(string_view_type(lhs)) == 0;
+    }
+    template <typename OtherString>
+    friend bool operator!=(const this_type& lhs, const OtherString& rhs)
+    {
+        return lhs.compare(string_view_type(rhs)) != 0;
+    }
+    template <typename OtherString>
+    friend bool operator!=(const OtherString& lhs, const this_type& rhs)
+    {
+        return rhs.compare(lhs) != 0;
+    }
 
-    // StringBase, StringBase
-    bool operator==(const this_type& rhs) const { return compare(rhs) == 0; }
-    bool operator!=(const this_type& rhs) const { return compare(rhs) != 0; }
-    bool operator<(const this_type& rhs) const { return compare(rhs) < 0; }
-    bool operator<=(const this_type& rhs) const { return compare(rhs) <= 0; }
-    bool operator>(const this_type& rhs) const { return compare(rhs) > 0; }
-    bool operator>=(const this_type& rhs) const { return compare(rhs) >= 0; }
-
-    // StringBase, other string type
-    bool operator==(const string_view_type& rhs) const { return compare(rhs) == 0; }
-    bool operator!=(const string_view_type& rhs) const { return compare(rhs) != 0; }
-    bool operator<(const string_view_type& rhs) const { return compare(rhs) < 0; }
-    bool operator<=(const string_view_type& rhs) const { return compare(rhs) <= 0; }
-    bool operator>(const string_view_type& rhs) const { return compare(rhs) > 0; }
-    bool operator>=(const string_view_type& rhs) const { return compare(rhs) >= 0; }
+    template <typename OtherString>
+    friend bool operator<(const this_type& lhs, const OtherString& rhs)
+    {
+        return lhs.compare(rhs) < 0;
+    }
+    template <typename OtherString>
+    friend bool operator<(const OtherString& lhs, const this_type& rhs)
+    {
+        return rhs.compare(lhs) > 0;
+    }
+    template <typename OtherString>
+    friend bool operator<=(const this_type& lhs, const OtherString& rhs)
+    {
+        return lhs.compare(rhs) <= 0;
+    }
+    template <typename OtherString>
+    friend bool operator<=(const OtherString& lhs, const this_type& rhs)
+    {
+        return rhs.compare(lhs) >= 0;
+    }
+    template <typename OtherString>
+    friend bool operator>(const this_type& lhs, const OtherString& rhs)
+    {
+        return lhs.compare(rhs) > 0;
+    }
+    template <typename OtherString>
+    friend bool operator>(const OtherString& lhs, const this_type& rhs)
+    {
+        return rhs.compare(lhs) < 0;
+    }
+    template <typename OtherString>
+    friend bool operator>=(const this_type& lhs, const OtherString& rhs)
+    {
+        return lhs.compare(rhs) >= 0;
+    }
+    template <typename OtherString>
+    friend bool operator>=(const OtherString& lhs, const this_type& rhs)
+    {
+        return rhs.compare(lhs) <= 0;
+    }
 
 
     /* ********************************** ASSIGNMENT FUNCTIONS ********************************** */
@@ -839,42 +900,6 @@ public:
         return find_last_not_of(s.data(), pos, s.size());
     }
 };
-
-
-/* ********************************** COMPARISON OPERATORS ********************************** */
-// These are the (non-member) functions, that can't be implemented as members.
-
-// SOMETHING, StringBase
-template <typename OtherString, typename StorageType>
-bool operator==(const OtherString& lhs, const StringBase<StorageType>& rhs)
-{
-    return rhs.compare(lhs) == 0;
-}
-template <typename OtherString, typename StorageType>
-bool operator!=(const OtherString& lhs, const StringBase<StorageType>& rhs)
-{
-    return rhs.compare(lhs) != 0;
-}
-template <typename OtherString, typename StorageType>
-bool operator<(const OtherString& lhs, const StringBase<StorageType>& rhs)
-{
-    return rhs.compare(lhs) > 0;
-}
-template <typename OtherString, typename StorageType>
-bool operator<=(const OtherString& lhs, const StringBase<StorageType>& rhs)
-{
-    return rhs.compare(lhs) >= 0;
-}
-template <typename OtherString, typename StorageType>
-bool operator>(const OtherString& lhs, const StringBase<StorageType>& rhs)
-{
-    return rhs.compare(lhs) < 0;
-}
-template <typename OtherString, typename StorageType>
-bool operator>=(const OtherString& lhs, const StringBase<StorageType>& rhs)
-{
-    return rhs.compare(lhs) <= 0;
-}
 
 
 // swap implementation
