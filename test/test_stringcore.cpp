@@ -20,10 +20,12 @@ public:
 
     using base_type::operator=;
 
-    friend bool operator==(const DerivedString<Char>& lhs, const DerivedString<Char>& rhs) {
+    friend bool operator==(const DerivedString<Char>& lhs, const DerivedString<Char>& rhs)
+    {
         return lhs.compare(rhs) == 0;
     }
-    friend bool operator!=(const DerivedString<Char>& lhs, const DerivedString<Char>& rhs) {
+    friend bool operator!=(const DerivedString<Char>& lhs, const DerivedString<Char>& rhs)
+    {
         return lhs.compare(rhs) != 0;
     }
 };
